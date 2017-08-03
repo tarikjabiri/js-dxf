@@ -1,8 +1,9 @@
-//http://paulbourke.net/dataformats/dxf/min3d.html
-//http://www.scan2cad.com/dxf/file-specification/
 const LineType = require('./LineType');
 const Layer = require('./Layer');
 const Line = require('./Line');
+const Arc = require('./Arc');
+const Circle = require('./Circle');
+const Text = require('./Text');
 
 class Drawing
 {
@@ -33,7 +34,7 @@ class Drawing
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
      */
     addLineType(name, description, elements)
     {
@@ -56,6 +57,43 @@ class Drawing
     drawLine(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - Center x
+     * @param {number} y1 - Center y
+     * @param {number} r - radius
+     * @param {number} startAngle - degree 
+     * @param {number} endAngle - degree 
+     */
+    drawArc(x1, y1, r, startAngle, endAngle)
+    {
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - Center x
+     * @param {number} y1 - Center y
+     * @param {number} r - radius
+     */
+    drawCircle(x1, y1, r)
+    {
+        this.activeLayer.addShape(new Circle(x1, y1, r));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - x
+     * @param {number} y1 - y
+     * @param {number} height - Text height
+     * @param {number} rotation - Text rotation
+     * @param {string} value - the string itself
+     */
+    drawText(x1, y1, height, rotation, value)
+    {
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
         return this;
     }
 
@@ -144,7 +182,8 @@ Drawing.ACI =
 Drawing.LINE_TYPES = 
 [
     {name: 'CONTINOUS', description: '______', elements: []},
-    {name: 'DASHED',    description: '_ _ _ ', elements: [0.250, -0.250]}
+    {name: 'DASHED',    description: '_ _ _ ', elements: [0.5, -0.5]},
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -0.5]}
 ]
 
 Drawing.LAYERS = 
