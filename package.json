@@ -7,7 +7,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle" : "browserify -r ./src/Arc.js -r ./src/Circle.js -r ./src/Layer.js  -r ./src/Line.js  -r ./src/Line.js  -r ./src/Text.js  -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
   },
   "repository": {
     "type": "git",
