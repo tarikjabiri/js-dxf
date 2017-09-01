@@ -1,6 +1,6 @@
 {
   "name": "dxf-writer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dead simple 2D DXF writer",
   "main": "index.js",
   "directories": {
