@@ -37,4 +37,4 @@ d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DOTTED')
 fs.writeFileSync(__filename + '.dxf', d.toDxfString());
 ```
 Example preview in the LibreCAD:
-![exmple in LibreCAD](https://github.com/ognjen-petrovic/js-dxf/blob/master/examples/demo.png "example in LibreCAD")
+![exmple in LibreCAD](https://raw.githubusercontent.com/ognjen-petrovic/js-dxf/master/examples/demo.png "example in LibreCAD")
