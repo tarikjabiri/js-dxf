@@ -4,6 +4,7 @@ const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
+const Polyline = require('./Polyline');
 
 class Drawing
 {
@@ -94,6 +95,15 @@ class Drawing
     drawText(x1, y1, height, rotation, value)
     {
         this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        return this;
+    }
+
+    /**
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     */
+    drawPolyline(points)
+    {
+        this.activeLayer.addShape(new Polyline(points));
         return this;
     }
 

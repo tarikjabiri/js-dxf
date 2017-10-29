@@ -1,4 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/src/Arc.js":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 class Arc
 {
     /**
@@ -28,7 +28,7 @@ class Arc
 }
 
 module.exports = Arc;
-},{}],"/src/Circle.js":[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 class Circle
 {
     /**
@@ -45,7 +45,7 @@ class Circle
 
     toDxfString()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
+        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
         let s = `0\nCIRCLE\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n`;
@@ -54,7 +54,7 @@ class Circle
 }
 
 module.exports = Circle;
-},{}],"/src/Layer.js":[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 class Layer
 {
     constructor(name, colorNumber, lineTypeName)
@@ -99,7 +99,7 @@ class Layer
 }
 
 module.exports = Layer;
-},{}],"/src/Line.js":[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 class Line
 {
     constructor(x1, y1, x2, y2)
@@ -121,38 +121,7 @@ class Line
 }
 
 module.exports = Line;
-},{}],"/src/Text.js":[function(require,module,exports){
-class Text
-{
-    /**
-     * @param {number} x1 - x
-     * @param {number} y1 - y
-     * @param {number} height - Text height
-     * @param {number} rotation - Text rotation
-     * @param {string} value - the string itself
-     */
-    constructor(x1, y1, height, rotation, value)
-    {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.height = height;
-        this.rotation = rotation;
-        this.value = value;
-    }
-
-    toDxfString()
-    {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        let s = `0\nTEXT\n`;
-        s += `1\n${this.value}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `40\n${this.height}\n50\n${this.rotation}\n`;
-        return s;
-    }
-}
-
-module.exports = Text;
-},{}],1:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 class LineType
 {
     /**
@@ -200,6 +169,64 @@ class LineType
 }
 
 module.exports = LineType;
+},{}],6:[function(require,module,exports){
+class Polyline
+{
+    /**
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     */
+    constructor(points)
+    {
+        this.points = points;
+    }
+
+    toDxfString()
+    {
+        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/lwpolyline_al_u05_c.htm
+        let s = `0\nLWPOLYLINE\n`;
+        s += `90\n${this.points.length}\n`;
+
+        for (let i = 0; i < this.points.length; ++i)
+        {
+            s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
+        }
+        
+        return s;
+    }
+}
+
+module.exports = Polyline;
+},{}],7:[function(require,module,exports){
+class Text
+{
+    /**
+     * @param {number} x1 - x
+     * @param {number} y1 - y
+     * @param {number} height - Text height
+     * @param {number} rotation - Text rotation
+     * @param {string} value - the string itself
+     */
+    constructor(x1, y1, height, rotation, value)
+    {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.height = height;
+        this.rotation = rotation;
+        this.value = value;
+    }
+
+    toDxfString()
+    {
+        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
+        let s = `0\nTEXT\n`;
+        s += `1\n${this.value}\n`;
+        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
+        s += `40\n${this.height}\n50\n${this.rotation}\n`;
+        return s;
+    }
+}
+
+module.exports = Text;
 },{}],"Drawing":[function(require,module,exports){
 const LineType = require('./LineType');
 const Layer = require('./Layer');
@@ -207,6 +234,7 @@ const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
+const Polyline = require('./Polyline');
 
 class Drawing
 {
@@ -297,6 +325,15 @@ class Drawing
     drawText(x1, y1, height, rotation, value)
     {
         this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        return this;
+    }
+
+    /**
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     */
+    drawPolyline(points)
+    {
+        this.activeLayer.addShape(new Polyline(points));
         return this;
     }
 
@@ -395,4 +432,4 @@ Drawing.LAYERS =
 ]
 
 module.exports = Drawing;
-},{"./Arc":"/src/Arc.js","./Circle":"/src/Circle.js","./Layer":"/src/Layer.js","./Line":"/src/Line.js","./LineType":1,"./Text":"/src/Text.js"}]},{},[]);
+},{"./Arc":1,"./Circle":2,"./Layer":3,"./Line":4,"./LineType":5,"./Polyline":6,"./Text":7}]},{},[]);
