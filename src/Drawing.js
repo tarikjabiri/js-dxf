@@ -192,8 +192,8 @@ Drawing.ACI =
 Drawing.LINE_TYPES = 
 [
     {name: 'CONTINOUS', description: '______', elements: []},
-    {name: 'DASHED',    description: '_ _ _ ', elements: [0.5, -0.5]},
-    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -0.5]}
+    {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
 Drawing.LAYERS = 
