@@ -68,6 +68,7 @@ class Layer
     toDxfString()
     {
         let s = '0\nLAYER\n';
+        s += '70\n64\n';
         s += `2\n${this.name}\n`;
         s += `62\n${this.colorNumber}\n`;
         s += `6\n${this.lineTypeName}\n`;
@@ -143,6 +144,7 @@ class LineType
     {
         let s = '0\nLTYPE\n';
         s += '72\n65\n';
+        s += '70\n64\n';
         s += `2\n${this.name}\n`;
         s += `3\n${this.description}\n`;
         s += `73\n${this.elements.length}\n`;
@@ -422,8 +424,8 @@ Drawing.ACI =
 Drawing.LINE_TYPES = 
 [
     {name: 'CONTINOUS', description: '______', elements: []},
-    {name: 'DASHED',    description: '_ _ _ ', elements: [0.5, -0.5]},
-    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -0.5]}
+    {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
 Drawing.LAYERS = 

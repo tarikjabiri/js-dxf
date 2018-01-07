@@ -19,6 +19,7 @@ class LineType
     {
         let s = '0\nLTYPE\n';
         s += '72\n65\n';
+        s += '70\n64\n';
         s += `2\n${this.name}\n`;
         s += `3\n${this.description}\n`;
         s += `73\n${this.elements.length}\n`;
