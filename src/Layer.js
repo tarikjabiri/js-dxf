@@ -11,6 +11,7 @@ class Layer
     toDxfString()
     {
         let s = '0\nLAYER\n';
+        s += '70\n64\n';
         s += `2\n${this.name}\n`;
         s += `62\n${this.colorNumber}\n`;
         s += `6\n${this.lineTypeName}\n`;

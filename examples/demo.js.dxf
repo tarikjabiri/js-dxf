@@ -10,6 +10,8 @@ LTYPE
 LTYPE
 72
 65
+70
+64
 2
 CONTINOUS
 3
@@ -22,6 +24,8 @@ ______
 LTYPE
 72
 65
+70
+64
 2
 DASHED
 3
@@ -38,6 +42,8 @@ _ _ _
 LTYPE
 72
 65
+70
+64
 2
 DOTTED
 3
@@ -58,6 +64,8 @@ TABLE
 LAYER
 0
 LAYER
+70
+64
 2
 0
 62
@@ -66,6 +74,8 @@ LAYER
 CONTINOUS
 0
 LAYER
+70
+64
 2
 l_green
 62
@@ -74,6 +84,8 @@ l_green
 CONTINOUS
 0
 LAYER
+70
+64
 2
 l_yellow
 62
