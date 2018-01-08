@@ -423,14 +423,14 @@ Drawing.ACI =
 
 Drawing.LINE_TYPES = 
 [
-    {name: 'CONTINOUS', description: '______', elements: []},
+    {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
     {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
 Drawing.LAYERS = 
 [
-    {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINOUS'}
+    {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
 
 module.exports = Drawing;

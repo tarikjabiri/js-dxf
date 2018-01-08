@@ -10,7 +10,7 @@ npm install dxf-writer
 
 Supported entities: line, polyline, arc, circle and text.
 Supported colors: red, green, cyan, blue, magenta and white.
-3 line type out of the box (CONTINOUS, DASHED, DOTTED) with the ability to add a custom line type.
+3 line type out of the box (CONTINUOUS, DASHED, DOTTED) with the ability to add a custom line type.
 
 ```javascript
 let d = new Drawing();
@@ -25,7 +25,7 @@ const fs = require('fs');
 let d = new Drawing();
 
 d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINOUS');
+d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
 d.setActiveLayer('l_green');
 d.drawText(20, -70, 10, 0, 'go green!');
 

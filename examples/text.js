@@ -3,7 +3,7 @@ const fs = require('fs');
 
 let d = new Drawing();
 
-d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINOUS');
+d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
 d.setActiveLayer('l_green');
 
 d.drawText(0, 0, 10, 0, 'js - DXF');
