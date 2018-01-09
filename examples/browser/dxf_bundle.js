@@ -21,6 +21,7 @@ class Arc
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
         let s = `0\nARC\n`;
+        s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
         return s;
@@ -47,6 +48,7 @@ class Circle
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
         let s = `0\nCIRCLE\n`;
+        s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n`;
         return s;
@@ -78,6 +80,7 @@ class Layer
     addShape(shape)
     {
         this.shapes.push(shape);
+        shape.layer = this;
     }
 
     getShapes()
@@ -91,7 +94,6 @@ class Layer
         for (let i = 0; i < this.shapes.length; ++i)
         {
             s += this.shapes[i].toDxfString();
-            s += `8\n${this.name}\n`;
         } 
         
         
@@ -115,6 +117,7 @@ class Line
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
         let s = `0\nLINE\n`;
+        s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n0\n`;
         return s;
@@ -184,15 +187,21 @@ class Polyline
 
     toDxfString()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/lwpolyline_al_u05_c.htm
-        let s = `0\nLWPOLYLINE\n`;
-        s += `90\n${this.points.length}\n`;
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
+        let s = `0\nPOLYLINE\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `66\n1\n70\n0\n`;
 
         for (let i = 0; i < this.points.length; ++i)
         {
+            s += `0\nVERTEX\n`;
+            s += `8\n${this.layer.name}\n`;
+            s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
         }
         
+        s += `0\nSEQEND\n`;
         return s;
     }
 }
@@ -221,6 +230,7 @@ class Text
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         let s = `0\nTEXT\n`;
+        s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.height}\n50\n${this.rotation}\n`;

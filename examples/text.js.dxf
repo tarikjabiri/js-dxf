@@ -92,6 +92,8 @@ SECTION
 ENTITIES
 0
 TEXT
+8
+l_green
 1
 js - DXF
 10
@@ -104,10 +106,10 @@ js - DXF
 10
 50
 0
-8
-l_green
 0
 TEXT
+8
+l_green
 1
 js - DXF
 10
@@ -120,8 +122,6 @@ js - DXF
 10
 50
 0
-8
-l_green
 0
 ENDSEC
 0

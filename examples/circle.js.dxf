@@ -114,6 +114,8 @@ SECTION
 ENTITIES
 0
 CIRCLE
+8
+l_green
 10
 0
 20
@@ -122,8 +124,6 @@ CIRCLE
 0
 40
 20
-8
-l_green
 0
 ENDSEC
 0

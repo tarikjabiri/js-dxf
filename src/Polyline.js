@@ -10,15 +10,21 @@ class Polyline
 
     toDxfString()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/lwpolyline_al_u05_c.htm
-        let s = `0\nLWPOLYLINE\n`;
-        s += `90\n${this.points.length}\n`;
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
+        let s = `0\nPOLYLINE\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `66\n1\n70\n0\n`;
 
         for (let i = 0; i < this.points.length; ++i)
         {
+            s += `0\nVERTEX\n`;
+            s += `8\n${this.layer.name}\n`;
+            s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
         }
         
+        s += `0\nSEQEND\n`;
         return s;
     }
 }

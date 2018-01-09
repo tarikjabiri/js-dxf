@@ -92,6 +92,8 @@ SECTION
 ENTITIES
 0
 LINE
+8
+l_green
 10
 50
 20
@@ -104,10 +106,10 @@ LINE
 100
 31
 0
-8
-l_green
 0
 LINE
+8
+l_green
 10
 100
 20
@@ -120,10 +122,10 @@ LINE
 50
 31
 0
-8
-l_green
 0
 LINE
+8
+l_green
 10
 150
 20
@@ -136,10 +138,10 @@ LINE
 0
 31
 0
-8
-l_green
 0
 LINE
+8
+l_green
 10
 100
 20
@@ -152,8 +154,6 @@ LINE
 50
 31
 0
-8
-l_green
 0
 ENDSEC
 0

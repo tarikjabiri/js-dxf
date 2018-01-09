@@ -21,6 +21,7 @@ class Layer
     addShape(shape)
     {
         this.shapes.push(shape);
+        shape.layer = this;
     }
 
     getShapes()
@@ -34,7 +35,6 @@ class Layer
         for (let i = 0; i < this.shapes.length; ++i)
         {
             s += this.shapes[i].toDxfString();
-            s += `8\n${this.name}\n`;
         } 
         
         

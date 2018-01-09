@@ -20,6 +20,7 @@ class Text
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         let s = `0\nTEXT\n`;
+        s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.height}\n50\n${this.rotation}\n`;
