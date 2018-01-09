@@ -102,6 +102,8 @@ SECTION
 ENTITIES
 0
 TEXT
+8
+0
 1
 Hello World
 10
@@ -114,10 +116,10 @@ Hello World
 10
 50
 0
-8
-0
 0
 TEXT
+8
+l_green
 1
 go green!
 10
@@ -130,10 +132,10 @@ go green!
 10
 50
 0
-8
-l_green
 0
 CIRCLE
+8
+l_yellow
 10
 50
 20
@@ -142,8 +144,6 @@ CIRCLE
 0
 40
 25
-8
-l_yellow
 0
 ENDSEC
 0
