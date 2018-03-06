@@ -62,15 +62,14 @@ class Drawing
     }
 
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      * @param {number} startAngle - degree 
      * @param {number} endAngle - degree 
      */
-    drawArc(x1, y1, r, startAngle, endAngle)
+    drawArc(point, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(new Arc(point, r, startAngle, endAngle));
         return this;
     }
 
