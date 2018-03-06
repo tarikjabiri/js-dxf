@@ -74,13 +74,12 @@ class Drawing
     }
 
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      */
-    drawCircle(x1, y1, r)
+    drawCircle(point, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(new Circle(point, r));
         return this;
     }
 
