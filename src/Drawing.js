@@ -55,9 +55,9 @@ class Drawing
         return this;
     }
 
-    drawLine(x1, y1, x2, y2)
+    drawLine(p1, p2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        this.activeLayer.addShape(new Line(p1, p2));
         return this;
     }
 
