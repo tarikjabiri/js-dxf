@@ -1,16 +1,14 @@
 class Text
 {
     /**
-     * @param {number} x1 - x
-     * @param {number} y1 - y
+     * @param {array} point - [x, y, z]
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
      */
-    constructor(x1, y1, height, rotation, value)
+    constructor(point, height, rotation, value)
     {
-        this.x1 = x1;
-        this.y1 = y1;
+        this.point = point;
         this.height = height;
         this.rotation = rotation;
         this.value = value;
@@ -22,7 +20,7 @@ class Text
         let s = `0\nTEXT\n`;
         s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
+        s += `10\n${this.point[0]}\n20\n${this.point[1]}\n30\n${this.point[2]||0}\n`;
         s += `40\n${this.height}\n50\n${this.rotation}\n`;
         return s;
     }

@@ -84,15 +84,14 @@ class Drawing
     }
 
     /**
-     * @param {number} x1 - x
-     * @param {number} y1 - y
+     * @param {array} point - [x1, x2, x3]
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
      */
-    drawText(x1, y1, height, rotation, value)
+    drawText(point, height, rotation, value)
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        this.activeLayer.addShape(new Text(point, height, rotation, value));
         return this;
     }
 
