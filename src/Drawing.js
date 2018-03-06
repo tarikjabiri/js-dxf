@@ -97,7 +97,7 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
     drawPolyline(points)
     {

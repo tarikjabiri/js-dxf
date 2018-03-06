@@ -1,7 +1,7 @@
 class Polyline
 {
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
     constructor(points)
     {
@@ -21,7 +21,7 @@ class Polyline
             s += `0\nVERTEX\n`;
             s += `8\n${this.layer.name}\n`;
             s += `70\n0\n`;
-            s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
+            s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]||0}\n`;
         }
         
         s += `0\nSEQEND\n`;
