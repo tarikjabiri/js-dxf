@@ -60,7 +60,7 @@ class Drawing
         this.activeLayer.addShape(new Line(x1, y1, x2, y2));
         return this;
     }
-
+    
     drawRect(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y1));
