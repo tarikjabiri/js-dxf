@@ -5,6 +5,7 @@ const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
+const Face = require('./Face');
 
 class Drawing
 {
@@ -113,6 +114,26 @@ class Drawing
     drawPolyline(points)
     {
         this.activeLayer.addShape(new Polyline(points));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - x
+     * @param {number} y1 - y
+     * @param {number} z1 - z
+     * @param {number} x2 - x
+     * @param {number} y2 - y
+     * @param {number} z2 - z
+     * @param {number} x3 - x
+     * @param {number} y3 - y
+     * @param {number} z3 - z
+     * @param {number} x4 - x
+     * @param {number} y4 - y
+     * @param {number} z4 - z
+     */
+    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    {
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
         return this;
     }
 
