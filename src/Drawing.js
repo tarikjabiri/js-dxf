@@ -204,7 +204,6 @@ class Drawing
             for (let i = 0; i < layer.shapes.length; ++i) {
                 stream.write(layer.shapes[i].toDxfString());
             }
-            this.writeShapesToDxf(stream, layer);
         }
   
         stream.write('0\nENDSEC\n');
