@@ -169,40 +169,49 @@ class Drawing
 
     toDxfString()
     {
-        let s = '';
+        let stringIO = {
+            s: "",
+            write(str) { this.s += str }
+            toString() { return this.s }
+        };
 
+        this.writeDxf(stringIO);
+
+        return stringIO.toString();
+    }
+
+    writeDxf(stream)
+    {
         //start section
-        s += '0\nSECTION\n';
+        stream.write('0\nSECTION\n');
         //name section as TABLES section
-        s += '2\nTABLES\n';
-
-        s += this._getDxfLtypeTable();
-        s += this._getDxfLayerTable();
-
+        stream.write('2\nTABLES\n');
+  
+        stream.write(this._getDxfLtypeTable());
+        stream.write(this._getDxfLayerTable());
+  
         //end section
-        s += '0\nENDSEC\n';
-
-
+        stream.write('0\nENDSEC\n');
+  
+  
         //ENTITES section
-        s += '0\nSECTION\n';
-        s += '2\nENTITIES\n';
-
+        stream.write('0\nSECTION\n');
+        stream.write('2\nENTITIES\n');
+  
         for (let layerName in this.layers)
         {
             let layer = this.layers[layerName];
-            s += layer.shapesToDxf();
-            // let shapes = layer.getShapes();
+            for (let i = 0; i < layer.shapes.length; ++i) {
+                stream.write(layer.shapes[i].toDxfString());
+            }
+            this.writeShapesToDxf(stream, layer);
         }
-
-        s += '0\nENDSEC\n';
-
-
+  
+        stream.write('0\nENDSEC\n');
+  
         //close file
-        s += '0\nEOF';
-
-        return s;
+        stream.write('0\nEOF');
     }
-
 }
 
 //AutoCAD Color Index (ACI)
