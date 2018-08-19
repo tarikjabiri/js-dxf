@@ -171,7 +171,7 @@ class Drawing
     {
         let stringIO = {
             s: "",
-            write(str) { this.s += str }
+            write(str) { this.s += str },
             toString() { return this.s }
         };
 
