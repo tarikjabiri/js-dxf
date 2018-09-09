@@ -37,10 +37,4 @@ describe('Drawing', function() {
         fs.writeFileSync('line_0_0_100_100.dxf', d.toDxfString());
     });
 
-    it('can add a viewport', function()
-    {
-        var d = new Drawing();
-        d.addViewport(80, 90, 100, 40, 50, 1);
-        fs.writeFileSync('viewport_80_90_100_40_50_1.dxf', d.toDxfString());
-    });
 });

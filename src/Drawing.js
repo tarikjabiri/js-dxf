@@ -6,7 +6,6 @@ const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
-const Viewport = require('./Viewport');
 
 class Drawing
 {
@@ -15,7 +14,6 @@ class Drawing
         this.layers = {};
         this.activeLayer = null;
         this.lineTypes = {};
-        this.viewports = [];
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -56,11 +54,6 @@ class Drawing
     {
         this.activeLayer = this.layers[name];
         return this;
-    }
-
-    addViewport(centerX, centerY, centerZ, width, height, status)
-    {
-        this.viewports.push(new Viewport(centerX, centerY, centerZ, width, height, status));
     }
 
     drawLine(x1, y1, x2, y2)
@@ -204,11 +197,6 @@ class Drawing
         //ENTITES section
         stream.write('0\nSECTION\n');
         stream.write('2\nENTITIES\n');
-
-        for (let viewport of this.viewports)
-        {
-            stream.write(viewport.toDxfString());
-        }
   
         for (let layerName in this.layers)
         {
