@@ -35,7 +35,7 @@ class VPort
         s += `11\n${this.upperRightX}\n`;
         s += `21\n${this.upperRightY}\n`;
         s += `12\n${this.viewCenterX}\n`;
-        s += `22\n${this.viewCenterX}\n`;
+        s += `22\n${this.viewCenterY}\n`;
         s += `13\n0.0\n`;
         s += `23\n0.0\n`;
         s += `14\n1.0\n`;
