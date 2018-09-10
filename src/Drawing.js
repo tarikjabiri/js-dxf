@@ -6,7 +6,7 @@ const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
-const VPort = require('./Vport');
+const VPort = require('./VPort');
 
 class Drawing
 {
