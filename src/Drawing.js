@@ -14,6 +14,7 @@ class Drawing
         this.layers = {};
         this.activeLayer = null;
         this.lineTypes = {};
+        this.vports = [];
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -54,6 +55,11 @@ class Drawing
     {
         this.activeLayer = this.layers[name];
         return this;
+    }
+
+    addVPort(vport)
+    {
+        this.vports.push(vport);
     }
 
     drawLine(x1, y1, x2, y2)
@@ -167,6 +173,21 @@ class Drawing
         return s;
     }
 
+    _getDxfVPortTable()
+    {
+        let s = '0\nTABLE\n';
+        s += '2\nVPORT\n';
+        
+        for (let vport of this.vports)
+        {
+            s += vport.toDxfString();
+        }
+
+        s += '0\nENDTAB\n';
+
+        return s;
+    }
+
     toDxfString()
     {
         let stringIO = {
@@ -189,6 +210,7 @@ class Drawing
   
         stream.write(this._getDxfLtypeTable());
         stream.write(this._getDxfLayerTable());
+        stream.write(this._getDxfVPortTable());
   
         //end section
         stream.write('0\nENDSEC\n');
