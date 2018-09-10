@@ -6,6 +6,7 @@ const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
+const VPort = require('./Vport');
 
 class Drawing
 {
@@ -57,9 +58,9 @@ class Drawing
         return this;
     }
 
-    addVPort(vport)
+    addVPort(args)
     {
-        this.vports.push(vport);
+        this.vports.push(new VPort(args));
     }
 
     drawLine(x1, y1, x2, y2)

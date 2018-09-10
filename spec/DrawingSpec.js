@@ -1,7 +1,6 @@
 const Drawing = require('../src/Drawing');
 const LineType = require('../src/LineType');
 const Layer = require('../src/Layer');
-const VPort = require('../src/VPort');
 
 describe('Drawing', function() {
     const fs = require('fs');
@@ -41,12 +40,12 @@ describe('Drawing', function() {
     it('can add a vport', function()
     {
         var d = new Drawing();
-        d.addVPort(new VPort({
+        d.addVPort({
             viewCenterX: 50,
             viewCenterY: 50,
             viewHeight: 20,
             viewAspectRatio: 1.22
-        }));
+        });
         fs.writeFileSync('vport.dxf', d.toDxfString());
     });
 
