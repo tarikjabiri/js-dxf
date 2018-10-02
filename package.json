@@ -9,9 +9,9 @@
   "scripts": {
     "test": "jasmine spec/*.spec.js",
     "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js",
-    "release-patch": "npm version patch && bundle && npm publish",
-    "release-minor": "npm version minor && bundle && npm publish",
-    "release-major": "npm version major && bundle && npm publish"
+    "release-patch": "yarn test && npm version patch && npm publish",
+    "release-minor": "yarn test && npm version minor && npm publish",
+    "release-major": "yarn test && npm version major && npm publish"
   },
   "repository": {
     "type": "git",
