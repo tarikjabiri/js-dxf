@@ -1,5 +1,5 @@
 {
-  "name": "dxf-writer",
+  "name": "@propelleraero/dxf-writer",
   "version": "1.1.0",
   "description": "Dead simple 2D DXF writer",
   "main": "index.js",
@@ -7,8 +7,11 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle" : "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
+    "test": "jasmine spec/*.spec.js",
+    "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js",
+    "release-patch": "npm version patch && bundle && npm publish",
+    "release-minor": "npm version minor && bundle && npm publish",
+    "release-major": "npm version major && bundle && npm publish"
   },
   "repository": {
     "type": "git",
@@ -24,5 +27,14 @@
   "bugs": {
     "url": "https://github.com/ognjen-petrovic/js-dxf/issues"
   },
-  "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme"
+  "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
+  "devDependencies": {
+    "husky": "^1.1.0",
+    "jasmine": "^3.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
+  }
 }
