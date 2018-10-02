@@ -7,6 +7,7 @@ const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
 const VPort = require('./VPort');
+const Point = require('./Point');
 
 class Drawing
 {
@@ -99,6 +100,17 @@ class Drawing
     drawCircle(x1, y1, r)
     {
         this.activeLayer.addShape(new Circle(x1, y1, r));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - x
+     * @param {number} y1 - y
+     * @param {number} z1 - z
+     */
+    drawPoint(x1, y1, z1)
+    {
+        this.activeLayer.addShape(new Point(x1, y1, z1));
         return this;
     }
 

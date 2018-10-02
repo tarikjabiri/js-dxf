@@ -1,4 +1,5 @@
 node_modules/
+output/
 *.log
 .vscode
 .DS_Store
