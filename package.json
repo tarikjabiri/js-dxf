@@ -8,10 +8,7 @@
   },
   "scripts": {
     "test": "jasmine spec/*.spec.js",
-    "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js",
-    "release-patch": "yarn test && npm version patch && npm publish",
-    "release-minor": "yarn test && npm version minor && npm publish",
-    "release-major": "yarn test && npm version major && npm publish"
+    "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
   },
   "repository": {
     "type": "git",
