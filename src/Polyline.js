@@ -1,4 +1,4 @@
-export const POLYLINE_TYPE = {
+const POLYLINE_TYPE = {
     POLYLINE: 0,
     POLYGON: 1,
 }
