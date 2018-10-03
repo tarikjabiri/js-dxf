@@ -130,9 +130,9 @@ class Drawing
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
      */
-    drawPolyline(points)
+    drawPolyline(points, options)
     {
-        this.activeLayer.addShape(new Polyline(points));
+        this.activeLayer.addShape(new Polyline(points, options));
         return this;
     }
 
@@ -260,18 +260,26 @@ Drawing.ACI =
     BLUE : 5,
     MAGENTA : 6,
     WHITE : 7
-}
+};
+
+Drawing.LINE_TYPE_NAMES = {
+    CONTINUOUS: 'CONTINUOUS',
+    DASHED: 'DASHED',
+    DOTTED: 'DOTTED',
+};
 
 Drawing.LINE_TYPES = 
 [
-    {name: 'CONTINUOUS', description: '______', elements: []},
-    {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
-    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
-]
+    {name: Drawing.LINE_TYPE_NAMES.CONTINUOUS, description: '______', elements: []},
+    {name: Drawing.LINE_TYPE_NAMES.DASHED, description: '_ _ _ ', elements: [5.0, -5.0]},
+    {name: Drawing.LINE_TYPE_NAMES.DOTTED, description: '. . . ', elements: [0.0, -5.0]}
+];
 
 Drawing.LAYERS = 
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
-]
+];
+
+Drawing.POLYLINE_TYPE = Polyline.POLYLINE_TYPE;
 
 module.exports = Drawing;

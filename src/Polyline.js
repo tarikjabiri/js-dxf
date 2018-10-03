@@ -1,11 +1,26 @@
+export const POLYLINE_TYPE = {
+    POLYLINE: 0,
+    POLYGON: 1,
+}
+
+const DEFAULT_OPTIONS = {
+    polylineType: POLYLINE_TYPE.POLYLINE,
+    thickness: 0,
+    lineType: null,
+}
+
 class Polyline
 {
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
      */
-    constructor(points)
+    constructor(points, options)
     {
         this.points = points;
+        this.options = {
+            ...DEFAULT_OPTIONS,
+            ...options,
+        };
     }
 
     toDxfString()
@@ -14,7 +29,13 @@ class Polyline
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
         s += `8\n${this.layer.name}\n`;
-        s += `66\n1\n70\n0\n`;
+        s += `66\n1\n`;
+        s += `70\n${this.options.polylineType}\n`;
+        s += `39\n${this.options.thickness}\n`;
+
+        if (this.options.lineType) {
+            s += `6\n${this.options.lineType}\n`;
+        }
 
         for (let i = 0; i < this.points.length; ++i)
         {
@@ -28,5 +49,7 @@ class Polyline
         return s;
     }
 }
+
+Polyline.POLYLINE_TYPE = POLYLINE_TYPE
 
 module.exports = Polyline;
