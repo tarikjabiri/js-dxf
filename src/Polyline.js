@@ -41,7 +41,7 @@ class Polyline
         {
             s += `0\nVERTEX\n`;
             s += `8\n${this.layer.name}\n`;
-            s += `70\n0\n`;
+            s += `70\n32\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
         }
         
