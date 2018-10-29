@@ -1,6 +1,6 @@
 const POLYLINE_TYPE = {
-    POLYLINE: 0,
-    POLYGON: 1,
+    POLYLINE: 8,
+    POLYGON: 16,
 }
 
 const DEFAULT_OPTIONS = {
@@ -32,6 +32,8 @@ class Polyline
         s += `66\n1\n`;
         s += `70\n${this.options.polylineType}\n`;
         s += `39\n${this.options.thickness}\n`;
+        s += `10\n0\n20\n0\n30\n0\n`;
+        s += '100\nAcDbEntity\n100\nAcDb3dPolyline\n'
 
         if (this.options.lineType) {
             s += `6\n${this.options.lineType}\n`;
@@ -43,6 +45,7 @@ class Polyline
             s += `8\n${this.layer.name}\n`;
             s += `70\n32\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
+            s += '100\nAcDbVertex\n100\nAcDb3dPolylineVertex\n'
         }
         
         s += `0\nSEQEND\n`;
