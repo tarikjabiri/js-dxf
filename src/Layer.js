@@ -1,7 +1,17 @@
+const LAYER_NAME_REGEX = /[0-9a-zA-Z_-]+/gi
+
+function isValidLayerName(name) {
+    const match = name.match(LAYER_NAME_REGEX);
+    return match !== null && match[0] === name;
+}
+
 class Layer
 {
     constructor(name, colorNumber, lineTypeName)
     {
+        if (!isValidLayerName(name)) {
+            throw new Error(`Layer name ${name} must only container alphanumeric characters, dashes or undercores`)
+        }
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
@@ -10,6 +20,8 @@ class Layer
 
     toDxfString()
     {
+        if (this.shapes.length === 0) return '';
+
         let s = '0\nLAYER\n';
         s += '70\n64\n';
         s += `2\n${this.name}\n`;
