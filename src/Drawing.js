@@ -6,6 +6,7 @@ const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
+const Point = require('./Point');
 
 class Drawing
 {
@@ -59,6 +60,12 @@ class Drawing
     drawLine(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        return this;
+    }
+
+    drawPoint(x, y)
+    {
+        this.activeLayer.addShape(new Point(x, y));
         return this;
     }
     

@@ -1,14 +1,13 @@
 # JavaScript DXF writer
 
-Dead simple 2D [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) writer. 
-~~2D space only (z is always 0)~~ There is 3DFace, and it has z.
+Simple [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) writer.
 
 ## Installing
 ```
 npm install dxf-writer
 ```
 
-Supported entities: line, polyline, 3DFace, arc, circle and text.
+Supported entities: line, polyline, 3DFace, arc, circle and text. Now point is available.
 Supported colors: red, green, cyan, blue, magenta and white.
 3 line type out of the box (CONTINUOUS, DASHED, DOTTED) with the ability to add a custom line type.
 
