@@ -1,6 +1,6 @@
 const POLYLINE_TYPE = {
     POLYLINE: 8,
-    POLYGON: 16,
+    POLYGON: 1,
 }
 
 const DEFAULT_OPTIONS = {
