@@ -7,6 +7,7 @@ const Text = require('./Text');
 const Polyline = require('./Polyline');
 const Face = require('./Face');
 const Point = require('./Point');
+const Spline = require('./Spline')
 
 class Drawing
 {
@@ -32,12 +33,12 @@ class Drawing
 
         this.setActiveLayer('0');
     }
-    
-    
+
+
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
     addLineType(name, description, elements)
     {
@@ -50,7 +51,7 @@ class Drawing
         this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
-    
+
     setActiveLayer(name)
     {
         this.activeLayer = this.layers[name];
@@ -68,7 +69,7 @@ class Drawing
         this.activeLayer.addShape(new Point(x, y));
         return this;
     }
-    
+
     drawRect(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y1));
@@ -82,8 +83,8 @@ class Drawing
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
@@ -116,12 +117,27 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
      */
     drawPolyline(points)
     {
         this.activeLayer.addShape(new Polyline(points));
         return this;
+    }
+
+    drawSplineFromControlPoints(points) {
+      const knots = [0,0,0,1,1,1]
+      const degree = 2
+
+      // ToDo: Calculate knots and degree automatic
+      const closed = 0
+      const periodic = 0
+      const rational = 1
+      const planar = 1
+      const linear = 0
+      const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
+      this.activeLayer.addShape(new Spline(splineType, degree, points, knots, []))
+
     }
 
     /**
@@ -214,7 +230,7 @@ class Drawing
 
 //AutoCAD Color Index (ACI)
 //http://sub-atomic.com/~moses/acadcolors.html
-Drawing.ACI = 
+Drawing.ACI =
 {
     LAYER : 0,
     RED : 1,
@@ -226,14 +242,14 @@ Drawing.ACI =
     WHITE : 7
 }
 
-Drawing.LINE_TYPES = 
+Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
     {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
-Drawing.LAYERS = 
+Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
