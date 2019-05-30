@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle" : "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
+    "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/ognjen-petrovic/js-dxf/issues"
   },
-  "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme"
+  "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
+  "devDependencies": {
+    "browserify": "^16.2.3"
+  }
 }
