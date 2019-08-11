@@ -7,8 +7,24 @@ Simple [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) writer.
 npm install dxf-writer
 ```
 
-Supported entities: line, polyline, 3DFace, arc, circle and text. Now point is available.
-Supported colors: red, green, cyan, blue, magenta and white.
+### Supported entities: 
+ - arc 
+ - circle
+ - line
+ - point
+ - polyline 
+ - text
+ - 3DFace
+ 
+### Supported colors: 
+ - red
+ - green 
+ - cyan
+ - blue
+ - magenta
+ - white
+
+### Line types
 3 line type out of the box (CONTINUOUS, DASHED, DOTTED) with the ability to add a custom line type.
 
 ```javascript
