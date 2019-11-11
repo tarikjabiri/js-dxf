@@ -15,6 +15,9 @@ class Drawing
         this.layers = {};
         this.activeLayer = null;
         this.lineTypes = {};
+        this.headers = {};
+
+        this.setUnit('Unitless');
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -174,9 +177,54 @@ class Drawing
         return s;
     }
 
+     /**
+      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
+      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
+      * 
+      * @param {string} variable 
+      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
+      */
+    header(variable, values) {
+        this.headers[variable] = values;
+        return this;
+    }
+
+    _getHeader(variable, values){
+        let s = '9\n$'+ variable +'\n';
+
+        for (let value of values) {
+            s += `${value[0]}\n${value[1]}\n`;
+        }
+
+        return s;
+    }
+
+    /**
+     * 
+     * @param {string} unit see Drawing.UNITS
+     */
+    setUnit(unit) {
+        let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
+        this.header('INSUNITS', [[70, Drawing.UNITS[unit]]]);
+        return this;
+    }
+
     toDxfString()
     {
         let s = '';
+
+        //start section
+        s += '0\nSECTION\n';
+        //name section as HEADER section
+        s += '2\nHEADER\n';
+
+        for (let header in this.headers) {
+            s += this._getHeader(header, this.headers[header]);
+        }
+
+        //end section
+        s += '0\nENDSEC\n';
+
 
         //start section
         s += '0\nSECTION\n';
@@ -237,5 +285,30 @@ Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
+
+//https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
+Drawing.UNITS = {
+    'Unitless':0,
+    'Inches':1,
+    'Feet':2,
+    'Miles':3,
+    'Millimeters':4,
+    'Centimeters':5,
+    'Meters':6,
+    'Kilometers':7,
+    'Microinches':8,
+    'Mils':9,
+    'Yards':10,
+    'Angstroms':11,
+    'Nanometers':12,
+    'Microns':13,
+    'Decimeters':14,
+    'Decameters':15,
+    'Hectometers':16,
+    'Gigameters':17,
+    'Astronomical units':18,
+    'Light years':19,
+    'Parsecs':20
+}
 
 module.exports = Drawing;
