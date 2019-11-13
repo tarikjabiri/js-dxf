@@ -17,7 +17,7 @@ class Drawing
         this.lineTypes = {};
         this.headers = {};
 
-        this.setUnit('Unitless');
+        this.setUnits('Unitless');
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -203,7 +203,7 @@ class Drawing
      * 
      * @param {string} unit see Drawing.UNITS
      */
-    setUnit(unit) {
+    setUnits(unit) {
         let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
         this.header('INSUNITS', [[70, Drawing.UNITS[unit]]]);
         return this;

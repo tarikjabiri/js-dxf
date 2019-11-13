@@ -3,7 +3,7 @@ const fs = require('fs');
 
 let d = new Drawing();
 
-d.setUnit('Decimeters');
+d.setUnits('Decimeters');
 d.addLineType('DASHDOT', '_ . _ ', [0.5, -0.5, 0.0, -0.5]);
 d.addLayer('l_green', Drawing.ACI.GREEN, 'DASHDOT');
 d.setActiveLayer('l_green');
