@@ -24,7 +24,7 @@ npm install dxf-writer
  - magenta
  - white
 
- ### Supported colors:
+ ### Supported units:
  - Unitless
  - Inches
  - Feet
