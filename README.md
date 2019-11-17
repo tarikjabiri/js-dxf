@@ -24,6 +24,29 @@ npm install dxf-writer
  - magenta
  - white
 
+ ### Supported colors:
+ - Unitless
+ - Inches
+ - Feet
+ - Miles
+ - Millimeters
+ - Centimeters
+ - Meters
+ - Kilometers
+ - Microinches
+ - Mils
+ - Yards
+ - Angstroms
+ - Nanometers
+ - Microns
+ - Decimeters
+ - Decameters
+ - Hectometers
+ - Gigameters
+ - Astronomical units
+ - Light years
+ - Parsecs
+
 ### Line types
 3 line type out of the box (CONTINUOUS, DASHED, DOTTED) with the ability to add a custom line type.
 
@@ -39,6 +62,7 @@ const fs = require('fs');
 
 let d = new Drawing();
 
+d.setUnits('Decimeters');
 d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
 d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
 d.setActiveLayer('l_green');
