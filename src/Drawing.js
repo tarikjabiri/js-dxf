@@ -125,6 +125,16 @@ class Drawing
     }
 
     /**
+     * 
+     * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
+     */
+    setTrueColor(trueColor)
+    {
+        this.activeLayer.setTrueColor(trueColor);
+        return this;
+    }
+
+    /**
      * @param {number} x1 - x
      * @param {number} y1 - y
      * @param {number} z1 - z
