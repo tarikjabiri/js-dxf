@@ -98,6 +98,7 @@ class Layer
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
+        this.trueColor = -1;
     }
 
     toDxfString()
@@ -105,9 +106,21 @@ class Layer
         let s = '0\nLAYER\n';
         s += '70\n64\n';
         s += `2\n${this.name}\n`;
-        s += `62\n${this.colorNumber}\n`;
+        if (this.trueColor !== -1)
+        {
+            s += `420\n${this.trueColor}\n`
+        }
+        else
+        {
+            s += `62\n${this.colorNumber}\n`;
+        }
         s += `6\n${this.lineTypeName}\n`;
         return s;        
+    }
+
+    setTrueColor(color)
+    {
+        this.trueColor = color;
     }
 
     addShape(shape)
@@ -261,6 +274,39 @@ class Polyline
 
 module.exports = Polyline;
 },{}],9:[function(require,module,exports){
+class Polyline3d
+{
+    /**
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
+     */
+    constructor(points)
+    {
+        this.points = points;
+    }
+
+    toDxfString()
+    {
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
+        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
+        let s = `0\nPOLYLINE\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `66\n1\n70\n8\n`;
+
+        for (let i = 0; i < this.points.length; ++i)
+        {
+            s += `0\nVERTEX\n`;
+            s += `8\n${this.layer.name}\n`;
+            s += `70\n0\n`;
+            s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
+        }
+        
+        s += `0\nSEQEND\n`;
+        return s;
+    }
+}
+
+module.exports = Polyline3d;
+},{}],10:[function(require,module,exports){
 class Text
 {
     /**
@@ -300,6 +346,7 @@ const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
+const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 
@@ -419,6 +466,30 @@ class Drawing
     drawPolyline(points)
     {
         this.activeLayer.addShape(new Polyline(points));
+        return this;
+    }
+
+    /**
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     */
+    drawPolyline3d(points)
+    {
+        points.forEach(point => {
+            if (point.length !== 3){
+                throw "Require 3D coordinate"
+            }
+        });
+        this.activeLayer.addShape(new Polyline3d(points));
+        return this;
+    }
+
+    /**
+     * 
+     * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
+     */
+    setTrueColor(trueColor)
+    {
+        this.activeLayer.setTrueColor(trueColor);
         return this;
     }
 
@@ -608,4 +679,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":1,"./Circle":2,"./Face":3,"./Layer":4,"./Line":5,"./LineType":6,"./Point":7,"./Polyline":8,"./Text":9}]},{},[]);
+},{"./Arc":1,"./Circle":2,"./Face":3,"./Layer":4,"./Line":5,"./LineType":6,"./Point":7,"./Polyline":8,"./Polyline3d":9,"./Text":10}]},{},[]);

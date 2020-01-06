@@ -13,6 +13,7 @@ npm install dxf-writer
  - line
  - point
  - polyline 
+ - polyline 3D 
  - text
  - 3DFace
  
