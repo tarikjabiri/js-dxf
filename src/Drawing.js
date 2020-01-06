@@ -5,6 +5,7 @@ const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
+const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 
@@ -124,6 +125,20 @@ class Drawing
     drawPolyline(points)
     {
         this.activeLayer.addShape(new Polyline(points));
+        return this;
+    }
+
+    /**
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     */
+    drawPolyline3d(points)
+    {
+        points.forEach(point => {
+            if (point.length !== 3){
+                throw "Require 3D coordinate"
+            }
+        });
+        this.activeLayer.addShape(new Polyline3d(points));
         return this;
     }
 
