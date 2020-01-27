@@ -31,7 +31,7 @@ class Text
         s += `1\n${this.value}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.height}\n50\n${this.rotation}\n`;
-        if (H_ALIGN_CODES.includes(this.hAlign, 1) | V_ALIGN_CODES.includes(this.vAlign, 1)){
+        if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)){
             s += `11\n${this.x1}\n21\n${this.y1}\n31\n0\n`;
             s += `72\n${Math.max(H_ALIGN_CODES.indexOf(this.hAlign),0)}\n`;
             s += `73\n${Math.max(V_ALIGN_CODES.indexOf(this.vAlign),0)}\n`;
