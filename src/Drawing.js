@@ -112,10 +112,12 @@ class Drawing
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
+     * @param {string} [horizontalAlignment="left"] left | center | right
+     * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    drawText(x1, y1, height, rotation, value)
+    drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
         return this;
     }
 
