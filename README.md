@@ -32,9 +32,9 @@ Example preview in the LibreCAD:
 
 ## Browser examples
 
- -[demo](//ognjen-petrovic.github.io/js-dxf/examples/browser/index.html)
+ - [demo](//ognjen-petrovic.github.io/js-dxf/examples/browser/index.html)
 
- -[editor](//ognjen-petrovic.github.io/js-dxf/examples/browser/editor/index.html)
+ - [editor](//ognjen-petrovic.github.io/js-dxf/examples/browser/editor/index.html)
 
 ## Supported entities: 
  - arc 
