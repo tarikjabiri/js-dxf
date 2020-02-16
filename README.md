@@ -32,10 +32,11 @@ Example preview in the LibreCAD:
 
 ## Browser examples
 
-[demo](//ognjen-petrovic.github.io/js-dxf/examples/browser/index.html)
-[editor](//ognjen-petrovic.github.io/js-dxf/examples/browser/editor/index.html)
+ - [demo](//ognjen-petrovic.github.io/js-dxf/examples/browser/index.html)
 
-### Supported entities: 
+ - [editor](//ognjen-petrovic.github.io/js-dxf/examples/browser/editor/index.html)
+
+## Supported entities: 
  - arc 
  - circle
  - line
@@ -45,7 +46,7 @@ Example preview in the LibreCAD:
  - text
  - 3DFace
  
-### Supported colors: 
+## Supported colors: 
  - red
  - green 
  - cyan
@@ -53,7 +54,7 @@ Example preview in the LibreCAD:
  - magenta
  - white
 
- ### Supported units:
+## Supported units:
  - Unitless
  - Inches
  - Feet
@@ -76,7 +77,7 @@ Example preview in the LibreCAD:
  - Light years
  - Parsecs
 
-### Line types
+## Line types
 3 line type out of the box (CONTINUOUS, DASHED, DOTTED) with the ability to add a custom line type.
 
 ```javascript
