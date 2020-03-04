@@ -8,7 +8,7 @@ class Layer {
     constructor(name, colorNumber, lineTypeName) {
         if (isInvalidLayerName(name)) {
             throw new Error(
-                `Layer name ${name} must only container alphanumeric characters, dashes or undercores`,
+                `Layer name ${name} cannot include the following characters: < > / \ " : ; ? * | = ’`,
             );
         }
         this.name = name;
