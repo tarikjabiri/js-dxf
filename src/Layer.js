@@ -1,16 +1,15 @@
-const LAYER_NAME_REGEX = /[0-9a-zA-Z_-]+/gi
+const LAYER_NAME_BANNED_REGEX = /<|>|\/|\\|"|:|;|\?|\*|\||=|'/g;
 
-function isValidLayerName(name) {
-    const match = name.match(LAYER_NAME_REGEX);
-    return match !== null && match[0] === name;
+function isInvalidLayerName(name) {
+    return LAYER_NAME_BANNED_REGEX.test(name);
 }
 
-class Layer
-{
-    constructor(name, colorNumber, lineTypeName)
-    {
-        if (!isValidLayerName(name)) {
-            throw new Error(`Layer name ${name} must only container alphanumeric characters, dashes or undercores`)
+class Layer {
+    constructor(name, colorNumber, lineTypeName) {
+        if (isInvalidLayerName(name)) {
+            throw new Error(
+                `Layer name ${name} cannot include the following characters: < > / \ " : ; ? * | = ’`,
+            );
         }
         this.name = name;
         this.colorNumber = colorNumber;
@@ -18,41 +17,37 @@ class Layer
         this.shapes = [];
     }
 
-    toDxfString()
-    {
-        if (this.shapes.length === 0) return '';
+    toDxfString() {
+        if (this.shapes.length === 0) {
+            return "";
+        }
 
-        let s = '0\nLAYER\n';
-        s += '70\n64\n';
+        let s = "0\nLAYER\n";
+        s += "70\n64\n";
         s += `2\n${this.name}\n`;
         s += `62\n${this.colorNumber}\n`;
         s += `61\n0\n`;
         if (this.lineTypeName) {
             s += `6\n${this.lineTypeName}\n`;
         }
-        return s;        
+        return s;
     }
 
-    addShape(shape)
-    {
+    addShape(shape) {
         this.shapes.push(shape);
         shape.layer = this;
     }
 
-    getShapes()
-    {
+    getShapes() {
         return this.shapes;
     }
 
-    shapesToDxf()
-    {
-        let s = '';
-        for (let i = 0; i < this.shapes.length; ++i)
-        {
+    shapesToDxf() {
+        let s = "";
+        for (let i = 0; i < this.shapes.length; ++i) {
             s += this.shapes[i].toDxfString();
-        } 
-        
-        
+        }
+
         return s;
     }
 }
