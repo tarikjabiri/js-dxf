@@ -18,7 +18,9 @@ class Layer {
     }
 
     toDxfString() {
-        if (this.shapes.length === 0) return "";
+        if (this.shapes.length === 0) {
+            return "";
+        }
 
         let s = "0\nLAYER\n";
         s += "70\n64\n";
