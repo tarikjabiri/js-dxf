@@ -3,6 +3,7 @@
   "version": "1.6.0",
   "description": "Dead simple 2D DXF writer",
   "main": "index.js",
+  "types": "./index.d.ts",
   "directories": {
     "example": "examples"
   },
