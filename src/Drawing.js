@@ -124,9 +124,9 @@ class Drawing
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
      */
-    drawPolyline(points)
+    drawPolyline(points, closed)
     {
-        this.activeLayer.addShape(new Polyline(points));
+        this.activeLayer.addShape(new Polyline(points, closed));
         return this;
     }
 
