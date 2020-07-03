@@ -116,8 +116,8 @@ declare module "dxf-writer" {
         constructor(name: string, colorNumber: number, lineTypeName: string);
         toDxfString(): string;
 
-        setTrueColor(color: number);
-        addShape(shape: RenderableToDxf);
+        setTrueColor(color: number): void;
+        addShape(shape: RenderableToDxf): void;
         getShapes(): Array<RenderableToDxf>;
         shapesToDxf(): string;
     }
