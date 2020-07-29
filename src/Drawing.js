@@ -127,7 +127,7 @@ class Drawing
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
      */
-    drawPolyline(points, closed, startWidth, endWidth)
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
         this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
         return this;
