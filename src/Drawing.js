@@ -123,10 +123,13 @@ class Drawing
 
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {boolean} closed - Closed polyline flag
+     * @param {number} startWidth - Default start width
+     * @param {number} endWidth - Default end width
      */
-    drawPolyline(points, closed)
+    drawPolyline(points, closed, startWidth, endWidth)
     {
-        this.activeLayer.addShape(new Polyline(points, closed));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
         return this;
     }
 

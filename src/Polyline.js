@@ -3,11 +3,15 @@ class Polyline
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2, bulge]... ]
      * @param {boolean} closed
+     * @param {number} startWidth
+     * @param {number} endWidth
      */
-    constructor(points, closed = false)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0)
     {
         this.points = points;
         this.closed = closed;
+        this.startWidth = startWidth;
+        this.endWidth = endWidth;
     }
 
     toDxfString()
@@ -17,6 +21,9 @@ class Polyline
         let s = `0\nPOLYLINE\n`;
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n${this.closed ? 1 : 0}\n`;
+        if (this.startWidth !== 0 || this.endWidth !== 0) {
+            s += `40\n${this.startWidth}\n41\n${this.endWidth}\n`;
+        }
 
         for (let i = 0; i < this.points.length; ++i)
         {
