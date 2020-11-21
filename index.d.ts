@@ -125,7 +125,7 @@ declare module "dxf-writer" {
     export class Line implements RenderableToDxf {
         public x1: number;
         public y1: number;
-        public x2: number; 
+        public x2: number;
         public y2: number;
 
         constructor(x1: number, y1: number, x2: number, y2: number);
@@ -133,8 +133,8 @@ declare module "dxf-writer" {
     }
 
     export class LineType implements RenderableToDxf {
-        public name: string; 
-        public description: string; 
+        public name: string;
+        public description: string;
         public elements: Array<number>;
 
         /**
@@ -151,7 +151,7 @@ declare module "dxf-writer" {
     export class Point implements RenderableToDxf {
         public x: number;
         public y: number;
-        
+
         constructor(x: number, y: number);
         toDxfString(): string;
     }
@@ -267,8 +267,11 @@ declare module "dxf-writer" {
 
         /**
          * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+         * @param {boolean} closed - Closed polyline flag
+         * @param {number} startWidth - Default start width
+         * @param {number} endWidth - Default end width
          */
-        drawPolyline(points: Array<Point2D>): Drawing;
+        drawPolyline(points: Array<Point2D>, closed?: boolean, startWidth?: number, endWidth?: number): Drawing;
 
         /**
          * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
