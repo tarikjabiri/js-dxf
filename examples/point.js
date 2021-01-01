@@ -7,8 +7,8 @@ d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
 d.setActiveLayer('l_green');
 
 d.drawPoint(50, 50)
- .drawLine(60,60)
- .drawLine(70,70)
- .drawLine(80,80)
+ .drawPoint(60,60)
+ .drawPoint(70,70)
+ .drawPoint(80,80)
 
 fs.writeFileSync(__filename + '.dxf', d.toDxfString());

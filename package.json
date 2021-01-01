@@ -1,8 +1,9 @@
 {
   "name": "dxf-writer",
-  "version": "1.2.0",
+  "version": "1.7.1",
   "description": "Dead simple 2D DXF writer",
   "main": "index.js",
+  "types": "./index.d.ts",
   "directories": {
     "example": "examples"
   },
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
   "devDependencies": {
-    "browserify": "^16.2.3"
+    "browserify": "^16.2.3",
+    "minimist": ">=1.2.3"
   }
 }

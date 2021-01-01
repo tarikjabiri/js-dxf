@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js-dxf editor</title>
+
+    <script src="svg.js"></script>
+    <script src="svg.draw.js"></script>
+    <script src="../dxf_bundle.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+            display: grid;
+        }
+        #editor {
+            margin: auto;
+        }
+        #editor .toolbar{
+            background-color:aqua;
+            padding: 0.2em;
+        }
+
+        #editor .toolbar a{
+            float:right;
+        }
+
+        #sheet {
+            border:1px solid green;
+        }
+
+        line:hover, circle:hover {
+            stroke: red;
+        }
+    </style>
+    <script>
+        var svg, sheet, width=600, height=600;
+        var Drawing = require('Drawing');
+        window.addEventListener('load', function(){
+            sheet = document.getElementById('sheet');
+            svg = SVG(sheet).size(width, height)
+        })
+
+
+        function drawLine() {
+            svg.line().draw().attr('fill','none').attr('stroke', '#000000')           
+        }
+        function drawCircle() {
+            svg.circle().draw().attr('fill','none').attr('stroke', '#000000')           
+        }
+
+        function getX(el, att) {
+            return parseInt(el.getAttribute(att)) - width/2;
+        }
+
+        function getY(el, att) {
+            return height/2 - parseInt(el.getAttribute(att))
+        }
+
+        function toDxf() {
+            d = new Drawing();
+            for(var line of Array.from(svg.node.getElementsByTagName('line'))) {
+                d.drawLine(getX(line,'x1'), getY(line,'y1'), getX(line,'x2'), getY(line, 'y2'))
+            }
+
+            for(var circle of Array.from(svg.node.getElementsByTagName('circle'))) {
+                d.drawCircle(getX(circle, 'cx'), getY(circle, 'cy'), circle.getAttribute('r'))
+            }
+
+            var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
+            document.getElementById('toDxf').href = URL.createObjectURL(b);
+            
+        }
+    </script>
+</head>
+<body>
+    <div id="editor">
+        <div class="toolbar">
+            <button onclick="drawLine()">drawLine()</button>
+            <button onclick="drawCircle()">drawCircle()</button>
+            <a href="" id="toDxf" download="demo.dxf" onclick="toDxf()">toDxf()</a>
+        </div>
+        <div id="sheet"></div>
+    </div>
+</body>
+</html>

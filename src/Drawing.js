@@ -5,6 +5,7 @@ const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
+const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 const Spline = require('./Spline')
@@ -16,6 +17,9 @@ class Drawing
         this.layers = {};
         this.activeLayer = null;
         this.lineTypes = {};
+        this.headers = {};
+
+        this.setUnits('Unitless');
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -109,19 +113,48 @@ class Drawing
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
+     * @param {string} [horizontalAlignment="left"] left | center | right
+     * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    drawText(x1, y1, height, rotation, value)
+    drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
         return this;
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {boolean} closed - Closed polyline flag
+     * @param {number} startWidth - Default start width
+     * @param {number} endWidth - Default end width
      */
-    drawPolyline(points)
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        return this;
+    }
+
+    /**
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     */
+    drawPolyline3d(points)
+    {
+        points.forEach(point => {
+            if (point.length !== 3){
+                throw "Require 3D coordinate"
+            }
+        });
+        this.activeLayer.addShape(new Polyline3d(points));
+        return this;
+    }
+
+    /**
+     * 
+     * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
+     */
+    setTrueColor(trueColor)
+    {
+        this.activeLayer.setTrueColor(trueColor);
         return this;
     }
 
@@ -190,9 +223,54 @@ class Drawing
         return s;
     }
 
+     /**
+      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
+      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
+      * 
+      * @param {string} variable 
+      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
+      */
+    header(variable, values) {
+        this.headers[variable] = values;
+        return this;
+    }
+
+    _getHeader(variable, values){
+        let s = '9\n$'+ variable +'\n';
+
+        for (let value of values) {
+            s += `${value[0]}\n${value[1]}\n`;
+        }
+
+        return s;
+    }
+
+    /**
+     * 
+     * @param {string} unit see Drawing.UNITS
+     */
+    setUnits(unit) {
+        let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
+        this.header('INSUNITS', [[70, Drawing.UNITS[unit]]]);
+        return this;
+    }
+
     toDxfString()
     {
         let s = '';
+
+        //start section
+        s += '0\nSECTION\n';
+        //name section as HEADER section
+        s += '2\nHEADER\n';
+
+        for (let header in this.headers) {
+            s += this._getHeader(header, this.headers[header]);
+        }
+
+        //end section
+        s += '0\nENDSEC\n';
+
 
         //start section
         s += '0\nSECTION\n';
@@ -253,5 +331,30 @@ Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
+
+//https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
+Drawing.UNITS = {
+    'Unitless':0,
+    'Inches':1,
+    'Feet':2,
+    'Miles':3,
+    'Millimeters':4,
+    'Centimeters':5,
+    'Meters':6,
+    'Kilometers':7,
+    'Microinches':8,
+    'Mils':9,
+    'Yards':10,
+    'Angstroms':11,
+    'Nanometers':12,
+    'Microns':13,
+    'Decimeters':14,
+    'Decameters':15,
+    'Hectometers':16,
+    'Gigameters':17,
+    'Astronomical units':18,
+    'Light years':19,
+    'Parsecs':20
+}
 
 module.exports = Drawing;
