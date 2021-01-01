@@ -11,20 +11,17 @@ class Layer
         this.trueColor = -1;
     }
 
-    toDxfString() // ToDo: Include handSeed
+    toDxfString(handSeed) // ToDo: Include handSeed
     {
-        let s = '0\nLAYER\n';
-        s += '70\n64\n';
-        s += `2\n${this.name}\n`;
-        if (this.trueColor !== -1)
-        {
-            s += `420\n${this.trueColor}\n`
-        }
-        else
-        {
-            s += `62\n${this.colorNumber}\n`;
-        }
-        s += `6\n${this.lineTypeName}\n`;
+        const rows = this.toDxfRows(handSeed)
+        const outputAsStrings = []  // string[]
+        rows.forEach(item => {
+          outputAsStrings.push(item.type)
+          outputAsStrings.push(item.value.toString())
+        })
+        let s = outputAsStrings.join('\n')
+
+        s += '\n'
         return s;
     }
 

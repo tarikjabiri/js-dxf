@@ -24,8 +24,8 @@ class HeaderAndDefaults {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    const defaultTableResult = generateDefaultTables(layers, handSeed)  // Needs to be generated before header
-    const finalHandseedValue = defaultTableResult.handSeed  // Seed after all entities have been added
+    const defaultTableResult = generateDefaultTables(layers, handSeed)
+
     const parametersToOutput = generateMinimalHeader()
 
     parametersToOutput.forEach(parameter => {
