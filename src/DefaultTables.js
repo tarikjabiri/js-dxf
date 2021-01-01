@@ -1,5 +1,5 @@
-import { Row } from './row'
-import { generateLayer } from './layer'
+const Layer = require('./Layer')
+const Row = require('./Row')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9
 function generateVportTable () {
@@ -82,9 +82,18 @@ function generateVportTable () {
 function generateLayerTable (_layers, seedCounter) {
   const output = [] // Row[]
 
-  const layersWithout0 = _layers.filter(layerName => layerName !== '0')
+  const layerNames = Object.keys(_layers)
 
-  const layers = [
+  const layers = _layers
+
+  const layersWithout0 = layerNames.filter(layerName => layerName !== '0')
+
+  const layer0missing = layerNames.filter(layerName => layerName === '0').length === 0
+  if (layer0missing) {
+    layers['0'] = new Layer('0',7, 'CONTINUOUS') //ToDo:Connect to constants
+  }
+
+  const sortedLayers = [
     '0',  // Ensure mandatory 0 is first layer
     ...layersWithout0,
   ]
@@ -96,9 +105,10 @@ function generateLayerTable (_layers, seedCounter) {
   output.push(new Row('100', 'AcDbSymbolTable'))
   output.push(new Row('70', '1'))
 
-  layers.forEach(layerName => {
-    const layer = generateLayer(layerName, seedCounter++)
-    output.push(...layer)
+  sortedLayers.forEach(layerName => {
+    const layer = _layers[layerName]
+    const rows = layer.toDxfRows(seedCounter++)
+    output.push(...rows)
   })
   output.push(new Row('0', 'ENDTAB'))
   return output
@@ -260,7 +270,7 @@ function generateLtypeTable (_handSeed) {
   }
 }
 
-export function generateDimStyleTable (_handSeed) {
+function generateDimStyleTable (_handSeed) {
 
   let handSeed = _handSeed
 
@@ -342,9 +352,9 @@ function generateDefaultTables (layers, _handSeed) {
   handSeed = lTypeTable.handSeed  // Keep counting objects
   output.push(...generateVportTable())
 
-  const layers = generateLayerTable(layers, handSeed)
-  output.push(...layers)
-  handSeed += layers.length
+  const layersTable = generateLayerTable(layers, handSeed)
+  output.push(...layersTable)
+  handSeed += layersTable.length
 
   output.push(...generateStyleTable())
   output.push(...generateBlockRecordTable())

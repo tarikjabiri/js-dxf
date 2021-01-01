@@ -8,3 +8,5 @@ class Row {
     this.value = value
   }
 }
+
+module.exports = Row

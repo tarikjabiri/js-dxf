@@ -1,18 +1,15 @@
-const defaultBlocks = require('./DefaultBlocks');
+const defaultBlocks = require('./DefaultBlocks')
 const defaultDictionary = require('./DefaultDictionary')
+const generateDefaultTables = require('./DefaultTables')
 const Row = require('./Row')
 const UUID = require('uuid')
-import { Row } from './row'
-
-
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
 class HeaderAndDefaults {
   unit
-  parameters = [] // HeaderParameter[]
   constructor () {
     this.unit = 4 // 4 = mm
-    this.parameters = generateMinimalHeader()
+    this.projectName = 'Project '
   }
 
   setUnit (value) {
@@ -21,26 +18,18 @@ class HeaderAndDefaults {
 
   generateOutput (layers, handSeed) {
 
-    const projectName = 'DXF Export'
-
-
     const output = [] // Row[]
-
-    const defaultTables = generateDefaultTables(layers, handSeed)
 
     // Header Section ------------------------------------------------------------
 
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    const parametersToOutput = this.parameters.slice()
+    const defaultTableResult = generateDefaultTables(layers, handSeed)  // Needs to be generated before header
+    const finalHandseedValue = defaultTableResult.handSeed  // Seed after all entities have been added
+    const parametersToOutput = generateMinimalHeader(finalHandseedValue, this.projectName)
 
-    // Generative header parameters
-    const finalHandseedValue = handSeed.toString(16)
-    parametersToOutput.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
-    parametersToOutput.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
-
-    this.parameters.forEach(parameter => {
+    parametersToOutput.forEach(parameter => {
       output.push(new Row('9', parameter.id))
       output.push(...parameter.rows)
     })
@@ -55,7 +44,7 @@ class HeaderAndDefaults {
 
 
     // Default Tables ------------------------------------------------------------
-    output.push(...defaultTables)
+    output.push(...defaultTableResult.output)
 
     // Default Dictionary --------------------------------------------------------
     output.push(...createTypeValueRowsFromDxfData(defaultDictionary))
@@ -76,7 +65,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader () { // ToDo: Add unit
+function generateMinimalHeader (finalHandseedValue, projectName) { // ToDo: Add unit
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -276,6 +265,11 @@ function generateMinimalHeader () { // ToDo: Add unit
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
+
+
+  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
+
   return parameters
 }
 

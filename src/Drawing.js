@@ -23,7 +23,7 @@ class Drawing
 
         this.handSeed = 0x11F
 
-        // this.setUnits('Unitless');
+        // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -259,7 +259,16 @@ class Drawing
     {
         let s = '';
 
-        s += this.header.generateOutput(this.layers, this.handSeed)
+        const headerOutputAsRowItems = this.header.generateOutput(this.layers, this.handSeed)
+
+        const headerOutputAsStrings = []  // string[]
+        headerOutputAsRowItems.forEach(item => {
+          headerOutputAsStrings.push(item.type)
+          headerOutputAsStrings.push(item.value.toString())
+        })
+        s += headerOutputAsStrings.join('\n')
+
+        // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
         s += '0\nSECTION\n';
