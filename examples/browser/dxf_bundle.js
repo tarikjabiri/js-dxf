@@ -244,11 +244,17 @@ module.exports = Point;
 class Polyline
 {
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2, bulge]... ]
+     * @param {boolean} closed
+     * @param {number} startWidth
+     * @param {number} endWidth
      */
-    constructor(points)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0)
     {
         this.points = points;
+        this.closed = closed;
+        this.startWidth = startWidth;
+        this.endWidth = endWidth;
     }
 
     toDxfString()
@@ -257,7 +263,10 @@ class Polyline
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
         s += `8\n${this.layer.name}\n`;
-        s += `66\n1\n70\n0\n`;
+        s += `66\n1\n70\n${this.closed ? 1 : 0}\n`;
+        if (this.startWidth !== 0 || this.endWidth !== 0) {
+            s += `40\n${this.startWidth}\n41\n${this.endWidth}\n`;
+        }
 
         for (let i = 0; i < this.points.length; ++i)
         {
@@ -265,6 +274,9 @@ class Polyline
             s += `8\n${this.layer.name}\n`;
             s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
+            if (this.points[i][2] !== undefined) {
+                s += `42\n${this.points[i][2]}\n`;
+            }
         }
         
         s += `0\nSEQEND\n`;
@@ -307,6 +319,66 @@ class Polyline3d
 
 module.exports = Polyline3d;
 },{}],10:[function(require,module,exports){
+class Spline
+{
+    /**
+     * @param {array} controlPoints - Array of points like [ [x1, y1], [x2, y2]... ]
+     */
+    constructor(type, degree, controlPoints, knots, fitPoints)
+    {
+        this.controlPoints = controlPoints
+        this.knots = knots
+        this.fitPoints = fitPoints
+        this.type = type
+        this.degree = degree
+
+        // const closed = 0
+        // const periodic = 0
+        // const rational = 1
+        // const planar = 1
+        // const linear = 0
+        // const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
+
+
+
+    }
+
+    toDxfString()
+    {
+      // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
+        let s = `0\nSPLINE\n`
+        s += `8\n${this.layer.name}\n`
+        s += `100\nAcDbSpline\n`
+        s += `210\n0.0\n220\n0.0\n230\n1.0\n`
+
+        s+= `70\n${this.type}\n`
+        s+= `71\n${this.degree}\n`
+        s+= `72\n${this.knots.length}\n`
+        s+= `73\n${this.controlPoints.length}\n`
+        s+= `74\n${this.fitPoints.length}\n`
+        s+= `42\n1e-6\n`
+        s+= `43\n1e-6\n`
+
+        for (let i = 0; i < this.knots.length; ++i)
+        {
+            s += `40\n${this.knots[i]}\n`
+        }
+
+
+        for (let i = 0; i < this.controlPoints.length; ++i)
+        {
+            s += `10\n${this.controlPoints[i][0]}\n`
+            s += `20\n${this.controlPoints[i][1]}\n`
+            s += `30\n0\n`
+        }
+
+        return s;
+    }
+}
+
+module.exports = Spline
+
+},{}],11:[function(require,module,exports){
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
@@ -361,6 +433,7 @@ const Polyline = require('./Polyline');
 const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
+const Spline = require('./Spline')
 
 class Drawing
 {
@@ -373,47 +446,59 @@ class Drawing
 
         this.setUnits('Unitless');
 
+        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
+        {
+            this.addLineType(Drawing.LINE_TYPES[i].name,
+                             Drawing.LINE_TYPES[i].description,
+                             Drawing.LINE_TYPES[i].elements);
+        }
+
+        for (let i = 0; i < Drawing.LAYERS.length; ++i)
+        {
+            this.addLayer(Drawing.LAYERS[i].name,
+                          Drawing.LAYERS[i].colorNumber,
+                          Drawing.LAYERS[i].lineTypeName);
+        }
+
+        this.setActiveLayer('0');
     }
 
-    toDxfString()
+
+    /**
+     * @param {string} name
+     * @param {string} description
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
+     */
+    addLineType(name, description, elements)
     {
-      // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
-        let s = `0\nSPLINE\n`
-        s += `8\n${this.layer.name}\n`
-        s += `100\nAcDbSpline\n`
-        s += `210\n0.0\n220\n0.0\n230\n1.0\n`
-
-        s+= `70\n${this.type}\n`
-        s+= `71\n${this.degree}\n`
-        s+= `72\n${this.knots.length}\n`
-        s+= `73\n${this.controlPoints.length}\n`
-        s+= `74\n${this.fitPoints.length}\n`
-        s+= `42\n1e-6\n`
-        s+= `43\n1e-6\n`
-
-        for (let i = 0; i < this.knots.length; ++i)
-        {
-            s += `40\n${this.knots[i]}\n`
-        }
-
-
-        for (let i = 0; i < this.controlPoints.length; ++i)
-        {
-            s += `10\n${this.controlPoints[i][0]}\n`
-            s += `20\n${this.controlPoints[i][1]}\n`
-            s += `30\n0\n`
-        }
-
-        return s;
+        this.lineTypes[name] = new LineType(name, description, elements);
+        return this;
     }
-}
+
+    addLayer(name, colorNumber, lineTypeName)
+    {
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
+        return this;
+    }
+
+    setActiveLayer(name)
+    {
+        this.activeLayer = this.layers[name];
+        return this;
+    }
+
+    drawLine(x1, y1, x2, y2)
+    {
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        return this;
+    }
 
     drawPoint(x, y)
     {
         this.activeLayer.addShape(new Point(x, y));
         return this;
     }
-    
+
     drawRect(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y1));
@@ -427,8 +512,8 @@ class Drawing
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
@@ -447,9 +532,6 @@ class Drawing
         return this;
     }
 
-},{}],10:[function(require,module,exports){
-class Text
-{
     /**
      * @param {number} x1 - x
      * @param {number} y1 - y
@@ -467,10 +549,13 @@ class Text
 
     /**
      * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {boolean} closed - Closed polyline flag
+     * @param {number} startWidth - Default start width
+     * @param {number} endWidth - Default end width
      */
-    drawPolyline(points)
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
         return this;
     }
 
@@ -496,6 +581,21 @@ class Text
     {
         this.activeLayer.setTrueColor(trueColor);
         return this;
+    }
+
+    drawSplineFromControlPoints(points) {
+      const knots = [0,0,0,1,1,1]
+      const degree = 2
+
+      // ToDo: Calculate knots and degree automatic
+      const closed = 0
+      const periodic = 0
+      const rational = 1
+      const planar = 1
+      const linear = 0
+      const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
+      this.activeLayer.addShape(new Spline(splineType, degree, points, knots, []))
+
     }
 
     /**
@@ -535,11 +635,17 @@ class Text
 
     _getDxfLayerTable()
     {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.height = height;
-        this.rotation = rotation;
-        this.value = value;
+        let s = '0\nTABLE\n'; //start table
+        s += '2\nLAYER\n'; //name table as LAYER table
+
+        for (let layerName in this.layers)
+        {
+            s += this.layers[layerName].toDxfString();
+        }
+
+        s += '0\nENDTAB\n';
+
+        return s;
     }
 
      /**
@@ -622,11 +728,12 @@ class Text
 
         return s;
     }
+
 }
 
 //AutoCAD Color Index (ACI)
 //http://sub-atomic.com/~moses/acadcolors.html
-Drawing.ACI = 
+Drawing.ACI =
 {
     LAYER : 0,
     RED : 1,
@@ -638,14 +745,14 @@ Drawing.ACI =
     WHITE : 7
 }
 
-Drawing.LINE_TYPES = 
+Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
     {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
-Drawing.LAYERS = 
+Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
@@ -677,4 +784,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":1,"./Circle":2,"./Face":3,"./Layer":4,"./Line":5,"./LineType":6,"./Point":7,"./Polyline":8,"./Polyline3d":9,"./Text":10}]},{},[]);
+},{"./Arc":1,"./Circle":2,"./Face":3,"./Layer":4,"./Line":5,"./LineType":6,"./Point":7,"./Polyline":8,"./Polyline3d":9,"./Spline":10,"./Text":11}]},{},[]);
