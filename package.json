@@ -1,6 +1,6 @@
 {
   "name": "dxf-writer",
-  "version": "1.7.1",
+  "version": "2.0.0-0",
   "description": "Dead simple 2D DXF writer",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -29,5 +29,8 @@
   "devDependencies": {
     "browserify": "^16.2.3",
     "minimist": ">=1.2.3"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }

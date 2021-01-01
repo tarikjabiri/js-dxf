@@ -5,8 +5,8 @@ class Arc
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
     constructor(x1, y1, r, startAngle, endAngle)
     {
@@ -115,7 +115,7 @@ class Layer
             s += `62\n${this.colorNumber}\n`;
         }
         s += `6\n${this.lineTypeName}\n`;
-        return s;        
+        return s;
     }
 
     setTrueColor(color)
@@ -140,9 +140,9 @@ class Layer
         for (let i = 0; i < this.shapes.length; ++i)
         {
             s += this.shapes[i].toDxfString();
-        } 
-        
-        
+        }
+
+
         return s;
     }
 }
@@ -177,7 +177,7 @@ class LineType
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
     constructor(name, description, elements)
     {
@@ -266,7 +266,7 @@ class Polyline
             s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n`;
         }
-        
+
         s += `0\nSEQEND\n`;
         return s;
     }
@@ -299,7 +299,7 @@ class Polyline3d
             s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
         }
-        
+
         s += `0\nSEQEND\n`;
         return s;
     }
@@ -389,12 +389,12 @@ class Drawing
 
         this.setActiveLayer('0');
     }
-    
-    
+
+
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
     addLineType(name, description, elements)
     {
@@ -407,7 +407,7 @@ class Drawing
         this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
-    
+
     setActiveLayer(name)
     {
         this.activeLayer = this.layers[name];
@@ -425,7 +425,7 @@ class Drawing
         this.activeLayer.addShape(new Point(x, y));
         return this;
     }
-    
+
     drawRect(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y1));
@@ -439,8 +439,8 @@ class Drawing
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
@@ -475,7 +475,7 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
      */
     drawPolyline(points)
     {
@@ -484,7 +484,7 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
      */
     drawPolyline3d(points)
     {
@@ -498,7 +498,7 @@ class Drawing
     }
 
     /**
-     * 
+     *
      * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
      */
     setTrueColor(trueColor)
@@ -558,11 +558,8 @@ class Drawing
     }
 
      /**
-      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
-      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-      * 
-      * @param {string} variable 
-      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
+      * @deprecated Header is auto generated
+      *
       */
     header(variable, values) {
         this.headers[variable] = values;
@@ -580,7 +577,7 @@ class Drawing
     }
 
     /**
-     * 
+     *
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
@@ -642,7 +639,7 @@ class Drawing
 
 //AutoCAD Color Index (ACI)
 //http://sub-atomic.com/~moses/acadcolors.html
-Drawing.ACI = 
+Drawing.ACI =
 {
     LAYER : 0,
     RED : 1,
@@ -654,14 +651,14 @@ Drawing.ACI =
     WHITE : 7
 }
 
-Drawing.LINE_TYPES = 
+Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
     {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
-Drawing.LAYERS = 
+Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]

@@ -8,6 +8,7 @@ const Polyline = require('./Polyline');
 const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
+const HeaderAndDefaults = require('./Header')
 
 class Drawing
 {
@@ -18,7 +19,11 @@ class Drawing
         this.lineTypes = {};
         this.headers = {};
 
-        this.setUnits('Unitless');
+        this.header = new HeaderAndDefaults()
+
+        this.handSeed = 0x11F
+
+        // this.setUnits('Unitless');
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -36,12 +41,12 @@ class Drawing
 
         this.setActiveLayer('0');
     }
-    
-    
+
+
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
     addLineType(name, description, elements)
     {
@@ -54,7 +59,7 @@ class Drawing
         this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
-    
+
     setActiveLayer(name)
     {
         this.activeLayer = this.layers[name];
@@ -72,7 +77,7 @@ class Drawing
         this.activeLayer.addShape(new Point(x, y));
         return this;
     }
-    
+
     drawRect(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(new Line(x1, y1, x2, y1));
@@ -86,8 +91,8 @@ class Drawing
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
@@ -122,7 +127,7 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
      * @param {boolean} closed - Closed polyline flag
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
@@ -134,7 +139,7 @@ class Drawing
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
      */
     drawPolyline3d(points)
     {
@@ -148,7 +153,7 @@ class Drawing
     }
 
     /**
-     * 
+     *
      * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
      */
     setTrueColor(trueColor)
@@ -177,6 +182,9 @@ class Drawing
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     _getDxfLtypeTable()
     {
         let s = '0\nTABLE\n'; //start table
@@ -192,6 +200,9 @@ class Drawing
         return s;
     }
 
+    /**
+     * @deprecated
+     */
     _getDxfLayerTable()
     {
         let s = '0\nTABLE\n'; //start table
@@ -210,8 +221,8 @@ class Drawing
      /**
       * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
       * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-      * 
-      * @param {string} variable 
+      *
+      * @param {string} variable
       * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
       */
     header(variable, values) {
@@ -219,6 +230,10 @@ class Drawing
         return this;
     }
 
+    /**
+     *
+     * @deprecated
+     */
     _getHeader(variable, values){
         let s = '9\n$'+ variable +'\n';
 
@@ -230,12 +245,13 @@ class Drawing
     }
 
     /**
-     * 
+     *
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
-        this.header('INSUNITS', [[70, Drawing.UNITS[unit]]]);
+        this.header.setUnit(Drawing.UNITS[unit])
+        // let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
+        // this.header('INSUNITS', [[70, ]]);
         return this;
     }
 
@@ -243,30 +259,7 @@ class Drawing
     {
         let s = '';
 
-        //start section
-        s += '0\nSECTION\n';
-        //name section as HEADER section
-        s += '2\nHEADER\n';
-
-        for (let header in this.headers) {
-            s += this._getHeader(header, this.headers[header]);
-        }
-
-        //end section
-        s += '0\nENDSEC\n';
-
-
-        //start section
-        s += '0\nSECTION\n';
-        //name section as TABLES section
-        s += '2\nTABLES\n';
-
-        s += this._getDxfLtypeTable();
-        s += this._getDxfLayerTable();
-
-        //end section
-        s += '0\nENDSEC\n';
-
+        s += this.header.generateOutput(this.layers, this.handSeed)
 
         //ENTITES section
         s += '0\nSECTION\n';
@@ -292,7 +285,7 @@ class Drawing
 
 //AutoCAD Color Index (ACI)
 //http://sub-atomic.com/~moses/acadcolors.html
-Drawing.ACI = 
+Drawing.ACI =
 {
     LAYER : 0,
     RED : 1,
@@ -304,14 +297,14 @@ Drawing.ACI =
     WHITE : 7
 }
 
-Drawing.LINE_TYPES = 
+Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
     {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
-Drawing.LAYERS = 
+Drawing.LAYERS =
 [
     {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
 ]
