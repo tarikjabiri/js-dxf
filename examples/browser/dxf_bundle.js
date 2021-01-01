@@ -11593,7 +11593,6 @@ class HeaderAndDefaults {
   unit
   constructor () {
     this.unit = 4 // 4 = mm
-    this.projectName = 'Project '
   }
 
   setUnit (value) {
@@ -11611,7 +11610,7 @@ class HeaderAndDefaults {
 
     const defaultTableResult = generateDefaultTables(layers, handSeed)  // Needs to be generated before header
     const finalHandseedValue = defaultTableResult.handSeed  // Seed after all entities have been added
-    const parametersToOutput = generateMinimalHeader(finalHandseedValue, this.projectName)
+    const parametersToOutput = generateMinimalHeader()
 
     parametersToOutput.forEach(parameter => {
       output.push(new Row('9', parameter.id))
@@ -11649,7 +11648,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader (finalHandseedValue, projectName) { // ToDo: Add unit
+function generateMinimalHeader () { // ToDo: Add unit
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -11851,8 +11850,8 @@ function generateMinimalHeader (finalHandseedValue, projectName) { // ToDo: Add 
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
 
 
-  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
-  parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
+  // parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  // parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
 }
@@ -12154,7 +12153,7 @@ class Text
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed = 0)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -12163,12 +12162,14 @@ class Text
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         let s = `0\nTEXT\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
@@ -12183,6 +12184,7 @@ class Text
 }
 
 module.exports = Text;
+
 },{}],"Drawing":[function(require,module,exports){
 const LineType = require('./LineType');
 const Layer = require('./Layer');
@@ -12308,7 +12310,7 @@ class Drawing
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, this.handSeed++));
         return this;
     }
 
@@ -12453,6 +12455,8 @@ class Drawing
           headerOutputAsStrings.push(item.value.toString())
         })
         s += headerOutputAsStrings.join('\n')
+
+        s += '\n'
 
         // ToDo: Consider converting all Entity output to Row items
 

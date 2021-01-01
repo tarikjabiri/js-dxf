@@ -12,7 +12,7 @@ class Text
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed = 0)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -21,12 +21,14 @@ class Text
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         let s = `0\nTEXT\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;

@@ -9,7 +9,6 @@ class HeaderAndDefaults {
   unit
   constructor () {
     this.unit = 4 // 4 = mm
-    this.projectName = 'Project '
   }
 
   setUnit (value) {
@@ -27,7 +26,7 @@ class HeaderAndDefaults {
 
     const defaultTableResult = generateDefaultTables(layers, handSeed)  // Needs to be generated before header
     const finalHandseedValue = defaultTableResult.handSeed  // Seed after all entities have been added
-    const parametersToOutput = generateMinimalHeader(finalHandseedValue, this.projectName)
+    const parametersToOutput = generateMinimalHeader()
 
     parametersToOutput.forEach(parameter => {
       output.push(new Row('9', parameter.id))
@@ -65,7 +64,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader (finalHandseedValue, projectName) { // ToDo: Add unit
+function generateMinimalHeader () { // ToDo: Add unit
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -267,8 +266,8 @@ function generateMinimalHeader (finalHandseedValue, projectName) { // ToDo: Add 
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
 
 
-  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
-  parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
+  // parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  // parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
 }

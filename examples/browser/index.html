@@ -5,20 +5,20 @@
     <script src="dxf_bundle.js"></script>
     <script>
         var Drawing = require('Drawing');
-        window.onload = function()
+        function generateDrawing()
         {
             d = new Drawing();
 
-            d.setUnits('Decimeters');
+            // d.setUnits('Decimeters');
             d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-            d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
-            d.setActiveLayer('l_green');
-            d.drawText(20, -70, 10, 0, 'go green!');
+            // d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
+            // d.setActiveLayer('l_green');
+            // d.drawText(20, -70, 10, 0, 'go green!');
 
             //or fluent
-            d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
-            .setActiveLayer('l_yellow')
-            .drawCircle(50, -30, 25);
+            // d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
+            // .setActiveLayer('l_yellow')
+            // .drawCircle(50, -30, 25);
 
             var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
             document.getElementById('dxf').href = URL.createObjectURL(b);
@@ -40,6 +40,6 @@
             .setActiveLayer('l_yellow')
             .drawCircle(50, -30, 25);
     </pre>
-<a href="" id="dxf" download="demo.dxf">demo.dxf</a>
+<a href="" id="dxf" onclick=generateDrawing() download='test.dxf'>demo.dxf</a>
 </body>
 </html>

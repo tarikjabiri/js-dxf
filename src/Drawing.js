@@ -122,7 +122,7 @@ class Drawing
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, this.handSeed++));
         return this;
     }
 
@@ -267,6 +267,8 @@ class Drawing
           headerOutputAsStrings.push(item.value.toString())
         })
         s += headerOutputAsStrings.join('\n')
+
+        s += '\n'
 
         // ToDo: Consider converting all Entity output to Row items
 
