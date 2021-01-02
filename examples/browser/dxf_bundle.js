@@ -11548,7 +11548,27 @@ function generateDefaultTables (layers, _handSeed) {
 
 module.exports = generateDefaultTables
 
-},{"./Layer":23,"./Row":29}],21:[function(require,module,exports){
+},{"./Layer":24,"./Row":30}],21:[function(require,module,exports){
+/**
+ * Base class representing a DXF entity
+ * About the DXF ENTITIES Section: http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
+ */
+class Entity
+{
+    /**
+     * Entity type like TEXT, LINE, CIRCLE...
+     * @type string
+     * @memberof Entity
+     */
+    entityType
+    constructor({entityType})
+    {
+        this.entityType = entityType
+    }
+}
+
+module.exports = Entity
+},{}],22:[function(require,module,exports){
 class Face
 {
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
@@ -11581,7 +11601,7 @@ class Face
 }
 
 module.exports = Face;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 const defaultBlocks = require('./DefaultBlocks')
 const defaultDictionary = require('./DefaultDictionary')
 const generateDefaultTables = require('./DefaultTables')
@@ -11871,7 +11891,7 @@ function generateJulianDate () {
 
 module.exports = HeaderAndDefaults
 
-},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":29,"uuid":1}],23:[function(require,module,exports){
+},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":30,"uuid":1}],24:[function(require,module,exports){
 const Row = require('./Row')
 
 class Layer
@@ -11951,7 +11971,7 @@ class Layer
 
 module.exports = Layer;
 
-},{"./Row":29}],24:[function(require,module,exports){
+},{"./Row":30}],25:[function(require,module,exports){
 class Line
 {
     constructor(x1, y1, x2, y2)
@@ -11974,7 +11994,7 @@ class Line
 }
 
 module.exports = Line;
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 class LineType
 {
     /**
@@ -12023,7 +12043,7 @@ class LineType
 }
 
 module.exports = LineType;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 class Point
 {
     constructor(x, y)
@@ -12043,7 +12063,7 @@ class Point
 }
 
 module.exports = Point;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 class Polyline
 {
     /**
@@ -12088,7 +12108,7 @@ class Polyline
 }
 
 module.exports = Polyline;
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 class Polyline3d
 {
     /**
@@ -12121,7 +12141,7 @@ class Polyline3d
 }
 
 module.exports = Polyline3d;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // Helper structure
 class Row {
   type
@@ -12135,11 +12155,13 @@ class Row {
 
 module.exports = Row
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
+const Entity = require("./Entity");
+
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
-class Text
+class Text extends Entity
 {
     /**
      * @param {number} x1 - x
@@ -12152,6 +12174,7 @@ class Text
      */
     constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed = 0)
     {
+        super({entityType: 'TEXT'});
         this.x1 = x1;
         this.y1 = y1;
         this.height = height;
@@ -12182,7 +12205,7 @@ class Text
 
 module.exports = Text;
 
-},{}],"Drawing":[function(require,module,exports){
+},{"./Entity":21}],"Drawing":[function(require,module,exports){
 const LineType = require('./LineType');
 const Layer = require('./Layer');
 const Line = require('./Line');
@@ -12532,4 +12555,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":21,"./Header":22,"./Layer":23,"./Line":24,"./LineType":25,"./Point":26,"./Polyline":27,"./Polyline3d":28,"./Text":30}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Layer":24,"./Line":25,"./LineType":26,"./Point":27,"./Polyline":28,"./Polyline3d":29,"./Text":31}]},{},[]);

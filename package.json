@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
   "devDependencies": {
-    "browserify": "^16.2.3",
+    "browserify": "^17.0.0",
     "minimist": ">=1.2.3"
   },
   "dependencies": {

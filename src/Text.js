@@ -1,7 +1,9 @@
+const Entity = require("./Entity");
+
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
-class Text
+class Text extends Entity
 {
     /**
      * @param {number} x1 - x
@@ -14,6 +16,7 @@ class Text
      */
     constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed = 0)
     {
+        super({entityType: 'TEXT'});
         this.x1 = x1;
         this.y1 = y1;
         this.height = height;
