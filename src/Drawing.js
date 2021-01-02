@@ -8,30 +8,19 @@ const Polyline = require('./Polyline');
 const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
-const HeaderAndDefaults = require('./Header')
+const HEADER = require('./Header')
 const H = require('./Helpers')
 
 class Drawing
 {
     constructor()
     {
-        this.layers = {};
+        this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
-        this.lineTypes = {};
-        this.headers = {};
-
-        this.header = new HeaderAndDefaults()
 
         this.handSeed = 0x11F
 
-        // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
-
-        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
-        {
-            this.addLineType(Drawing.LINE_TYPES[i].name,
-                             Drawing.LINE_TYPES[i].description,
-                             Drawing.LINE_TYPES[i].elements);
-        }
+        this.unit = Drawing.UNITS.Unitless
 
         for (let i = 0; i < Drawing.LAYERS.length; ++i)
         {
@@ -188,17 +177,17 @@ class Drawing
      */
     _getDxfLtypeTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLTYPE\n';    //name table as LTYPE table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLTYPE\n';    //name table as LTYPE table
 
-        for (let lineTypeName in this.lineTypes)
-        {
-            s += this.lineTypes[lineTypeName].toDxfString();
-        }
+        // for (let lineTypeName in this.lineTypes)
+        // {
+        //     s += this.lineTypes[lineTypeName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n'; //end table
+        // s += '0\nENDTAB\n'; //end table
 
-        return s;
+        // return s;
     }
 
     /**
@@ -206,27 +195,26 @@ class Drawing
      */
     _getDxfLayerTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLAYER\n'; //name table as LAYER table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLAYER\n'; //name table as LAYER table
 
-        for (let layerName in this.layers)
-        {
-            s += this.layers[layerName].toDxfString();
-        }
+        // for (let layerName in this.layers)
+        // {
+        //     s += this.layers[layerName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n';
+        // s += '0\nENDTAB\n';
 
-        return s;
+        // return s;
     }
 
     /**
-     *
+     * Auto generated
      * @deprecated
-     *
      */
     header(variable, values) {
-        this.headers[variable] = values;
-        return this;
+        // this.headers[variable] = values;
+        // return this;
     }
 
     /**
@@ -234,13 +222,13 @@ class Drawing
      * @deprecated
      */
     _getHeader(variable, values){
-        let s = '9\n$'+ variable +'\n';
+        // let s = '9\n$'+ variable +'\n';
 
-        for (let value of values) {
-            s += `${value[0]}\n${value[1]}\n`;
-        }
+        // for (let value of values) {
+        //     s += `${value[0]}\n${value[1]}\n`;
+        // }
 
-        return s;
+        // return s;
     }
 
     /**
@@ -248,16 +236,13 @@ class Drawing
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        this.header.setUnit(Drawing.UNITS[unit])
-        // let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
-        // this.header('INSUNITS', [[70, ]]);
-        return this;
+        this.unit = Drawing.UNITS[unit]
     }
 
     toDxfString()
     {
         const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, finalHandseedAfterAllEntitiesAreCreated)
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreCreated)
 
         let s = H.generateStringFromRows(headerOutputAsRowItems)
 

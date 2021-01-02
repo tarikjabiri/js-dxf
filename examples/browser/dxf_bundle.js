@@ -11597,17 +11597,9 @@ const Row = require('./Row')
 const UUID = require('uuid')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-class HeaderAndDefaults { // ToDo: replace with function instead of class
-  unit
-  constructor () {
-    this.unit = 4 // 4 = mm
-  }
 
-  setUnit (value) {
-    this.unit = value
-  }
 
-  generateOutput (layers, handSeed) {
+function generateHeaderAndDefaults (layers, unit, handSeed) {
 
     const output = [] // Row[]
 
@@ -11617,8 +11609,8 @@ class HeaderAndDefaults { // ToDo: replace with function instead of class
     output.push(new Row('2', 'HEADER'))
 
     const defaultTableResult = generateDefaultTables(layers, handSeed)
-
-    const parametersToOutput = generateMinimalHeader()
+    const finalHandseed = defaultTableResult.handSeed
+    const parametersToOutput = generateMinimalHeader(unit, finalHandseed, 'DXF Project')
 
     parametersToOutput.forEach(parameter => {
       output.push(new Row('9', parameter.id))
@@ -11645,7 +11637,7 @@ class HeaderAndDefaults { // ToDo: replace with function instead of class
 
     return output
   }
-}
+
 
 class HeaderParameter {
   id
@@ -11656,7 +11648,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader () { // ToDo: Add unit
+function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -11760,7 +11752,9 @@ function generateMinimalHeader () { // ToDo: Add unit
   parameters.push(new HeaderParameter('$HYPERLINKBASE', [new Row('1', '')]))
   parameters.push(new HeaderParameter('$INDEXCTL', [new Row('280', '0')]))
   parameters.push(new HeaderParameter('$INSBASE', [new Row('10', '0'), new Row('20', '0'), new Row('30', '0')]))
-  parameters.push(new HeaderParameter('$INSUNITS', [new Row('70', '4')]))  // 4 = mm, 1 = inches
+
+  parameters.push(new HeaderParameter('$INSUNITS', [new Row('70', unit)]))  // 4 = mm, 1 = inches
+
   parameters.push(new HeaderParameter('$INTERFERECOLOR', [new Row('62', '1')]))
   parameters.push(new HeaderParameter('$INTERSECTIONCOLOR', [new Row('70', '257')]))
   parameters.push(new HeaderParameter('$INTERSECTIONDISPLAY', [new Row('280', '0')])) // diff towards spec, 290 cause error in autodesk
@@ -11858,8 +11852,8 @@ function generateMinimalHeader () { // ToDo: Add unit
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
 
 
-  // parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
-  // parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
+  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
 }
@@ -11877,7 +11871,9 @@ function generateJulianDate () {
   return new Date().getTime() / 86400000 + 2440587.5
 }
 
-module.exports = HeaderAndDefaults
+module.exports = {
+  generateHeaderAndDefaults
+}
 
 },{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":30,"uuid":1}],23:[function(require,module,exports){
 // const Row = require('./Row')
@@ -12278,30 +12274,19 @@ const Polyline = require('./Polyline');
 const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
-const HeaderAndDefaults = require('./Header')
+const HEADER = require('./Header')
 const H = require('./Helpers')
 
 class Drawing
 {
     constructor()
     {
-        this.layers = {};
+        this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
-        this.lineTypes = {};
-        this.headers = {};
-
-        this.header = new HeaderAndDefaults()
 
         this.handSeed = 0x11F
 
-        // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
-
-        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
-        {
-            this.addLineType(Drawing.LINE_TYPES[i].name,
-                             Drawing.LINE_TYPES[i].description,
-                             Drawing.LINE_TYPES[i].elements);
-        }
+        this.unit = Drawing.UNITS.Unitless
 
         for (let i = 0; i < Drawing.LAYERS.length; ++i)
         {
@@ -12458,17 +12443,17 @@ class Drawing
      */
     _getDxfLtypeTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLTYPE\n';    //name table as LTYPE table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLTYPE\n';    //name table as LTYPE table
 
-        for (let lineTypeName in this.lineTypes)
-        {
-            s += this.lineTypes[lineTypeName].toDxfString();
-        }
+        // for (let lineTypeName in this.lineTypes)
+        // {
+        //     s += this.lineTypes[lineTypeName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n'; //end table
+        // s += '0\nENDTAB\n'; //end table
 
-        return s;
+        // return s;
     }
 
     /**
@@ -12476,27 +12461,26 @@ class Drawing
      */
     _getDxfLayerTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLAYER\n'; //name table as LAYER table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLAYER\n'; //name table as LAYER table
 
-        for (let layerName in this.layers)
-        {
-            s += this.layers[layerName].toDxfString();
-        }
+        // for (let layerName in this.layers)
+        // {
+        //     s += this.layers[layerName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n';
+        // s += '0\nENDTAB\n';
 
-        return s;
+        // return s;
     }
 
     /**
-     *
+     * Auto generated
      * @deprecated
-     *
      */
     header(variable, values) {
-        this.headers[variable] = values;
-        return this;
+        // this.headers[variable] = values;
+        // return this;
     }
 
     /**
@@ -12504,13 +12488,13 @@ class Drawing
      * @deprecated
      */
     _getHeader(variable, values){
-        let s = '9\n$'+ variable +'\n';
+        // let s = '9\n$'+ variable +'\n';
 
-        for (let value of values) {
-            s += `${value[0]}\n${value[1]}\n`;
-        }
+        // for (let value of values) {
+        //     s += `${value[0]}\n${value[1]}\n`;
+        // }
 
-        return s;
+        // return s;
     }
 
     /**
@@ -12518,16 +12502,13 @@ class Drawing
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        this.header.setUnit(Drawing.UNITS[unit])
-        // let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
-        // this.header('INSUNITS', [[70, ]]);
-        return this;
+        this.unit = Drawing.UNITS[unit]
     }
 
     toDxfString()
     {
         const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, finalHandseedAfterAllEntitiesAreCreated)
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreCreated)
 
         let s = H.generateStringFromRows(headerOutputAsRowItems)
 
