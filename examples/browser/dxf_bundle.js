@@ -12151,12 +12151,18 @@ class Row {
     this.type = type
     this.value = value
   }
+
+  toString()
+  {
+    return `${this.type}\n${this.value}\n`
+  }
 }
 
 module.exports = Row
 
 },{}],31:[function(require,module,exports){
-const Entity = require("./Entity");
+const Entity = require('./Entity');
+const Row = require('./Row')
 
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
@@ -12188,7 +12194,7 @@ class Text extends Entity
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
-        let s = `0\nTEXT\n`;
+        let s = `${new Row(0, this.entityType)}`;
         s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
@@ -12205,7 +12211,7 @@ class Text extends Entity
 
 module.exports = Text;
 
-},{"./Entity":21}],"Drawing":[function(require,module,exports){
+},{"./Entity":21,"./Row":30}],"Drawing":[function(require,module,exports){
 const LineType = require('./LineType');
 const Layer = require('./Layer');
 const Line = require('./Line');
@@ -12226,9 +12232,6 @@ class Drawing
         this.activeLayer = null;
         this.lineTypes = {};
         this.headers = {};
-
-        this.header = new HeaderAndDefaults()
-
         this.handSeed = 0x11F
 
         // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
@@ -12467,7 +12470,7 @@ class Drawing
     {
         let s = '';
 
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, this.handSeed)
+        const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
 
         const headerOutputAsStrings = []  // string[]
         headerOutputAsRowItems.forEach(item => {

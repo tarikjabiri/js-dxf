@@ -18,9 +18,6 @@ class Drawing
         this.activeLayer = null;
         this.lineTypes = {};
         this.headers = {};
-
-        this.header = new HeaderAndDefaults()
-
         this.handSeed = 0x11F
 
         // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
@@ -259,7 +256,7 @@ class Drawing
     {
         let s = '';
 
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, this.handSeed)
+        const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
 
         const headerOutputAsStrings = []  // string[]
         headerOutputAsRowItems.forEach(item => {

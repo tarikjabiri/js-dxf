@@ -7,6 +7,11 @@ class Row {
     this.type = type
     this.value = value
   }
+
+  toString()
+  {
+    return `${this.type}\n${this.value}\n`
+  }
 }
 
 module.exports = Row

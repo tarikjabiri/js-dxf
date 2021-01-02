@@ -1,4 +1,5 @@
-const Entity = require("./Entity");
+const Entity = require('./Entity');
+const Row = require('./Row')
 
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
@@ -30,7 +31,7 @@ class Text extends Entity
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
-        let s = `0\nTEXT\n`;
+        let s = `${new Row(0, this.entityType)}`;
         s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `1\n${this.value}\n`;
