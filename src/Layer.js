@@ -2,16 +2,16 @@ const Row = require('./Row')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName)
+    constructor(name, colorNumber, lineTypeName)  // ToDo: Move handseed to constructor
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
-        this.trueColor = 16777215;
+        this.trueColor = -1
     }
 
-    toDxfString(handSeed) // ToDo: Include handSeed
+    toDxfString(handSeed)
     {
         const rows = this.toDxfRows(handSeed)
         const outputAsStrings = []  // string[]

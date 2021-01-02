@@ -5,7 +5,7 @@ const Row = require('./Row')
 const UUID = require('uuid')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-class HeaderAndDefaults {
+class HeaderAndDefaults { // ToDo: replace with function instead of class
   unit
   constructor () {
     this.unit = 4 // 4 = mm

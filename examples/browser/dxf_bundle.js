@@ -844,22 +844,24 @@ class Arc
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
-    constructor(x1, y1, r, startAngle, endAngle)
+    constructor(x1, y1, r, startAngle, endAngle, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
         let s = `0\nARC\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
@@ -868,6 +870,7 @@ class Arc
 }
 
 module.exports = Arc;
+
 },{}],17:[function(require,module,exports){
 class Circle
 {
@@ -876,11 +879,12 @@ class Circle
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    constructor(x1, y1, r)
+    constructor(x1, y1, r, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
+        this.handSeed = handSeed
     }
 
     toDxfString()
@@ -895,6 +899,7 @@ class Circle
 }
 
 module.exports = Circle;
+
 },{}],18:[function(require,module,exports){
 // ToDo: Compress whitespaces
 const defaultDxfBlocks = [
@@ -11551,7 +11556,7 @@ module.exports = generateDefaultTables
 },{"./Layer":24,"./Row":30}],21:[function(require,module,exports){
 class Face
 {
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -11565,12 +11570,14 @@ class Face
         this.x4 = x4;
         this.y4 = y4;
         this.z4 = z4;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
         let s = `0\n3DFACE\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
@@ -11581,6 +11588,7 @@ class Face
 }
 
 module.exports = Face;
+
 },{}],22:[function(require,module,exports){
 const defaultBlocks = require('./DefaultBlocks')
 const defaultDictionary = require('./DefaultDictionary')
@@ -11589,7 +11597,7 @@ const Row = require('./Row')
 const UUID = require('uuid')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-class HeaderAndDefaults {
+class HeaderAndDefaults { // ToDo: replace with function instead of class
   unit
   constructor () {
     this.unit = 4 // 4 = mm
@@ -11893,16 +11901,16 @@ const Row = require('./Row')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName)
+    constructor(name, colorNumber, lineTypeName)  // ToDo: Move handseed to constructor
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
-        this.trueColor = 16777215;
+        this.trueColor = -1
     }
 
-    toDxfString(handSeed) // ToDo: Include handSeed
+    toDxfString(handSeed)
     {
         const rows = this.toDxfRows(handSeed)
         const outputAsStrings = []  // string[]
@@ -12073,16 +12081,18 @@ module.exports = LineType;
 },{}],27:[function(require,module,exports){
 class Point
 {
-    constructor(x, y)
+    constructor(x, y, handSeed)
     {
         this.x = x;
         this.y = y;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
         let s = `0\nPOINT\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x}\n20\n${this.y}\n30\n0\n`;
         return s;
@@ -12090,6 +12100,7 @@ class Point
 }
 
 module.exports = Point;
+
 },{}],28:[function(require,module,exports){
 class Polyline
 {
@@ -12099,12 +12110,13 @@ class Polyline
      * @param {number} startWidth
      * @param {number} endWidth
      */
-    constructor(points, closed = false, startWidth = 0, endWidth = 0)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0, handSeed)
     {
         this.points = points;
         this.closed = closed;
         this.startWidth = startWidth;
         this.endWidth = endWidth;
+        this.handSeed = handSeed
     }
 
     toDxfString()
@@ -12112,6 +12124,7 @@ class Polyline
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n${this.closed ? 1 : 0}\n`;
         if (this.startWidth !== 0 || this.endWidth !== 0) {
@@ -12128,22 +12141,24 @@ class Polyline
                 s += `42\n${this.points[i][2]}\n`;
             }
         }
-        
+
         s += `0\nSEQEND\n`;
         return s;
     }
 }
 
 module.exports = Polyline;
+
 },{}],29:[function(require,module,exports){
 class Polyline3d
 {
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
-    constructor(points)
+    constructor(points, handSeed)
     {
         this.points = points;
+        this.handseed = handSeed
     }
 
     toDxfString()
@@ -12151,6 +12166,7 @@ class Polyline3d
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n8\n`;
 
@@ -12161,13 +12177,14 @@ class Polyline3d
             s += `70\n0\n`;
             s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
         }
-        
+
         s += `0\nSEQEND\n`;
         return s;
     }
 }
 
 module.exports = Polyline3d;
+
 },{}],30:[function(require,module,exports){
 // Helper structure
 class Row {
@@ -12183,6 +12200,9 @@ class Row {
 module.exports = Row
 
 },{}],31:[function(require,module,exports){
+const Row = require('./Row')
+const H = require('./Helpers')
+
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
@@ -12197,7 +12217,7 @@ class Text
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed = 0)
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -12209,27 +12229,45 @@ class Text
         this.handSeed = handSeed
     }
 
+    toDxfRows () {
+      const rows = [  // Row[]
+        new Row('0', 'TEXT'),
+        new Row('5', this.handSeed.toString(16)),
+        new Row('100', 'AcDbEntity'),
+        new Row('8', this.layer.name),
+        // new Row('62', dxfColorIndex),
+        new Row('100', 'AcDbText'),
+        new Row('1', this.value),
+        new Row('40', this.height),
+        new Row('50', this.rotation), // DEG
+        // new Row('72', alignment), // Centered text
+        new Row('10', this.x1), // X
+        new Row('20', this.y1), // Y
+        new Row('30', 0), // Z
+        new Row('100', 'AcDbText'),
+      ]
+
+      if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)){
+        rows.push(new Row('11', this.x1)), // X
+        rows.push(new Row('21', this.x2)), // Y
+        rows.push(new Row('31', 0)), // Y
+        rows.push(new Row('72', Math.max(H_ALIGN_CODES.indexOf(this.hAlign),0)))
+        rows.push(new Row('73', Math.max(V_ALIGN_CODES.indexOf(this.vAlign),0)))
+      }
+
+      return rows
+    }
+
     toDxfString()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
-        let s = `0\nTEXT\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `1\n${this.value}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `40\n${this.height}\n50\n${this.rotation}\n`;
-        if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)){
-            s += `11\n${this.x1}\n21\n${this.y1}\n31\n0\n`;
-            s += `72\n${Math.max(H_ALIGN_CODES.indexOf(this.hAlign),0)}\n`;
-            s += `73\n${Math.max(V_ALIGN_CODES.indexOf(this.vAlign),0)}\n`;
-        }
-        return s;
+        const rows = this.toDxfRows()
+        return H.generateStringFromRows(rows)
     }
 }
 
 module.exports = Text;
 
-},{}],"Drawing":[function(require,module,exports){
+},{"./Helpers":23,"./Row":30}],"Drawing":[function(require,module,exports){
 const LineType = require('./LineType');
 const Layer = require('./Layer');
 const Line = require('./Line');
@@ -12241,6 +12279,7 @@ const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 const HeaderAndDefaults = require('./Header')
+const H = require('./Helpers')
 
 class Drawing
 {
@@ -12306,7 +12345,7 @@ class Drawing
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y));
+        this.activeLayer.addShape(new Point(x, y, this.handSeed++));
         return this;
     }
 
@@ -12366,7 +12405,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth, this.handSeed++));
         return this;
     }
 
@@ -12450,13 +12489,11 @@ class Drawing
         return s;
     }
 
-     /**
-      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
-      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-      *
-      * @param {string} variable
-      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
-      */
+    /**
+     *
+     * @deprecated
+     *
+     */
     header(variable, values) {
         this.headers[variable] = values;
         return this;
@@ -12489,18 +12526,10 @@ class Drawing
 
     toDxfString()
     {
-        let s = '';
+        const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
+        const headerOutputAsRowItems = this.header.generateOutput(this.layers, finalHandseedAfterAllEntitiesAreCreated)
 
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, this.handSeed)
-
-        const headerOutputAsStrings = []  // string[]
-        headerOutputAsRowItems.forEach(item => {
-          headerOutputAsStrings.push(item.type)
-          headerOutputAsStrings.push(item.value.toString())
-        })
-        s += headerOutputAsStrings.join('\n')
-
-        s += '\n'
+        let s = H.generateStringFromRows(headerOutputAsRowItems)
 
         // ToDo: Consider converting all Entity output to Row items
 
@@ -12579,4 +12608,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":21,"./Header":22,"./Layer":24,"./Line":25,"./LineType":26,"./Point":27,"./Polyline":28,"./Polyline3d":29,"./Text":31}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":21,"./Header":22,"./Helpers":23,"./Layer":24,"./Line":25,"./LineType":26,"./Point":27,"./Polyline":28,"./Polyline3d":29,"./Text":31}]},{},[]);

@@ -1,6 +1,6 @@
 class Face
 {
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -14,12 +14,14 @@ class Face
         this.x4 = x4;
         this.y4 = y4;
         this.z4 = z4;
+        this.handSeed = handSeed
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
         let s = `0\n3DFACE\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;

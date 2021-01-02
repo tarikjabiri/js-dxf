@@ -5,11 +5,12 @@ class Circle
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    constructor(x1, y1, r)
+    constructor(x1, y1, r, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
+        this.handSeed = handSeed
     }
 
     toDxfString()

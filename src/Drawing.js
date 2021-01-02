@@ -9,6 +9,7 @@ const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 const HeaderAndDefaults = require('./Header')
+const H = require('./Helpers')
 
 class Drawing
 {
@@ -74,7 +75,7 @@ class Drawing
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y));
+        this.activeLayer.addShape(new Point(x, y, this.handSeed++));
         return this;
     }
 
@@ -134,7 +135,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth, this.handSeed++));
         return this;
     }
 
@@ -218,13 +219,11 @@ class Drawing
         return s;
     }
 
-     /**
-      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
-      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-      *
-      * @param {string} variable
-      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
-      */
+    /**
+     *
+     * @deprecated
+     *
+     */
     header(variable, values) {
         this.headers[variable] = values;
         return this;
@@ -257,18 +256,10 @@ class Drawing
 
     toDxfString()
     {
-        let s = '';
+        const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
+        const headerOutputAsRowItems = this.header.generateOutput(this.layers, finalHandseedAfterAllEntitiesAreCreated)
 
-        const headerOutputAsRowItems = this.header.generateOutput(this.layers, this.handSeed)
-
-        const headerOutputAsStrings = []  // string[]
-        headerOutputAsRowItems.forEach(item => {
-          headerOutputAsStrings.push(item.type)
-          headerOutputAsStrings.push(item.value.toString())
-        })
-        s += headerOutputAsStrings.join('\n')
-
-        s += '\n'
+        let s = H.generateStringFromRows(headerOutputAsRowItems)
 
         // ToDo: Consider converting all Entity output to Row items
 
