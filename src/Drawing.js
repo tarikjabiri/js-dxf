@@ -34,15 +34,9 @@ class Drawing
 
 
     /**
-     * @param {string} name
-     * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
+     * @deprecated
      */
-    addLineType(name, description, elements)
-    {
-        this.lineTypes[name] = new LineType(name, description, elements);
-        return this;
-    }
+    addLineType(name, description, elements) { }
 
     addLayer(name, colorNumber, lineTypeName)
     {
@@ -70,10 +64,10 @@ class Drawing
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
         return this;
     }
 
@@ -86,7 +80,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle, this.handSeed++));
         return this;
     }
 
@@ -97,7 +91,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(new Circle(x1, y1, r, this.handSeed++));
         return this;
     }
 
@@ -138,7 +132,7 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points));
+        this.activeLayer.addShape(new Polyline3d(points, this.handSeed++));
         return this;
     }
 
@@ -168,7 +162,7 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, this.handSeed++));
         return this;
     }
 

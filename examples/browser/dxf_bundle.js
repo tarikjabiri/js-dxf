@@ -891,7 +891,10 @@ class Circle
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
         let s = `0\nCIRCLE\n`;
+        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `100\nAcDbEntity\n`;
         s += `8\n${this.layer.name}\n`;
+        s += `100\nAcDbCircle\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n`;
         return s;
@@ -12300,15 +12303,9 @@ class Drawing
 
 
     /**
-     * @param {string} name
-     * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
+     * @deprecated
      */
-    addLineType(name, description, elements)
-    {
-        this.lineTypes[name] = new LineType(name, description, elements);
-        return this;
-    }
+    addLineType(name, description, elements) { }
 
     addLayer(name, colorNumber, lineTypeName)
     {
@@ -12336,10 +12333,10 @@ class Drawing
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
         return this;
     }
 
@@ -12352,7 +12349,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle, this.handSeed++));
         return this;
     }
 
@@ -12363,7 +12360,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(new Circle(x1, y1, r, this.handSeed++));
         return this;
     }
 
@@ -12404,7 +12401,7 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points));
+        this.activeLayer.addShape(new Polyline3d(points, this.handSeed++));
         return this;
     }
 
@@ -12434,7 +12431,7 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, this.handSeed++));
         return this;
     }
 
