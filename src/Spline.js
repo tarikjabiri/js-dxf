@@ -23,14 +23,14 @@ class Spline
             // degree 3, 5 pts:  0 0 0 0 1 2 2 2 2
 
             knots = [];
-            for (let i = 0; i < degree - 1; i++) {
+            for (let i = 0; i < degree + 1; i++) {
                 knots.push(0);
             }
-            for (let i = 0; i < controlPoints.length - degree - 1; i++) {
+            for (let i = 1; i < controlPoints.length - degree; i++) {
                 knots.push(i);
             }
-            for (let i = 0; i < degree - 1; i++) {
-                knots.push(controlPoints.length - degree - 2);
+            for (let i = 0; i < degree + 1; i++) {
+                knots.push(controlPoints.length - degree);
             }
         }
 
