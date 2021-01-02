@@ -9,6 +9,7 @@ const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 const Spline = require('./Spline')
+const Ellipse = require('./Ellipse');
 
 class Drawing
 {
@@ -158,19 +159,32 @@ class Drawing
         return this;
     }
 
-    drawSplineFromControlPoints(points) {
-      const knots = [0,0,0,1,1,1]
-      const degree = 2
+    /**
+     * Draw a spline.
+     * @param {[Array]} controlPoints - Array of control points like [ [x1, y1], [x2, y2]... ]
+     * @param {number} degree - Degree of spline: 2 for quadratic, 3 for cubic. Default is 3
+     * @param {[number]} knots - Knot vector array. If null, will use a uniform knot vector. Default is null
+     * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
+     * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
+     */
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = []) {
+        this.activeLayer.addShape(new Spline(controlPoints, degree, knots, weights, fitPoints));
+        return this;
+    }
 
-      // ToDo: Calculate knots and degree automatic
-      const closed = 0
-      const periodic = 0
-      const rational = 1
-      const planar = 1
-      const linear = 0
-      const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
-      this.activeLayer.addShape(new Spline(splineType, degree, points, knots, []))
-
+    /**
+     * Draw an ellipse.
+    * @param {number} x1 - Center x
+    * @param {number} y1 - Center y
+    * @param {number} majorAxisX - Endpoint x of major axis, relative to center
+    * @param {number} majorAxisY - Endpoint y of major axis, relative to center
+    * @param {number} axisRatio - Ratio of minor axis to major axis
+    * @param {number} startAngle - Start angle
+    * @param {number} endAngle - End angle
+    */
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI) {
+        this.activeLayer.addShape(new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle));
+        return this;
     }
 
     /**
