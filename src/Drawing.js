@@ -46,7 +46,7 @@ class Drawing
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName, this.handSeed++);
         return this;
     }
 
@@ -241,8 +241,8 @@ class Drawing
 
     toDxfString()
     {
-        const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
-        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreCreated)
+        const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
 
         let s = H.generateStringFromRows(headerOutputAsRowItems)
 

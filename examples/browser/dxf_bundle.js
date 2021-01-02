@@ -11256,7 +11256,7 @@ function generateVportTable () {
 
   return output
 }
-function generateLayerTable (_layers, seedCounter) {
+function generateLayerTable (_layers) {
   const output = [] // Row[]
 
   const layerNames = Object.keys(_layers)
@@ -11267,7 +11267,7 @@ function generateLayerTable (_layers, seedCounter) {
 
   const layer0missing = layerNames.filter(layerName => layerName === '0').length === 0
   if (layer0missing) {
-    layers['0'] = new Layer('0',7, 'CONTINUOUS') //ToDo:Connect to constants
+    layers['0'] = new Layer('0',7, 'CONTINUOUS') //ToDo:Connect to constants?
   }
 
   const sortedLayers = [
@@ -11284,7 +11284,7 @@ function generateLayerTable (_layers, seedCounter) {
 
   sortedLayers.forEach(layerName => {
     const layer = _layers[layerName]
-    const rows = layer.toDxfRows(seedCounter++)
+    const rows = layer.toDxfRows()
     output.push(...rows)
   })
   output.push(new Row('0', 'ENDTAB'))
@@ -11897,18 +11897,19 @@ const Row = require('./Row')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName)  // ToDo: Move handseed to constructor
+    constructor(name, colorNumber, lineTypeName, handSeed)
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
         this.trueColor = -1
+        this.handSeed = handSeed
     }
 
-    toDxfString(handSeed)
+    toDxfString()
     {
-        const rows = this.toDxfRows(handSeed)
+        const rows = this.toDxfRows()
         const outputAsStrings = []  // string[]
         rows.forEach(item => {
           outputAsStrings.push(item.type)
@@ -11920,10 +11921,10 @@ class Layer
         return s;
     }
 
-    toDxfRows (handSeed) {  // ToDo: Merge with toDxfString?
+    toDxfRows () {  // ToDo: Merge with toDxfString?
       const output = [
         new Row('0', 'LAYER'),
-        new Row('5', handSeed.toString(16)),
+        new Row('5', this.handSeed.toString(16)),
         new Row('330', '3B'),
         new Row('100', 'AcDbSymbolTableRecord'),
         new Row('100', 'AcDbLayerTableRecord'),
@@ -12236,7 +12237,6 @@ class Text
         new Row('1', this.value),
         new Row('40', this.height),
         new Row('50', this.rotation), // DEG
-        // new Row('72', alignment), // Centered text
         new Row('10', this.x1), // X
         new Row('20', this.y1), // Y
         new Row('30', 0), // Z
@@ -12312,7 +12312,7 @@ class Drawing
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName, this.handSeed++);
         return this;
     }
 
@@ -12507,8 +12507,8 @@ class Drawing
 
     toDxfString()
     {
-        const finalHandseedAfterAllEntitiesAreCreated = this.handSeed
-        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreCreated)
+        const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
 
         let s = H.generateStringFromRows(headerOutputAsRowItems)
 

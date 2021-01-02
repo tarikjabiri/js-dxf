@@ -38,7 +38,6 @@ class Text
         new Row('1', this.value),
         new Row('40', this.height),
         new Row('50', this.rotation), // DEG
-        // new Row('72', alignment), // Centered text
         new Row('10', this.x1), // X
         new Row('20', this.y1), // Y
         new Row('30', 0), // Z

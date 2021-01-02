@@ -2,18 +2,19 @@ const Row = require('./Row')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName)  // ToDo: Move handseed to constructor
+    constructor(name, colorNumber, lineTypeName, handSeed)
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
         this.trueColor = -1
+        this.handSeed = handSeed
     }
 
-    toDxfString(handSeed)
+    toDxfString()
     {
-        const rows = this.toDxfRows(handSeed)
+        const rows = this.toDxfRows()
         const outputAsStrings = []  // string[]
         rows.forEach(item => {
           outputAsStrings.push(item.type)
@@ -25,10 +26,10 @@ class Layer
         return s;
     }
 
-    toDxfRows (handSeed) {  // ToDo: Merge with toDxfString?
+    toDxfRows () {  // ToDo: Merge with toDxfString?
       const output = [
         new Row('0', 'LAYER'),
-        new Row('5', handSeed.toString(16)),
+        new Row('5', this.handSeed.toString(16)),
         new Row('330', '3B'),
         new Row('100', 'AcDbSymbolTableRecord'),
         new Row('100', 'AcDbLayerTableRecord'),
