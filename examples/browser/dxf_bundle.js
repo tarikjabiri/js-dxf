@@ -11548,7 +11548,7 @@ function generateDefaultTables (layers, _handSeed) {
 
 module.exports = generateDefaultTables
 
-},{"./Layer":23,"./Row":29}],21:[function(require,module,exports){
+},{"./Layer":24,"./Row":30}],21:[function(require,module,exports){
 class Face
 {
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
@@ -11871,7 +11871,24 @@ function generateJulianDate () {
 
 module.exports = HeaderAndDefaults
 
-},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":29,"uuid":1}],23:[function(require,module,exports){
+},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":30,"uuid":1}],23:[function(require,module,exports){
+// const Row = require('./Row')
+
+function generateStringFromRows (rows) {  // Row[]
+  const outputAsStrings = []  // string[]
+  rows.forEach(item => {
+    outputAsStrings.push(item.type)
+    outputAsStrings.push(item.value.toString())
+  })
+  const s = outputAsStrings.join('\n') + '\n'
+  return s
+}
+
+module.exports = {
+  generateStringFromRows
+}
+
+},{}],24:[function(require,module,exports){
 const Row = require('./Row')
 
 class Layer
@@ -11882,7 +11899,7 @@ class Layer
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
-        this.trueColor = -1;
+        this.trueColor = 16777215;
     }
 
     toDxfString(handSeed) // ToDo: Include handSeed
@@ -11909,13 +11926,21 @@ class Layer
         new Row('2', this.name),
         new Row('70', 0),
         new Row('62', this.colorNumber),
-        new Row('420', this.trueColor),
+      ]
+
+      if (this.trueColor !== -1) {
+        output.push(new Row('420', this.trueColor))
+
+      }
+
+      output.push(...[
         new Row('6', this.lineTypeName),
         new Row('370', 0),
         new Row('390', 47),
         new Row('347', '7D'),
         new Row('348', 0),
-      ]
+      ] )
+
       return output
     }
 
@@ -11928,7 +11953,7 @@ class Layer
     addShape(shape)
     {
         this.shapes.push(shape);
-        shape.layer = this;
+        shape.layer = this;       // ToDo: Wont work in typescript. Extend Entities with shape.setLayer() method instead
     }
 
     getShapes()
@@ -11951,30 +11976,52 @@ class Layer
 
 module.exports = Layer;
 
-},{"./Row":29}],24:[function(require,module,exports){
+},{"./Row":30}],25:[function(require,module,exports){
+const Row = require('./Row')
+const H = require('./Helpers')
+
 class Line
 {
-    constructor(x1, y1, x2, y2)
+    constructor(x1, y1, x2, y2, handSeed)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
+
+        this.handSeed = handSeed
+    }
+
+    toDxfRow () {
+      const output = [  // Row[]
+        new Row('0', 'LINE'),
+        new Row('5', this.handSeed.toString(16)),
+        new Row('100', 'AcDbEntity'),
+        new Row('8', this.layer.name),
+        new Row('100', 'AcDbLine'),
+        // new Row('62', colorIndex),
+        new Row('10', this.x1),
+        new Row('20', this.y1),
+        new Row('30', 0),
+        new Row('11', this.x2),
+        new Row('21', this.y2),
+        new Row('31', 0),
+      ]
+
+      return output
+
     }
 
     toDxfString()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        let s = `0\nLINE\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `11\n${this.x2}\n21\n${this.y2}\n31\n0\n`;
-        return s;
+        const rows = this.toDxfRow()
+        return H.generateStringFromRows(rows)
     }
 }
 
 module.exports = Line;
-},{}],25:[function(require,module,exports){
+
+},{"./Helpers":23,"./Row":30}],26:[function(require,module,exports){
 class LineType
 {
     /**
@@ -12023,7 +12070,7 @@ class LineType
 }
 
 module.exports = LineType;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 class Point
 {
     constructor(x, y)
@@ -12043,7 +12090,7 @@ class Point
 }
 
 module.exports = Point;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 class Polyline
 {
     /**
@@ -12088,7 +12135,7 @@ class Polyline
 }
 
 module.exports = Polyline;
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 class Polyline3d
 {
     /**
@@ -12121,7 +12168,7 @@ class Polyline3d
 }
 
 module.exports = Polyline3d;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // Helper structure
 class Row {
   type
@@ -12135,7 +12182,7 @@ class Row {
 
 module.exports = Row
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
@@ -12253,7 +12300,7 @@ class Drawing
 
     drawLine(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2, this.handSeed++));
         return this;
     }
 
@@ -12532,4 +12579,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":21,"./Header":22,"./Layer":23,"./Line":24,"./LineType":25,"./Point":26,"./Polyline":27,"./Polyline3d":28,"./Text":30}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":21,"./Header":22,"./Layer":24,"./Line":25,"./LineType":26,"./Point":27,"./Polyline":28,"./Polyline3d":29,"./Text":31}]},{},[]);
