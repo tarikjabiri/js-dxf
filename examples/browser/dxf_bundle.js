@@ -57,6 +57,46 @@ class Circle
 
 module.exports = Circle;
 },{}],3:[function(require,module,exports){
+class Ellipse {
+    /**
+     * Creates an ellipse.
+     * @param {number} x1 - Center x
+     * @param {number} y1 - Center y
+     * @param {number} majorAxisX - Endpoint x of major axis, relative to center
+     * @param {number} majorAxisY - Endpoint y of major axis, relative to center
+     * @param {number} axisRatio - Ratio of minor axis to major axis
+     * @param {number} startAngle - Start angle
+     * @param {number} endAngle - End angle
+     */
+    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.majorAxisX = majorAxisX;
+        this.majorAxisY = majorAxisY;
+        this.axisRatio = axisRatio;
+        this.startAngle = startAngle;
+        this.endAngle = endAngle;
+    }
+
+    toDxfString() {
+        // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
+        let s = `0\nELLIPSE\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `10\n${this.x1}\n`;
+        s += `20\n${this.y1}\n`;
+        s += `30\n0\n`;
+        s += `11\n${this.majorAxisX}\n`;
+        s += `21\n${this.majorAxisY}\n`;
+        s += `31\n0\n`;
+        s += `40\n${this.axisRatio}\n`;
+        s += `41\n${this.startAngle}\n`;
+        s += `42\n${this.endAngle}\n`;
+        return s;
+    }
+}
+
+module.exports = Ellipse;
+},{}],4:[function(require,module,exports){
 class Face
 {
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
@@ -89,7 +129,7 @@ class Face
 }
 
 module.exports = Face;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 class Layer
 {
     constructor(name, colorNumber, lineTypeName)
@@ -148,7 +188,7 @@ class Layer
 }
 
 module.exports = Layer;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 class Line
 {
     constructor(x1, y1, x2, y2)
@@ -171,7 +211,7 @@ class Line
 }
 
 module.exports = Line;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 class LineType
 {
     /**
@@ -220,7 +260,7 @@ class LineType
 }
 
 module.exports = LineType;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 class Point
 {
     constructor(x, y)
@@ -240,7 +280,7 @@ class Point
 }
 
 module.exports = Point;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 class Polyline
 {
     /**
@@ -285,7 +325,7 @@ class Polyline
 }
 
 module.exports = Polyline;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 class Polyline3d
 {
     /**
@@ -318,20 +358,67 @@ class Polyline3d
 }
 
 module.exports = Polyline3d;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 class Spline
 {
     /**
-     * @param {array} controlPoints - Array of points like [ [x1, y1], [x2, y2]... ]
+     * Creates a spline. See https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
+     * @param {[Array]} controlPoints - Array of control points like [ [x1, y1], [x2, y2]... ]
+     * @param {number} degree - Degree of spline: 2 for quadratic, 3 for cubic. Default is 3
+     * @param {[number]} knots - Knot vector array. If null, will use a uniform knot vector. Default is null
+     * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
+     * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    constructor(type, degree, controlPoints, knots, fitPoints)
+    constructor(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
     {
-        this.controlPoints = controlPoints
-        this.knots = knots
-        this.fitPoints = fitPoints
-        this.type = type
-        this.degree = degree
+        if (controlPoints.length < degree + 1) {
+            throw new Error(`For degree ${degree} spline, expected at least ${degree + 1} control points, but received only ${controlPoints.length}`);
+        }
 
+        if (knots == null) {
+            // Examples:
+            // degree 2, 3 pts:  0 0 0 1 1 1
+            // degree 2, 4 pts:  0 0 0 1 2 2 2
+            // degree 2, 5 pts:  0 0 0 1 2 3 3 3
+            // degree 3, 4 pts:  0 0 0 0 1 1 1 1
+            // degree 3, 5 pts:  0 0 0 0 1 2 2 2 2
+
+            knots = [];
+            for (let i = 0; i < degree + 1; i++) {
+                knots.push(0);
+            }
+            for (let i = 1; i < controlPoints.length - degree; i++) {
+                knots.push(i);
+            }
+            for (let i = 0; i < degree + 1; i++) {
+                knots.push(controlPoints.length - degree);
+            }
+        }
+
+        if (knots.length !== controlPoints.length + degree + 1) {
+            throw new Error(`Invalid knot vector length. Expected ${controlPoints.length + degree + 1} but received ${knots.length}.`);
+        }
+
+        this.controlPoints = controlPoints;
+        this.knots = knots;
+        this.fitPoints = fitPoints;
+        this.degree = degree;
+        this.weights = weights;
+
+        const closed = 0;
+        const periodic = 0;
+        const rational = this.weights ? 1 : 0;
+        const planar = 1;
+        const linear = 0;
+
+        this.type =
+            closed * 1 +
+            periodic * 2 +
+            rational * 4 +
+            planar * 8 +
+            linear * 16;
+
+        // Not certain where the values of these flags came from so I'm going to leave them commented for now
         // const closed = 0
         // const periodic = 0
         // const rational = 1
@@ -339,37 +426,38 @@ class Spline
         // const linear = 0
         // const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
 
-
-
     }
 
-    toDxfString()
-    {
-      // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
-        let s = `0\nSPLINE\n`
-        s += `8\n${this.layer.name}\n`
-        s += `100\nAcDbSpline\n`
-        s += `210\n0.0\n220\n0.0\n230\n1.0\n`
+    toDxfString() {
+        // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
+        let s = `0\nSPLINE\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `100\nAcDbSpline\n`;
+        s += `210\n0.0\n220\n0.0\n230\n1.0\n`;
 
-        s+= `70\n${this.type}\n`
-        s+= `71\n${this.degree}\n`
-        s+= `72\n${this.knots.length}\n`
-        s+= `73\n${this.controlPoints.length}\n`
-        s+= `74\n${this.fitPoints.length}\n`
-        s+= `42\n1e-6\n`
-        s+= `43\n1e-6\n`
+        s += `70\n${this.type}\n`;
+        s += `71\n${this.degree}\n`;
+        s += `72\n${this.knots.length}\n`;
+        s += `73\n${this.controlPoints.length}\n`;
+        s += `74\n${this.fitPoints.length}\n`;
+        s += `42\n1e-7\n`;
+        s += `43\n1e-7\n`;
+        s += `44\n1e-10\n`;
 
-        for (let i = 0; i < this.knots.length; ++i)
-        {
-            s += `40\n${this.knots[i]}\n`
+        for (let i = 0; i < this.knots.length; ++i) {
+            s += `40\n${this.knots[i]}\n`;
         }
 
+        if (this.weights) {
+            for (let i = 0; i < this.knots.length; ++i) {
+                s += `41\n${this.weights[i]}\n`;
+            }
+        }
 
-        for (let i = 0; i < this.controlPoints.length; ++i)
-        {
-            s += `10\n${this.controlPoints[i][0]}\n`
-            s += `20\n${this.controlPoints[i][1]}\n`
-            s += `30\n0\n`
+        for (let i = 0; i < this.controlPoints.length; ++i) {
+            s += `10\n${this.controlPoints[i][0]}\n`;
+            s += `20\n${this.controlPoints[i][1]}\n`;
+            s += `30\n0\n`;
         }
 
         return s;
@@ -378,7 +466,7 @@ class Spline
 
 module.exports = Spline
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
 
@@ -434,6 +522,7 @@ const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
 const Spline = require('./Spline')
+const Ellipse = require('./Ellipse');
 
 class Drawing
 {
@@ -583,19 +672,32 @@ class Drawing
         return this;
     }
 
-    drawSplineFromControlPoints(points) {
-      const knots = [0,0,0,1,1,1]
-      const degree = 2
+    /**
+     * Draw a spline.
+     * @param {[Array]} controlPoints - Array of control points like [ [x1, y1], [x2, y2]... ]
+     * @param {number} degree - Degree of spline: 2 for quadratic, 3 for cubic. Default is 3
+     * @param {[number]} knots - Knot vector array. If null, will use a uniform knot vector. Default is null
+     * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
+     * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
+     */
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = []) {
+        this.activeLayer.addShape(new Spline(controlPoints, degree, knots, weights, fitPoints));
+        return this;
+    }
 
-      // ToDo: Calculate knots and degree automatic
-      const closed = 0
-      const periodic = 0
-      const rational = 1
-      const planar = 1
-      const linear = 0
-      const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
-      this.activeLayer.addShape(new Spline(splineType, degree, points, knots, []))
-
+    /**
+     * Draw an ellipse.
+    * @param {number} x1 - Center x
+    * @param {number} y1 - Center y
+    * @param {number} majorAxisX - Endpoint x of major axis, relative to center
+    * @param {number} majorAxisY - Endpoint y of major axis, relative to center
+    * @param {number} axisRatio - Ratio of minor axis to major axis
+    * @param {number} startAngle - Start angle
+    * @param {number} endAngle - End angle
+    */
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI) {
+        this.activeLayer.addShape(new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle));
+        return this;
     }
 
     /**
@@ -784,4 +886,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":1,"./Circle":2,"./Face":3,"./Layer":4,"./Line":5,"./LineType":6,"./Point":7,"./Polyline":8,"./Polyline3d":9,"./Spline":10,"./Text":11}]},{},[]);
+},{"./Arc":1,"./Circle":2,"./Ellipse":3,"./Face":4,"./Layer":5,"./Line":6,"./LineType":7,"./Point":8,"./Polyline":9,"./Polyline3d":10,"./Spline":11,"./Text":12}]},{},[]);
