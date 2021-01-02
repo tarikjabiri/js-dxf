@@ -1,4 +1,3 @@
-const LineType = require('./LineType');
 const Layer = require('./Layer');
 const Line = require('./Line');
 const Arc = require('./Arc');
@@ -17,12 +16,6 @@ class Drawing
     {
         this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
-<<<<<<< HEAD
-        this.lineTypes = {};
-        this.headers = {};
-=======
-
->>>>>>> 6c302854eb889d8a2edb0b4ab41d17e7713892b4
         this.handSeed = 0x11F
 
         this.unit = Drawing.UNITS.Unitless
@@ -240,21 +233,18 @@ class Drawing
 
     toDxfString()
     {
-<<<<<<< HEAD
-        let s = '';
+        // let s = '';
 
-        const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
+        // const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
 
-        const headerOutputAsStrings = []  // string[]
-        headerOutputAsRowItems.forEach(item => {
-          headerOutputAsStrings.push(item.type)
-          headerOutputAsStrings.push(item.value.toString())
-        })
-        s += headerOutputAsStrings.join('\n')
-=======
+        // const headerOutputAsStrings = []  // string[]
+        // headerOutputAsRowItems.forEach(item => {
+        //   headerOutputAsStrings.push(item.type)
+        //   headerOutputAsStrings.push(item.value.toString())
+        // })
+        // s += headerOutputAsStrings.join('\n')
         const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
         const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
->>>>>>> 6c302854eb889d8a2edb0b4ab41d17e7713892b4
 
         let s = H.generateStringFromRows(headerOutputAsRowItems)
 
