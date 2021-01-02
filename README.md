@@ -39,10 +39,12 @@ Example preview in the LibreCAD:
 ## Supported entities: 
  - arc 
  - circle
+ - ellipse
  - line
  - point
  - polyline 
  - polyline 3D 
+ - spline
  - text
  - 3DFace
  
