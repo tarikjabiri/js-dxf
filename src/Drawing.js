@@ -8,26 +8,24 @@ const Polyline = require('./Polyline');
 const Polyline3d = require('./Polyline3d');
 const Face = require('./Face');
 const Point = require('./Point');
-const HeaderAndDefaults = require('./Header')
+const HEADER = require('./Header')
+const H = require('./Helpers')
 
 class Drawing
 {
     constructor()
     {
-        this.layers = {};
+        this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
+<<<<<<< HEAD
         this.lineTypes = {};
         this.headers = {};
+=======
+
+>>>>>>> 6c302854eb889d8a2edb0b4ab41d17e7713892b4
         this.handSeed = 0x11F
 
-        // this.setUnits('Unitless');   // ToDO: Set default to mm instead, or add optional argument?
-
-        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
-        {
-            this.addLineType(Drawing.LINE_TYPES[i].name,
-                             Drawing.LINE_TYPES[i].description,
-                             Drawing.LINE_TYPES[i].elements);
-        }
+        this.unit = Drawing.UNITS.Unitless
 
         for (let i = 0; i < Drawing.LAYERS.length; ++i)
         {
@@ -41,19 +39,13 @@ class Drawing
 
 
     /**
-     * @param {string} name
-     * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
+     * @deprecated
      */
-    addLineType(name, description, elements)
-    {
-        this.lineTypes[name] = new LineType(name, description, elements);
-        return this;
-    }
+    addLineType(name, description, elements) { }
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName, this.handSeed++);
         return this;
     }
 
@@ -65,22 +57,22 @@ class Drawing
 
     drawLine(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2, this.handSeed++));
         return this;
     }
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y));
+        this.activeLayer.addShape(new Point(x, y, this.handSeed++));
         return this;
     }
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
         return this;
     }
 
@@ -93,7 +85,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle, this.handSeed++));
         return this;
     }
 
@@ -104,7 +96,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(new Circle(x1, y1, r, this.handSeed++));
         return this;
     }
 
@@ -131,7 +123,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth, this.handSeed++));
         return this;
     }
 
@@ -145,7 +137,7 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points));
+        this.activeLayer.addShape(new Polyline3d(points, this.handSeed++));
         return this;
     }
 
@@ -175,7 +167,7 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, this.handSeed++));
         return this;
     }
 
@@ -184,17 +176,17 @@ class Drawing
      */
     _getDxfLtypeTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLTYPE\n';    //name table as LTYPE table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLTYPE\n';    //name table as LTYPE table
 
-        for (let lineTypeName in this.lineTypes)
-        {
-            s += this.lineTypes[lineTypeName].toDxfString();
-        }
+        // for (let lineTypeName in this.lineTypes)
+        // {
+        //     s += this.lineTypes[lineTypeName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n'; //end table
+        // s += '0\nENDTAB\n'; //end table
 
-        return s;
+        // return s;
     }
 
     /**
@@ -202,29 +194,26 @@ class Drawing
      */
     _getDxfLayerTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLAYER\n'; //name table as LAYER table
+        // let s = '0\nTABLE\n'; //start table
+        // s += '2\nLAYER\n'; //name table as LAYER table
 
-        for (let layerName in this.layers)
-        {
-            s += this.layers[layerName].toDxfString();
-        }
+        // for (let layerName in this.layers)
+        // {
+        //     s += this.layers[layerName].toDxfString();
+        // }
 
-        s += '0\nENDTAB\n';
+        // s += '0\nENDTAB\n';
 
-        return s;
+        // return s;
     }
 
-     /**
-      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
-      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-      *
-      * @param {string} variable
-      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
-      */
+    /**
+     * Auto generated
+     * @deprecated
+     */
     header(variable, values) {
-        this.headers[variable] = values;
-        return this;
+        // this.headers[variable] = values;
+        // return this;
     }
 
     /**
@@ -232,13 +221,13 @@ class Drawing
      * @deprecated
      */
     _getHeader(variable, values){
-        let s = '9\n$'+ variable +'\n';
+        // let s = '9\n$'+ variable +'\n';
 
-        for (let value of values) {
-            s += `${value[0]}\n${value[1]}\n`;
-        }
+        // for (let value of values) {
+        //     s += `${value[0]}\n${value[1]}\n`;
+        // }
 
-        return s;
+        // return s;
     }
 
     /**
@@ -246,14 +235,12 @@ class Drawing
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        this.header.setUnit(Drawing.UNITS[unit])
-        // let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
-        // this.header('INSUNITS', [[70, ]]);
-        return this;
+        this.unit = Drawing.UNITS[unit]
     }
 
     toDxfString()
     {
+<<<<<<< HEAD
         let s = '';
 
         const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
@@ -264,8 +251,12 @@ class Drawing
           headerOutputAsStrings.push(item.value.toString())
         })
         s += headerOutputAsStrings.join('\n')
+=======
+        const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
+>>>>>>> 6c302854eb889d8a2edb0b4ab41d17e7713892b4
 
-        s += '\n'
+        let s = H.generateStringFromRows(headerOutputAsRowItems)
 
         // ToDo: Consider converting all Entity output to Row items
 

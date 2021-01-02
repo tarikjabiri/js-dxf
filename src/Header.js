@@ -5,17 +5,9 @@ const Row = require('./Row')
 const UUID = require('uuid')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-class HeaderAndDefaults {
-  unit
-  constructor () {
-    this.unit = 4 // 4 = mm
-  }
 
-  setUnit (value) {
-    this.unit = value
-  }
 
-  generateOutput (layers, handSeed) {
+function generateHeaderAndDefaults (layers, unit, handSeed) {
 
     const output = [] // Row[]
 
@@ -25,8 +17,8 @@ class HeaderAndDefaults {
     output.push(new Row('2', 'HEADER'))
 
     const defaultTableResult = generateDefaultTables(layers, handSeed)
-
-    const parametersToOutput = generateMinimalHeader()
+    const finalHandseed = defaultTableResult.handSeed
+    const parametersToOutput = generateMinimalHeader(unit, finalHandseed, 'DXF Project')
 
     parametersToOutput.forEach(parameter => {
       output.push(new Row('9', parameter.id))
@@ -53,7 +45,7 @@ class HeaderAndDefaults {
 
     return output
   }
-}
+
 
 class HeaderParameter {
   id
@@ -64,7 +56,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader () { // ToDo: Add unit
+function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -168,7 +160,9 @@ function generateMinimalHeader () { // ToDo: Add unit
   parameters.push(new HeaderParameter('$HYPERLINKBASE', [new Row('1', '')]))
   parameters.push(new HeaderParameter('$INDEXCTL', [new Row('280', '0')]))
   parameters.push(new HeaderParameter('$INSBASE', [new Row('10', '0'), new Row('20', '0'), new Row('30', '0')]))
-  parameters.push(new HeaderParameter('$INSUNITS', [new Row('70', '4')]))  // 4 = mm, 1 = inches
+
+  parameters.push(new HeaderParameter('$INSUNITS', [new Row('70', unit)]))  // 4 = mm, 1 = inches
+
   parameters.push(new HeaderParameter('$INTERFERECOLOR', [new Row('62', '1')]))
   parameters.push(new HeaderParameter('$INTERSECTIONCOLOR', [new Row('70', '257')]))
   parameters.push(new HeaderParameter('$INTERSECTIONDISPLAY', [new Row('280', '0')])) // diff towards spec, 290 cause error in autodesk
@@ -266,8 +260,8 @@ function generateMinimalHeader () { // ToDo: Add unit
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
 
 
-  // parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
-  // parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
+  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
 }
@@ -285,4 +279,6 @@ function generateJulianDate () {
   return new Date().getTime() / 86400000 + 2440587.5
 }
 
-module.exports = HeaderAndDefaults
+module.exports = {
+  generateHeaderAndDefaults
+}

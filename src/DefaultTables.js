@@ -79,7 +79,7 @@ function generateVportTable () {
 
   return output
 }
-function generateLayerTable (_layers, seedCounter) {
+function generateLayerTable (_layers) {
   const output = [] // Row[]
 
   const layerNames = Object.keys(_layers)
@@ -90,7 +90,7 @@ function generateLayerTable (_layers, seedCounter) {
 
   const layer0missing = layerNames.filter(layerName => layerName === '0').length === 0
   if (layer0missing) {
-    layers['0'] = new Layer('0',7, 'CONTINUOUS') //ToDo:Connect to constants
+    layers['0'] = new Layer('0',7, 'CONTINUOUS') //ToDo:Connect to constants?
   }
 
   const sortedLayers = [
@@ -107,7 +107,7 @@ function generateLayerTable (_layers, seedCounter) {
 
   sortedLayers.forEach(layerName => {
     const layer = _layers[layerName]
-    const rows = layer.toDxfRows(seedCounter++)
+    const rows = layer.toDxfRows()
     output.push(...rows)
   })
   output.push(new Row('0', 'ENDTAB'))
