@@ -1,5 +1,9 @@
 const Layer = require('./Layer')
 const Row = require('./Row')
+const Drawing = require('./Drawing')
+const LineType = require('./LineType');
+const H = require('./Helpers')
+const handleSeed = require('./handleSeed.js')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9
 function generateVportTable () {
@@ -209,21 +213,21 @@ function generateBlockRecordTable () {
   return output
 }
 
-function generateLtypeTable (_handSeed) {
-  let handSeed = _handSeed
+function generateLtypeTable () {
+
 
   const output = []
 
   output.push(new Row('0', 'TABLE'))
   output.push(new Row('2', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '0'))
   output.push(new Row('100', 'AcDbSymbolTable'))
   output.push(new Row('70', '48'))
-  handSeed++
+  
   // By Block
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -233,10 +237,10 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
    // By Layer
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -246,11 +250,11 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
 
   // Continous lines
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -260,29 +264,64 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
+
+  /*
+
+0
+LTYPE
+72
+65
+70
+64
+2
+DASHED
+3
+_ _ _ 
+
+73
+2
+40
+10
+49
+5
+49
+-5
+*/
+  // Dashed lines
+  output.push(new Row('0', 'LTYPE'))
+  output.push(new Row('5', handleSeed()))
+  output.push(new Row('330', '3D'))
+  output.push(new Row('100', 'AcDbSymbolTableRecord'))
+  output.push(new Row('100', 'AcDbLinetypeTableRecord'))
+  output.push(new Row('2', 'Dashed'))
+  output.push(new Row('70', '0'))
+  output.push(new Row('3', '_ _ _ '))
+  output.push(new Row('73', '2'))
+  output.push(new Row('40', '10'))
+  output.push(new Row('49', '5'))
+  output.push(new Row('49', '-5'))
+  
 
   output.push(new Row('0', 'ENDTAB'))
 
   return {
     rows: output,
-    handSeed,
+    
   }
 }
 
-function generateDimStyleTable (_handSeed) {
-
-  let handSeed = _handSeed
+function generateDimStyleTable () {
 
   const rows = []
   rows.push(new Row('0', 'TABLE'))
   rows.push(new Row('2', 'DIMSTYLE'))
-  rows.push(new Row('5', handSeed.toString(16)))       // ToDO: Add handseed
+  rows.push(new Row('5', handleSeed()))       // ToDO: Add handseed
   rows.push(new Row('330', '0'))
   rows.push(new Row('100', 'AcDbSymbolTable'))
   rows.push(new Row('70', '2'))
   rows.push(new Row('100', 'AcDbDimStyleTable'))
-  handSeed++
+  
 
   rows.push(new Row('0', 'DIMSTYLE'))
   rows.push(new Row('105', '5E'))
@@ -296,13 +335,11 @@ function generateDimStyleTable (_handSeed) {
   rows.push(new Row('0', 'ENDTAB'))
   return {
     rows,
-    handSeed,
+    
   }
 }
 
-function generateAppIdTable (_handSeed) {
-
-  let handSeed = _handSeed
+function generateAppIdTable () {
 
   const appName = 'Online Exporter'     // ToDo: Rename
 
@@ -310,66 +347,60 @@ function generateAppIdTable (_handSeed) {
 
   output.push(new Row('0', 'TABLE'))
   output.push(new Row('2', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '0'))
   output.push(new Row('100', 'AcDbSymbolTable'))
   output.push(new Row('70', '0'))
-  handSeed++
+  
 
   output.push(new Row('0', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '41'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbRegAppTableRecord'))
   output.push(new Row('2', 'ACAD'))
   output.push(new Row('70', 0))
-  handSeed++
+  
 
   output.push(new Row('0', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '41'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbRegAppTableRecord'))
   output.push(new Row('2', appName))
   output.push(new Row('70', 0))
-  handSeed++
+  
 
   output.push(new Row('0', 'ENDTAB'))
 
   return {
-    handSeed,
     rows: output,
   }
 }
 
-function generateDefaultTables (layers, _handSeed) {
-  let handSeed = _handSeed
+function generateDefaultTables (layers) {
   const output = [] // Row[]
   output.push(new Row('0', 'SECTION'))
   output.push(new Row('2', 'TABLES'))
-  const lTypeTable = generateLtypeTable(handSeed)
+  const lTypeTable = generateLtypeTable()
   output.push(...lTypeTable.rows)
-  handSeed = lTypeTable.handSeed  // Keep counting objects
   output.push(...generateVportTable())
 
-  const layersTable = generateLayerTable(layers, handSeed)
+  const layersTable = generateLayerTable(layers)
   output.push(...layersTable)
-  handSeed += layersTable.length
 
   output.push(...generateStyleTable())
   output.push(...generateBlockRecordTable())
   output.push(...generateViewTable())
   output.push(...generateUcsTable())
-  const appIdTable = generateAppIdTable(handSeed)
+  const appIdTable = generateAppIdTable()
   output.push(...appIdTable.rows)
-  handSeed = appIdTable.handSeed // Keep counting objects
-  const dimStyleTable = generateDimStyleTable(handSeed)
+  const dimStyleTable = generateDimStyleTable()
   output.push(...dimStyleTable.rows)
-  handSeed = dimStyleTable.handSeed // Keep counting objects
   output.push(new Row('0', 'ENDSEC'))
 
   return {
-    handSeed,
+    
     output
   }
 }

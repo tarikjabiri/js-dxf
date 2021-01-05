@@ -1,5 +1,6 @@
 const Row = require('./Row')
 const H = require('./Helpers')
+const handleSeed = require('./handleSeed.js')
 
 class Line
 {
@@ -16,7 +17,7 @@ class Line
     toDxfRow () {
       const output = [  // Row[]
         new Row('0', 'LINE'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('100', 'AcDbEntity'),
         new Row('8', this.layer.name),
         new Row('100', 'AcDbLine'),

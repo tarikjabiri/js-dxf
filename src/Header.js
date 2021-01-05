@@ -3,6 +3,7 @@ const defaultDictionary = require('./DefaultDictionary')
 const generateDefaultTables = require('./DefaultTables')
 const Row = require('./Row')
 const UUID = require('uuid')
+const handleSeed = require('./handleSeed.js')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
 
@@ -260,7 +261,7 @@ function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
 
 
-  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
