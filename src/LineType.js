@@ -1,3 +1,5 @@
+const handleSeed = require('./handleSeed.js')
+
 class LineType
 {
     /**

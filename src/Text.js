@@ -1,10 +1,9 @@
 const Entity = require('./Entity');
 const Row = require('./Row')
 const H = require('./Helpers')
-
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
-
+const handleSeed = require('./handleSeed.js')
 class Text extends Entity
 {
     /**
@@ -16,7 +15,7 @@ class Text extends Entity
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed)
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
         super({entityType: 'TEXT'});
         this.x1 = x1;
@@ -26,13 +25,13 @@ class Text extends Entity
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
-        this.handSeed = handSeed
+        
     }
 
     toDxfRows () {
       const rows = [  // Row[]
         new Row('0', 'TEXT'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('100', 'AcDbEntity'),
         new Row('8', this.layer.name),
         // new Row('62', dxfColorIndex),
@@ -61,7 +60,7 @@ class Text extends Entity
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         // let s = `${new Row(0, this.entityType)}`;
-        // s += `5\n${this.handSeed.toString(16)}\n`;
+        // s += `5\n${handleSeed()}\n`;
         // s += `8\n${this.layer.name}\n`;
         // s += `1\n${this.value}\n`;
         // s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;

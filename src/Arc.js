@@ -1,3 +1,5 @@
+const handleSeed = require('./handleSeed.js')
+
 class Arc
 {
     /**
@@ -7,21 +9,21 @@ class Arc
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
      */
-    constructor(x1, y1, r, startAngle, endAngle, handSeed)
+    constructor(x1, y1, r, startAngle, endAngle)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
         let s = `0\nARC\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;

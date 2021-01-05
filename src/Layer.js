@@ -1,15 +1,16 @@
 const Row = require('./Row')
+const handleSeed = require('./handleSeed.js')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName, handSeed)
+    constructor(name, colorNumber, lineTypeName)
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
         this.trueColor = -1
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
@@ -29,7 +30,7 @@ class Layer
     toDxfRows () {  // ToDo: Merge with toDxfString?
       const output = [
         new Row('0', 'LAYER'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('330', '3B'),
         new Row('100', 'AcDbSymbolTableRecord'),
         new Row('100', 'AcDbLayerTableRecord'),
