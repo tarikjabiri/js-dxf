@@ -11562,12 +11562,12 @@ function generateAppIdTable () {
   }
 }
 
-function generateDefaultTables (layers) {
+function generateDefaultTables (layers, lineTypeTableRows) {
   const output = [] // Row[]
   output.push(new Row('0', 'SECTION'))
   output.push(new Row('2', 'TABLES'))
-  const lTypeTable = generateLtypeTable()
-  output.push(...lTypeTable.rows)
+  
+  output.push(...lineTypeTableRows)
   output.push(...generateVportTable())
 
   const layersTable = generateLayerTable(layers)
@@ -11663,7 +11663,7 @@ const handleSeed = require('./handleSeed.js')
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
 
 
-function generateHeaderAndDefaults (layers, unit) {
+function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
 
     const output = [] // Row[]
 
@@ -11672,11 +11672,12 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    const defaultTableResult = generateDefaultTables(layers)
-    const finalHandseed = defaultTableResult.handSeed
-    const parametersToOutput = generateMinimalHeader(unit, finalHandseed, 'DXF Project')
+    const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
+    const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
+    const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
+    const minimalHeaders = generateMinimalHeader(unit, 'DXF Project')
 
-    parametersToOutput.forEach(parameter => {
+    minimalHeaders.forEach(parameter => {
       output.push(new Row('9', parameter.id))
       output.push(...parameter.rows)
     })
@@ -11684,7 +11685,6 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(new Row('0', 'ENDSEC'))
 
     // Default classes -----------------------------------------------------------
-
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'CLASSES'))
     output.push(new Row('0', 'ENDSEC'))
@@ -11694,10 +11694,10 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(...defaultTableResult.output)
 
     // Default Dictionary --------------------------------------------------------
-    output.push(...createTypeValueRowsFromDxfData(defaultDictionary))
+    output.push(...defaultDictionaryRows)
 
     // Default Blocks
-    output.push(...createTypeValueRowsFromDxfData(defaultBlocks))
+    output.push(...defaultBlocksRows)
 
     return output
   }
@@ -11711,7 +11711,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader (unit, finalHandseedValue, projectName) {
+function generateMinimalHeader (unit, projectName) {
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -11913,6 +11913,7 @@ function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
+  console.log('FINAL')
   parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
@@ -12060,6 +12061,7 @@ class Line
     }
 
     toDxfRow () {
+      console.log('LINE')
       const output = [  // Row[]
         new Row('0', 'LINE'),
         new Row('5', handleSeed()),
@@ -12124,6 +12126,28 @@ class LineType
         }
 
         return s;
+    }
+
+    toDxfRows()
+    {
+        const output = []
+        output.push(new Row('0', 'LTYPE'))
+        output.push(new Row('5', handleSeed()))
+        output.push(new Row('330', '3D'))
+        output.push(new Row('100', 'AcDbSymbolTableRecord'))
+        output.push(new Row('100', 'AcDbLinetypeTableRecord'))
+        output.push(new Row('2', this.name))
+        output.push(new Row('70', '0'))
+        output.push(new Row('3', this.description))
+        output.push(new Row('72', '65'))
+        output.push(new Row('73', this.elements.length))
+        output.push(new Row('40', this.getElementsSum()))
+        for (let i = 0; i < this.elements.length; ++i)
+        {
+            s += `49\n${this.elements[i]}\n`;
+            output.push(new Row('49', this.elements[i]))
+        }
+        return output
     }
 
     getElementsSum()
@@ -12365,7 +12389,7 @@ function handleSeed()
     }
 
     console.log(handleSeed.i)
-    return handleSeed.i.toString(10)
+    return handleSeed.i.toString(16)
 }
 
 module.exports = handleSeed
@@ -12381,7 +12405,8 @@ const Face = require('./Face');
 const Point = require('./Point');
 const HEADER = require('./Header')
 const H = require('./Helpers')
-
+const Row = require('./Row')
+const handleSeed = require('./handleSeed.js')
 class Drawing
 {
     constructor()
@@ -12536,22 +12561,30 @@ class Drawing
         return this;
     }
 
-    /**
-     * @deprecated
-     */
-    _getDxfLtypeTable()
+
+    _getDxfLtypeTableRows()
     {
+        const output = []
+        output.push(new Row('0', 'TABLE'))
+        output.push(new Row('2', 'LTYPE'))
+        output.push(new Row('5', handleSeed()))
+        output.push(new Row('330', '0'))
+        output.push(new Row('100', 'AcDbSymbolTable'))
+        output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
 
-        // for (let lineTypeName in this.lineTypes)
-        // {
-        //     s += this.lineTypes[lineTypeName].toDxfString();
-        // }
+        for (let lineTypeName in this.lineTypes)
+        {
+            //s += this.lineTypes[lineTypeName].toDxfString();
+            output.push(...this.lineTypes[lineTypeName].toDxfRows())
+        }
 
         // s += '0\nENDTAB\n'; //end table
 
         // return s;
+        output.push(new Row('0', 'ENDTAB'))
+        return output
     }
 
     /**
@@ -12615,14 +12648,12 @@ class Drawing
         //   headerOutputAsStrings.push(item.value.toString())
         // })
         // s += headerOutputAsStrings.join('\n')
-        const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
-        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
-
-        let s = H.generateStringFromRows(headerOutputAsRowItems)
+        //const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
 
         // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
+        let s
         s += '0\nSECTION\n';
         s += '2\nENTITIES\n';
 
@@ -12639,7 +12670,10 @@ class Drawing
         //close file
         s += '0\nEOF';
 
-        return s;
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, this._getDxfLtypeTableRows())
+        const headerString = H.generateStringFromRows(headerOutputAsRowItems)
+
+        return headerString + s;
     }
 
 }
@@ -12697,4 +12731,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Text":32}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Row":31,"./Text":32,"./handleSeed.js":33}]},{},[]);

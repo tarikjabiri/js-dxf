@@ -14,6 +14,7 @@ class Line
     }
 
     toDxfRow () {
+      console.log('LINE')
       const output = [  // Row[]
         new Row('0', 'LINE'),
         new Row('5', handleSeed()),

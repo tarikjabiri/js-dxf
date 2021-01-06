@@ -10,7 +10,7 @@ function handleSeed()
     }
 
     console.log(handleSeed.i)
-    return handleSeed.i.toString(10)
+    return handleSeed.i.toString(16)
 }
 
 module.exports = handleSeed

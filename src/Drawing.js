@@ -9,7 +9,8 @@ const Face = require('./Face');
 const Point = require('./Point');
 const HEADER = require('./Header')
 const H = require('./Helpers')
-
+const Row = require('./Row')
+const handleSeed = require('./handleSeed.js')
 class Drawing
 {
     constructor()
@@ -164,22 +165,30 @@ class Drawing
         return this;
     }
 
-    /**
-     * @deprecated
-     */
-    _getDxfLtypeTable()
+
+    _getDxfLtypeTableRows()
     {
+        const output = []
+        output.push(new Row('0', 'TABLE'))
+        output.push(new Row('2', 'LTYPE'))
+        output.push(new Row('5', handleSeed()))
+        output.push(new Row('330', '0'))
+        output.push(new Row('100', 'AcDbSymbolTable'))
+        output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
 
-        // for (let lineTypeName in this.lineTypes)
-        // {
-        //     s += this.lineTypes[lineTypeName].toDxfString();
-        // }
+        for (let lineTypeName in this.lineTypes)
+        {
+            //s += this.lineTypes[lineTypeName].toDxfString();
+            output.push(...this.lineTypes[lineTypeName].toDxfRows())
+        }
 
         // s += '0\nENDTAB\n'; //end table
 
         // return s;
+        output.push(new Row('0', 'ENDTAB'))
+        return output
     }
 
     /**
@@ -265,8 +274,8 @@ class Drawing
         //close file
         s += '0\nEOF';
 
-        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit)
-        let headerString = H.generateStringFromRows(headerOutputAsRowItems)
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, this._getDxfLtypeTableRows())
+        const headerString = H.generateStringFromRows(headerOutputAsRowItems)
 
         return headerString + s;
     }

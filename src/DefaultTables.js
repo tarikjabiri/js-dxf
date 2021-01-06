@@ -378,12 +378,12 @@ function generateAppIdTable () {
   }
 }
 
-function generateDefaultTables (layers) {
+function generateDefaultTables (layers, lineTypeTableRows) {
   const output = [] // Row[]
   output.push(new Row('0', 'SECTION'))
   output.push(new Row('2', 'TABLES'))
-  const lTypeTable = generateLtypeTable()
-  output.push(...lTypeTable.rows)
+  
+  output.push(...lineTypeTableRows)
   output.push(...generateVportTable())
 
   const layersTable = generateLayerTable(layers)

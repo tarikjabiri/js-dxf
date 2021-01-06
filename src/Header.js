@@ -8,7 +8,7 @@ const handleSeed = require('./handleSeed.js')
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
 
 
-function generateHeaderAndDefaults (layers, unit) {
+function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
 
     const output = [] // Row[]
 
@@ -17,7 +17,7 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    const defaultTableResult = generateDefaultTables(layers)
+    const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
     const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
     const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
     const minimalHeaders = generateMinimalHeader(unit, 'DXF Project')
@@ -258,7 +258,7 @@ function generateMinimalHeader (unit, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
-  console.log('hand')
+  console.log('FINAL')
   parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
