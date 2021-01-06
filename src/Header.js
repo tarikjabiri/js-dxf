@@ -17,6 +17,7 @@ function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
+    console.log('lineTypeTableRows', lineTypeTableRows)
     const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
     const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
     const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)

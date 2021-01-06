@@ -1,4 +1,5 @@
 const Layer = require('./Layer');
+const LineType = require('./LineType')
 const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
@@ -17,9 +18,16 @@ class Drawing
     {
         this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
-        this.handSeed = 0x11F
-
+        this.lineTypes = {};
+        //this.handSeed = 0x11F
         this.unit = Drawing.UNITS.Unitless
+
+        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
+        {
+            this.addLineType(Drawing.LINE_TYPES[i].name,
+                             Drawing.LINE_TYPES[i].description,
+                             Drawing.LINE_TYPES[i].elements);
+        }
 
         for (let i = 0; i < Drawing.LAYERS.length; ++i)
         {
@@ -33,9 +41,15 @@ class Drawing
 
 
     /**
-     * @deprecated
+     * @param {string} name
+     * @param {string} description
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
-    addLineType(name, description, elements) { }
+    addLineType(name, description, elements)
+    {
+        this.lineTypes[name] = new LineType(name, description, elements);
+        return this;
+    }
 
     addLayer(name, colorNumber, lineTypeName)
     {
@@ -177,9 +191,10 @@ class Drawing
         output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
-
+        console.log(this.lineTypes)
         for (let lineTypeName in this.lineTypes)
         {
+            console.log('.....................................')
             //s += this.lineTypes[lineTypeName].toDxfString();
             output.push(...this.lineTypes[lineTypeName].toDxfRows())
         }

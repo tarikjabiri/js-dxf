@@ -1,3 +1,4 @@
+const Row = require('./Row')
 const handleSeed = require('./handleSeed.js')
 
 class LineType
@@ -51,7 +52,6 @@ class LineType
         output.push(new Row('40', this.getElementsSum()))
         for (let i = 0; i < this.elements.length; ++i)
         {
-            s += `49\n${this.elements[i]}\n`;
             output.push(new Row('49', this.elements[i]))
         }
         return output
