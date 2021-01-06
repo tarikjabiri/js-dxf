@@ -838,6 +838,8 @@ function version(uuid) {
 var _default = version;
 exports.default = _default;
 },{"./validate.js":14}],16:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Arc
 {
     /**
@@ -847,21 +849,21 @@ class Arc
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
      */
-    constructor(x1, y1, r, startAngle, endAngle, handSeed)
+    constructor(x1, y1, r, startAngle, endAngle)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
         let s = `0\nARC\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
@@ -871,7 +873,9 @@ class Arc
 
 module.exports = Arc;
 
-},{}],17:[function(require,module,exports){
+},{"./handleSeed.js":33}],17:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Circle
 {
     /**
@@ -879,19 +883,19 @@ class Circle
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    constructor(x1, y1, r, handSeed)
+    constructor(x1, y1, r)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
         let s = `0\nCIRCLE\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `100\nAcDbEntity\n`;
         s += `8\n${this.layer.name}\n`;
         s += `100\nAcDbCircle\n`;
@@ -903,7 +907,7 @@ class Circle
 
 module.exports = Circle;
 
-},{}],18:[function(require,module,exports){
+},{"./handleSeed.js":33}],18:[function(require,module,exports){
 // ToDo: Compress whitespaces
 const defaultDxfBlocks = [
   '  0',
@@ -11180,6 +11184,10 @@ module.exports = defaultDictionary
 },{}],20:[function(require,module,exports){
 const Layer = require('./Layer')
 const Row = require('./Row')
+const Drawing = require('./Drawing')
+const LineType = require('./LineType');
+const H = require('./Helpers')
+const handleSeed = require('./handleSeed.js')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9
 function generateVportTable () {
@@ -11389,21 +11397,21 @@ function generateBlockRecordTable () {
   return output
 }
 
-function generateLtypeTable (_handSeed) {
-  let handSeed = _handSeed
+function generateLtypeTable () {
+
 
   const output = []
 
   output.push(new Row('0', 'TABLE'))
   output.push(new Row('2', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '0'))
   output.push(new Row('100', 'AcDbSymbolTable'))
   output.push(new Row('70', '48'))
-  handSeed++
+  
   // By Block
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -11413,10 +11421,10 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
    // By Layer
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -11426,11 +11434,11 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
 
   // Continous lines
   output.push(new Row('0', 'LTYPE'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '3D'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbLinetypeTableRecord'))
@@ -11440,29 +11448,64 @@ function generateLtypeTable (_handSeed) {
   output.push(new Row('72', '65'))
   output.push(new Row('73', '0'))
   output.push(new Row('40', '0'))
-  handSeed++
+  
+
+  /*
+
+0
+LTYPE
+72
+65
+70
+64
+2
+DASHED
+3
+_ _ _ 
+
+73
+2
+40
+10
+49
+5
+49
+-5
+*/
+  // Dashed lines
+  output.push(new Row('0', 'LTYPE'))
+  output.push(new Row('5', handleSeed()))
+  output.push(new Row('330', '3D'))
+  output.push(new Row('100', 'AcDbSymbolTableRecord'))
+  output.push(new Row('100', 'AcDbLinetypeTableRecord'))
+  output.push(new Row('2', 'Dashed'))
+  output.push(new Row('70', '0'))
+  output.push(new Row('3', '_ _ _ '))
+  output.push(new Row('73', '2'))
+  output.push(new Row('40', '10'))
+  output.push(new Row('49', '5'))
+  output.push(new Row('49', '-5'))
+  
 
   output.push(new Row('0', 'ENDTAB'))
 
   return {
     rows: output,
-    handSeed,
+    
   }
 }
 
-function generateDimStyleTable (_handSeed) {
-
-  let handSeed = _handSeed
+function generateDimStyleTable () {
 
   const rows = []
   rows.push(new Row('0', 'TABLE'))
   rows.push(new Row('2', 'DIMSTYLE'))
-  rows.push(new Row('5', handSeed.toString(16)))       // ToDO: Add handseed
+  rows.push(new Row('5', handleSeed()))       // ToDO: Add handseed
   rows.push(new Row('330', '0'))
   rows.push(new Row('100', 'AcDbSymbolTable'))
   rows.push(new Row('70', '2'))
   rows.push(new Row('100', 'AcDbDimStyleTable'))
-  handSeed++
+  
 
   rows.push(new Row('0', 'DIMSTYLE'))
   rows.push(new Row('105', '5E'))
@@ -11476,13 +11519,11 @@ function generateDimStyleTable (_handSeed) {
   rows.push(new Row('0', 'ENDTAB'))
   return {
     rows,
-    handSeed,
+    
   }
 }
 
-function generateAppIdTable (_handSeed) {
-
-  let handSeed = _handSeed
+function generateAppIdTable () {
 
   const appName = 'Online Exporter'     // ToDo: Rename
 
@@ -11490,77 +11531,74 @@ function generateAppIdTable (_handSeed) {
 
   output.push(new Row('0', 'TABLE'))
   output.push(new Row('2', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '0'))
   output.push(new Row('100', 'AcDbSymbolTable'))
   output.push(new Row('70', '0'))
-  handSeed++
+  
 
   output.push(new Row('0', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '41'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbRegAppTableRecord'))
   output.push(new Row('2', 'ACAD'))
   output.push(new Row('70', 0))
-  handSeed++
+  
 
   output.push(new Row('0', 'APPID'))
-  output.push(new Row('5', handSeed.toString(16)))
+  output.push(new Row('5', handleSeed()))
   output.push(new Row('330', '41'))
   output.push(new Row('100', 'AcDbSymbolTableRecord'))
   output.push(new Row('100', 'AcDbRegAppTableRecord'))
   output.push(new Row('2', appName))
   output.push(new Row('70', 0))
-  handSeed++
+  
 
   output.push(new Row('0', 'ENDTAB'))
 
   return {
-    handSeed,
     rows: output,
   }
 }
 
-function generateDefaultTables (layers, _handSeed) {
-  let handSeed = _handSeed
+function generateDefaultTables (layers) {
   const output = [] // Row[]
   output.push(new Row('0', 'SECTION'))
   output.push(new Row('2', 'TABLES'))
-  const lTypeTable = generateLtypeTable(handSeed)
+  const lTypeTable = generateLtypeTable()
   output.push(...lTypeTable.rows)
-  handSeed = lTypeTable.handSeed  // Keep counting objects
   output.push(...generateVportTable())
 
-  const layersTable = generateLayerTable(layers, handSeed)
+  const layersTable = generateLayerTable(layers)
   output.push(...layersTable)
-  handSeed += layersTable.length
 
   output.push(...generateStyleTable())
   output.push(...generateBlockRecordTable())
   output.push(...generateViewTable())
   output.push(...generateUcsTable())
-  const appIdTable = generateAppIdTable(handSeed)
+  const appIdTable = generateAppIdTable()
   output.push(...appIdTable.rows)
-  handSeed = appIdTable.handSeed // Keep counting objects
-  const dimStyleTable = generateDimStyleTable(handSeed)
+  const dimStyleTable = generateDimStyleTable()
   output.push(...dimStyleTable.rows)
-  handSeed = dimStyleTable.handSeed // Keep counting objects
   output.push(new Row('0', 'ENDSEC'))
 
   return {
-    handSeed,
+    
     output
   }
 }
 
 module.exports = generateDefaultTables
 
-},{"./Layer":25,"./Row":30}],21:[function(require,module,exports){
+},{"./Drawing":"Drawing","./Helpers":24,"./Layer":25,"./LineType":27,"./Row":31,"./handleSeed.js":33}],21:[function(require,module,exports){
 /**
- * Base class representing a DXF entity
+ * Base const handleSeed = require('./handleSeed.js')
+
+classrepresenting a DXF entity
  * About the DXF ENTITIES Section: http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
  */
+
 class Entity
 {
     /**
@@ -11577,9 +11615,11 @@ class Entity
 
 module.exports = Entity
 },{}],22:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Face
 {
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, handSeed)
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
         this.x1 = x1;
         this.y1 = y1;
@@ -11593,14 +11633,14 @@ class Face
         this.x4 = x4;
         this.y4 = y4;
         this.z4 = z4;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
         let s = `0\n3DFACE\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
@@ -11612,17 +11652,18 @@ class Face
 
 module.exports = Face;
 
-},{}],23:[function(require,module,exports){
+},{"./handleSeed.js":33}],23:[function(require,module,exports){
 const defaultBlocks = require('./DefaultBlocks')
 const defaultDictionary = require('./DefaultDictionary')
 const generateDefaultTables = require('./DefaultTables')
 const Row = require('./Row')
 const UUID = require('uuid')
+const handleSeed = require('./handleSeed.js')
 
 // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
 
 
-function generateHeaderAndDefaults (layers, unit, handSeed) {
+function generateHeaderAndDefaults (layers, unit) {
 
     const output = [] // Row[]
 
@@ -11631,7 +11672,7 @@ function generateHeaderAndDefaults (layers, unit, handSeed) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    const defaultTableResult = generateDefaultTables(layers, handSeed)
+    const defaultTableResult = generateDefaultTables(layers)
     const finalHandseed = defaultTableResult.handSeed
     const parametersToOutput = generateMinimalHeader(unit, finalHandseed, 'DXF Project')
 
@@ -11660,7 +11701,6 @@ function generateHeaderAndDefaults (layers, unit, handSeed) {
 
     return output
   }
-
 
 class HeaderParameter {
   id
@@ -11873,9 +11913,7 @@ function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
-
-
-  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', finalHandseedValue)]))
+  parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
   return parameters
@@ -11898,7 +11936,7 @@ module.exports = {
   generateHeaderAndDefaults
 }
 
-},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":30,"uuid":1}],24:[function(require,module,exports){
+},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":31,"./handleSeed.js":33,"uuid":1}],24:[function(require,module,exports){
 // const Row = require('./Row')
 
 function generateStringFromRows (rows) {  // Row[]
@@ -11917,17 +11955,18 @@ module.exports = {
 
 },{}],25:[function(require,module,exports){
 const Row = require('./Row')
+const handleSeed = require('./handleSeed.js')
 
 class Layer
 {
-    constructor(name, colorNumber, lineTypeName, handSeed)
+    constructor(name, colorNumber, lineTypeName)
     {
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
         this.trueColor = -1
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
@@ -11947,7 +11986,7 @@ class Layer
     toDxfRows () {  // ToDo: Merge with toDxfString?
       const output = [
         new Row('0', 'LAYER'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('330', '3B'),
         new Row('100', 'AcDbSymbolTableRecord'),
         new Row('100', 'AcDbLayerTableRecord'),
@@ -12004,26 +12043,26 @@ class Layer
 
 module.exports = Layer;
 
-},{"./Row":30}],26:[function(require,module,exports){
+},{"./Row":31,"./handleSeed.js":33}],26:[function(require,module,exports){
 const Row = require('./Row')
 const H = require('./Helpers')
-
+const handleSeed = require('./handleSeed.js')
 class Line
 {
-    constructor(x1, y1, x2, y2, handSeed)
+    constructor(x1, y1, x2, y2)
     {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
 
-        this.handSeed = handSeed
+        
     }
 
     toDxfRow () {
       const output = [  // Row[]
         new Row('0', 'LINE'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('100', 'AcDbEntity'),
         new Row('8', this.layer.name),
         new Row('100', 'AcDbLine'),
@@ -12049,21 +12088,74 @@ class Line
 
 module.exports = Line;
 
-},{"./Helpers":24,"./Row":30}],27:[function(require,module,exports){
+},{"./Helpers":24,"./Row":31,"./handleSeed.js":33}],27:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
+class LineType
+{
+    /**
+     * @param {string} name
+     * @param {string} description
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     */
+    constructor(name, description, elements)
+    {
+        this.name = name;
+        this.description = description;
+        this.elements = elements;
+    }
+
+    /**
+     * @link https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
+     */
+    toDxfString()
+    {
+        let s = '0\nLTYPE\n';
+        s += '72\n65\n';
+        s += '70\n64\n';
+        s += `2\n${this.name}\n`;
+        s += `3\n${this.description}\n`;
+        s += `73\n${this.elements.length}\n`;
+        s += `40\n${this.getElementsSum()}\n`;
+
+        for (let i = 0; i < this.elements.length; ++i)
+        {
+            s += `49\n${this.elements[i]}\n`;
+        }
+
+        return s;
+    }
+
+    getElementsSum()
+    {
+        let sum = 0;
+        for (let i = 0; i < this.elements.length; ++i)
+        {
+            sum += Math.abs(this.elements[i]);
+        }
+
+        return sum;
+    }
+}
+
+module.exports = LineType;
+},{"./handleSeed.js":33}],28:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Point
 {
-    constructor(x, y, handSeed)
+    constructor(x, y)
     {
         this.x = x;
         this.y = y;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
         let s = `0\nPOINT\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x}\n20\n${this.y}\n30\n0\n`;
         return s;
@@ -12072,7 +12164,9 @@ class Point
 
 module.exports = Point;
 
-},{}],28:[function(require,module,exports){
+},{"./handleSeed.js":33}],29:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Polyline
 {
     /**
@@ -12081,13 +12175,13 @@ class Polyline
      * @param {number} startWidth
      * @param {number} endWidth
      */
-    constructor(points, closed = false, startWidth = 0, endWidth = 0, handSeed)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0)
     {
         this.points = points;
         this.closed = closed;
         this.startWidth = startWidth;
         this.endWidth = endWidth;
-        this.handSeed = handSeed
+        
     }
 
     toDxfString()
@@ -12095,7 +12189,7 @@ class Polyline
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n${this.closed ? 1 : 0}\n`;
         if (this.startWidth !== 0 || this.endWidth !== 0) {
@@ -12120,16 +12214,18 @@ class Polyline
 
 module.exports = Polyline;
 
-},{}],29:[function(require,module,exports){
+},{"./handleSeed.js":33}],30:[function(require,module,exports){
+const handleSeed = require('./handleSeed.js')
+
 class Polyline3d
 {
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
-    constructor(points, handSeed)
+    constructor(points)
     {
         this.points = points;
-        this.handseed = handSeed
+        
     }
 
     toDxfString()
@@ -12137,7 +12233,7 @@ class Polyline3d
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
         //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
         let s = `0\nPOLYLINE\n`;
-        s += `5\n${this.handSeed.toString(16)}\n`;
+        s += `5\n${handleSeed()}\n`;
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n8\n`;
 
@@ -12156,7 +12252,7 @@ class Polyline3d
 
 module.exports = Polyline3d;
 
-},{}],30:[function(require,module,exports){
+},{"./handleSeed.js":33}],31:[function(require,module,exports){
 // Helper structure
 class Row {
   type
@@ -12175,14 +12271,13 @@ class Row {
 
 module.exports = Row
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 const Entity = require('./Entity');
 const Row = require('./Row')
 const H = require('./Helpers')
-
 const H_ALIGN_CODES = ['left', 'center', 'right'];
 const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
-
+const handleSeed = require('./handleSeed.js')
 class Text extends Entity
 {
     /**
@@ -12194,7 +12289,7 @@ class Text extends Entity
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', handSeed)
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
         super({entityType: 'TEXT'});
         this.x1 = x1;
@@ -12204,13 +12299,13 @@ class Text extends Entity
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
-        this.handSeed = handSeed
+        
     }
 
     toDxfRows () {
       const rows = [  // Row[]
         new Row('0', 'TEXT'),
-        new Row('5', this.handSeed.toString(16)),
+        new Row('5', handleSeed()),
         new Row('100', 'AcDbEntity'),
         new Row('8', this.layer.name),
         // new Row('62', dxfColorIndex),
@@ -12239,7 +12334,7 @@ class Text extends Entity
     {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
         // let s = `${new Row(0, this.entityType)}`;
-        // s += `5\n${this.handSeed.toString(16)}\n`;
+        // s += `5\n${handleSeed()}\n`;
         // s += `8\n${this.layer.name}\n`;
         // s += `1\n${this.value}\n`;
         // s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
@@ -12257,7 +12352,24 @@ class Text extends Entity
 
 module.exports = Text;
 
-},{"./Entity":21,"./Helpers":24,"./Row":30}],"Drawing":[function(require,module,exports){
+},{"./Entity":21,"./Helpers":24,"./Row":31,"./handleSeed.js":33}],33:[function(require,module,exports){
+function handleSeed()
+{
+    if (typeof handleSeed.i == 'undefined')
+    {
+        handleSeed.i = 0
+    }
+    else
+    {
+        ++handleSeed.i
+    }
+
+    console.log(handleSeed.i)
+    return handleSeed.i.toString(10)
+}
+
+module.exports = handleSeed
+},{}],"Drawing":[function(require,module,exports){
 const Layer = require('./Layer');
 const Line = require('./Line');
 const Arc = require('./Arc');
@@ -12585,4 +12697,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./Point":27,"./Polyline":28,"./Polyline3d":29,"./Text":31}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Text":32}]},{},[]);

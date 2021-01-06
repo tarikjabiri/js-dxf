@@ -18,10 +18,11 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(new Row('2', 'HEADER'))
 
     const defaultTableResult = generateDefaultTables(layers)
-    const finalHandseed = defaultTableResult.handSeed
-    const parametersToOutput = generateMinimalHeader(unit, finalHandseed, 'DXF Project')
+    const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
+    const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
+    const minimalHeaders = generateMinimalHeader(unit, 'DXF Project')
 
-    parametersToOutput.forEach(parameter => {
+    minimalHeaders.forEach(parameter => {
       output.push(new Row('9', parameter.id))
       output.push(...parameter.rows)
     })
@@ -29,7 +30,6 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(new Row('0', 'ENDSEC'))
 
     // Default classes -----------------------------------------------------------
-
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'CLASSES'))
     output.push(new Row('0', 'ENDSEC'))
@@ -39,10 +39,10 @@ function generateHeaderAndDefaults (layers, unit) {
     output.push(...defaultTableResult.output)
 
     // Default Dictionary --------------------------------------------------------
-    output.push(...createTypeValueRowsFromDxfData(defaultDictionary))
+    output.push(...defaultDictionaryRows)
 
     // Default Blocks
-    output.push(...createTypeValueRowsFromDxfData(defaultBlocks))
+    output.push(...defaultBlocksRows)
 
     return output
   }
@@ -56,7 +56,7 @@ class HeaderParameter {
   }
 }
 
-function generateMinimalHeader (unit, finalHandseedValue, projectName) {
+function generateMinimalHeader (unit, projectName) {
   const parameters = []
   parameters.push(new HeaderParameter('$ACADVER', [new Row('1', 'AC1027')])) // 2013
   parameters.push(new HeaderParameter('$ANGBASE', [new Row('50', '0')]))
@@ -258,6 +258,7 @@ function generateMinimalHeader (unit, finalHandseedValue, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
+  console.log('hand')
   parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 

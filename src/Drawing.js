@@ -243,14 +243,12 @@ class Drawing
         //   headerOutputAsStrings.push(item.value.toString())
         // })
         // s += headerOutputAsStrings.join('\n')
-        const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
-        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, finalHandseedAfterAllEntitiesAreAssigned)
-
-        let s = H.generateStringFromRows(headerOutputAsRowItems)
+        //const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
 
         // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
+        let s
         s += '0\nSECTION\n';
         s += '2\nENTITIES\n';
 
@@ -267,7 +265,10 @@ class Drawing
         //close file
         s += '0\nEOF';
 
-        return s;
+        const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit)
+        let headerString = H.generateStringFromRows(headerOutputAsRowItems)
+
+        return headerString + s;
     }
 
 }
