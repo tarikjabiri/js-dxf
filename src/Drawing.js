@@ -191,10 +191,8 @@ class Drawing
         output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
-        console.log(this.lineTypes)
         for (let lineTypeName in this.lineTypes)
         {
-            console.log('.....................................')
             //s += this.lineTypes[lineTypeName].toDxfString();
             output.push(...this.lineTypes[lineTypeName].toDxfRows())
         }
@@ -257,22 +255,10 @@ class Drawing
 
     toDxfString()
     {
-        // let s = '';
-
-        // const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
-
-        // const headerOutputAsStrings = []  // string[]
-        // headerOutputAsRowItems.forEach(item => {
-        //   headerOutputAsStrings.push(item.type)
-        //   headerOutputAsStrings.push(item.value.toString())
-        // })
-        // s += headerOutputAsStrings.join('\n')
-        //const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
-
         // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
-        let s
+        let s =''
         s += '0\nSECTION\n';
         s += '2\nENTITIES\n';
 
@@ -292,7 +278,7 @@ class Drawing
         const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, this._getDxfLtypeTableRows())
         const headerString = H.generateStringFromRows(headerOutputAsRowItems)
 
-        return headerString + s;
+        return headerString + s
     }
 
 }

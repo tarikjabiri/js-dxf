@@ -17,7 +17,6 @@ function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    console.log('lineTypeTableRows', lineTypeTableRows)
     const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
     const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
     const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
@@ -259,7 +258,6 @@ function generateMinimalHeader (unit, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
-  console.log('FINAL')
   parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 

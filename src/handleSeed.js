@@ -9,7 +9,6 @@ function handleSeed()
         ++handleSeed.i
     }
 
-    console.log(handleSeed.i)
     return handleSeed.i.toString(16)
 }
 

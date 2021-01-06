@@ -11672,6 +11672,7 @@ function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
+    console.log('lineTypeTableRows', lineTypeTableRows)
     const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
     const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
     const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
@@ -12091,6 +12092,7 @@ class Line
 module.exports = Line;
 
 },{"./Helpers":24,"./Row":31,"./handleSeed.js":33}],27:[function(require,module,exports){
+const Row = require('./Row')
 const handleSeed = require('./handleSeed.js')
 
 class LineType
@@ -12144,7 +12146,6 @@ class LineType
         output.push(new Row('40', this.getElementsSum()))
         for (let i = 0; i < this.elements.length; ++i)
         {
-            s += `49\n${this.elements[i]}\n`;
             output.push(new Row('49', this.elements[i]))
         }
         return output
@@ -12163,7 +12164,7 @@ class LineType
 }
 
 module.exports = LineType;
-},{"./handleSeed.js":33}],28:[function(require,module,exports){
+},{"./Row":31,"./handleSeed.js":33}],28:[function(require,module,exports){
 const handleSeed = require('./handleSeed.js')
 
 class Point
@@ -12395,6 +12396,7 @@ function handleSeed()
 module.exports = handleSeed
 },{}],"Drawing":[function(require,module,exports){
 const Layer = require('./Layer');
+const LineType = require('./LineType')
 const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
@@ -12413,9 +12415,16 @@ class Drawing
     {
         this.layers = {}  // ToDo: replace with Map() : <string, Layer> for Typescript
         this.activeLayer = null;
-        this.handSeed = 0x11F
-
+        this.lineTypes = {};
+        //this.handSeed = 0x11F
         this.unit = Drawing.UNITS.Unitless
+
+        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
+        {
+            this.addLineType(Drawing.LINE_TYPES[i].name,
+                             Drawing.LINE_TYPES[i].description,
+                             Drawing.LINE_TYPES[i].elements);
+        }
 
         for (let i = 0; i < Drawing.LAYERS.length; ++i)
         {
@@ -12429,9 +12438,15 @@ class Drawing
 
 
     /**
-     * @deprecated
+     * @param {string} name
+     * @param {string} description
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
-    addLineType(name, description, elements) { }
+    addLineType(name, description, elements)
+    {
+        this.lineTypes[name] = new LineType(name, description, elements);
+        return this;
+    }
 
     addLayer(name, colorNumber, lineTypeName)
     {
@@ -12573,9 +12588,10 @@ class Drawing
         output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
-
+        console.log(this.lineTypes)
         for (let lineTypeName in this.lineTypes)
         {
+            console.log('.....................................')
             //s += this.lineTypes[lineTypeName].toDxfString();
             output.push(...this.lineTypes[lineTypeName].toDxfRows())
         }
@@ -12653,7 +12669,7 @@ class Drawing
         // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
-        let s
+        let s =''
         s += '0\nSECTION\n';
         s += '2\nENTITIES\n';
 
@@ -12673,7 +12689,7 @@ class Drawing
         const headerOutputAsRowItems = HEADER.generateHeaderAndDefaults(this.layers, this.unit, this._getDxfLtypeTableRows())
         const headerString = H.generateStringFromRows(headerOutputAsRowItems)
 
-        return headerString + s;
+        return headerString + s
     }
 
 }
@@ -12731,4 +12747,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Row":31,"./Text":32,"./handleSeed.js":33}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./LineType":27,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Row":31,"./Text":32,"./handleSeed.js":33}]},{},[]);
