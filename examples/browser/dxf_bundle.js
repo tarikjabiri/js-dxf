@@ -11672,7 +11672,6 @@ function generateHeaderAndDefaults (layers, unit, lineTypeTableRows) {
     output.push(new Row('0', 'SECTION'))
     output.push(new Row('2', 'HEADER'))
 
-    console.log('lineTypeTableRows', lineTypeTableRows)
     const defaultTableResult = generateDefaultTables(layers, lineTypeTableRows)
     const defaultDictionaryRows = createTypeValueRowsFromDxfData(defaultDictionary)
     const defaultBlocksRows = createTypeValueRowsFromDxfData(defaultBlocks)
@@ -11914,7 +11913,6 @@ function generateMinimalHeader (unit, projectName) {
   parameters.push(new HeaderParameter('$WORLDVIEW', [new Row('70', 1)]))
   parameters.push(new HeaderParameter('$XCLIPFRAME', [new Row('280', 2)])) // diff towards spec. 290 gives error
   parameters.push(new HeaderParameter('$XEDIT', [new Row('290', 1)]))
-  console.log('FINAL')
   parameters.push(new HeaderParameter('$HANDSEED', [new Row('5', handleSeed())]))
   parameters.push(new HeaderParameter('$PROJECTNAME', [new Row('1', projectName)])) // Project name
 
@@ -12062,7 +12060,6 @@ class Line
     }
 
     toDxfRow () {
-      console.log('LINE')
       const output = [  // Row[]
         new Row('0', 'LINE'),
         new Row('5', handleSeed()),
@@ -12389,7 +12386,6 @@ function handleSeed()
         ++handleSeed.i
     }
 
-    console.log(handleSeed.i)
     return handleSeed.i.toString(16)
 }
 
@@ -12588,10 +12584,8 @@ class Drawing
         output.push(new Row('70', '48'))
         // let s = '0\nTABLE\n'; //start table
         // s += '2\nLTYPE\n';    //name table as LTYPE table
-        console.log(this.lineTypes)
         for (let lineTypeName in this.lineTypes)
         {
-            console.log('.....................................')
             //s += this.lineTypes[lineTypeName].toDxfString();
             output.push(...this.lineTypes[lineTypeName].toDxfRows())
         }
@@ -12654,18 +12648,6 @@ class Drawing
 
     toDxfString()
     {
-        // let s = '';
-
-        // const headerOutputAsRowItems = (new HeaderAndDefaults()).generateOutput(this.layers, this.handSeed)
-
-        // const headerOutputAsStrings = []  // string[]
-        // headerOutputAsRowItems.forEach(item => {
-        //   headerOutputAsStrings.push(item.type)
-        //   headerOutputAsStrings.push(item.value.toString())
-        // })
-        // s += headerOutputAsStrings.join('\n')
-        //const finalHandseedAfterAllEntitiesAreAssigned = this.handSeed
-
         // ToDo: Consider converting all Entity output to Row items
 
         //ENTITES section
