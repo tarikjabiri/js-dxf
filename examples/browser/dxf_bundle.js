@@ -873,7 +873,7 @@ class Arc
 
 module.exports = Arc;
 
-},{"./handleSeed.js":33}],17:[function(require,module,exports){
+},{"./handleSeed.js":34}],17:[function(require,module,exports){
 const handleSeed = require('./handleSeed.js')
 
 class Circle
@@ -907,7 +907,7 @@ class Circle
 
 module.exports = Circle;
 
-},{"./handleSeed.js":33}],18:[function(require,module,exports){
+},{"./handleSeed.js":34}],18:[function(require,module,exports){
 // ToDo: Compress whitespaces
 const defaultDxfBlocks = [
   '  0',
@@ -11591,7 +11591,7 @@ function generateDefaultTables (layers, lineTypeTableRows) {
 
 module.exports = generateDefaultTables
 
-},{"./Drawing":"Drawing","./Helpers":24,"./Layer":25,"./LineType":27,"./Row":31,"./handleSeed.js":33}],21:[function(require,module,exports){
+},{"./Drawing":"Drawing","./Helpers":24,"./Layer":25,"./LineType":27,"./Row":32,"./handleSeed.js":34}],21:[function(require,module,exports){
 /**
  * Base const handleSeed = require('./handleSeed.js')
 
@@ -11652,7 +11652,7 @@ class Face
 
 module.exports = Face;
 
-},{"./handleSeed.js":33}],23:[function(require,module,exports){
+},{"./handleSeed.js":34}],23:[function(require,module,exports){
 const defaultBlocks = require('./DefaultBlocks')
 const defaultDictionary = require('./DefaultDictionary')
 const generateDefaultTables = require('./DefaultTables')
@@ -11936,7 +11936,7 @@ module.exports = {
   generateHeaderAndDefaults
 }
 
-},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":31,"./handleSeed.js":33,"uuid":1}],24:[function(require,module,exports){
+},{"./DefaultBlocks":18,"./DefaultDictionary":19,"./DefaultTables":20,"./Row":32,"./handleSeed.js":34,"uuid":1}],24:[function(require,module,exports){
 // const Row = require('./Row')
 
 function generateStringFromRows (rows) {  // Row[]
@@ -12043,7 +12043,7 @@ class Layer
 
 module.exports = Layer;
 
-},{"./Row":31,"./handleSeed.js":33}],26:[function(require,module,exports){
+},{"./Row":32,"./handleSeed.js":34}],26:[function(require,module,exports){
 const Row = require('./Row')
 const H = require('./Helpers')
 const handleSeed = require('./handleSeed.js')
@@ -12088,7 +12088,7 @@ class Line
 
 module.exports = Line;
 
-},{"./Helpers":24,"./Row":31,"./handleSeed.js":33}],27:[function(require,module,exports){
+},{"./Helpers":24,"./Row":32,"./handleSeed.js":34}],27:[function(require,module,exports){
 const Row = require('./Row')
 const handleSeed = require('./handleSeed.js')
 
@@ -12161,7 +12161,7 @@ class LineType
 }
 
 module.exports = LineType;
-},{"./Row":31,"./handleSeed.js":33}],28:[function(require,module,exports){
+},{"./Row":32,"./handleSeed.js":34}],28:[function(require,module,exports){
 const handleSeed = require('./handleSeed.js')
 
 class Point
@@ -12186,7 +12186,7 @@ class Point
 
 module.exports = Point;
 
-},{"./handleSeed.js":33}],29:[function(require,module,exports){
+},{"./handleSeed.js":34}],29:[function(require,module,exports){
 const handleSeed = require('./handleSeed.js')
 
 class Polyline
@@ -12236,7 +12236,7 @@ class Polyline
 
 module.exports = Polyline;
 
-},{"./handleSeed.js":33}],30:[function(require,module,exports){
+},{"./handleSeed.js":34}],30:[function(require,module,exports){
 const handleSeed = require('./handleSeed.js')
 
 class Polyline3d
@@ -12274,7 +12274,44 @@ class Polyline3d
 
 module.exports = Polyline3d;
 
-},{"./handleSeed.js":33}],31:[function(require,module,exports){
+},{"./handleSeed.js":34}],31:[function(require,module,exports){
+/**
+ * Class Rectangle
+ * To Draw a Closed Rectangle
+ * The Drawing.drawRect(x1, y1, x2, y2) draws 4 lines separated
+ * I added Drawing.drawRectClosed(x1, y1, x2, y2)
+ * 
+ * I did'nt implement the toDxfString() function because I'll use the class Polyline
+ * in the Drawing.drawRectClosed(x1, y1, x2, y2) function
+ * 
+ * finally it will be just a closed Polyline xD
+ */
+class Rectangle
+{
+    constructor(x1, y1, x2, y2)
+    {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
+    getCornersPoints()
+    {
+        let corners = [];
+
+        corners.push([this.x1, this.y1]);
+        corners.push([this.x1, this.y2]);
+        corners.push([this.x2, this.y2]);
+        corners.push([this.x2, this.y1]);
+
+        return corners;
+    }
+
+}
+
+module.exports = Rectangle;
+},{}],32:[function(require,module,exports){
 // Helper structure
 class Row {
   type
@@ -12293,7 +12330,7 @@ class Row {
 
 module.exports = Row
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 const Entity = require('./Entity');
 const Row = require('./Row')
 const H = require('./Helpers')
@@ -12374,7 +12411,7 @@ class Text extends Entity
 
 module.exports = Text;
 
-},{"./Entity":21,"./Helpers":24,"./Row":31,"./handleSeed.js":33}],33:[function(require,module,exports){
+},{"./Entity":21,"./Helpers":24,"./Row":32,"./handleSeed.js":34}],34:[function(require,module,exports){
 function handleSeed()
 {
     if (typeof handleSeed.i == 'undefined')
@@ -12404,7 +12441,8 @@ const Point = require('./Point');
 const HEADER = require('./Header')
 const H = require('./Helpers')
 const Row = require('./Row')
-const handleSeed = require('./handleSeed.js')
+const handleSeed = require('./handleSeed.js');
+const Rectangle = require('./Rectangle');
 class Drawing
 {
     constructor()
@@ -12474,6 +12512,13 @@ class Drawing
         this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
         this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
         this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
+        return this;
+    }
+
+    drawRectClosed(x1, y1, x2, y2)
+    {
+        const rect = new Rectangle(x1, y1, x2, y2);
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0, this.handSeed++));
         return this;
     }
 
@@ -12694,7 +12739,9 @@ Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
-    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]},
+    {name: 'BORDER',    description: '__ __ . __ __ . __ __', elements: [5.0, -2.5, 5.0, -2.5, 0, -2.5]},
+    {name: 'CENTER',    description: '____ _ ____ _ ____', elements: [5.0, -2.5, 2.5, -2.5]}
 ]
 
 Drawing.LAYERS =
@@ -12729,4 +12776,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./LineType":27,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Row":31,"./Text":32,"./handleSeed.js":33}]},{},[]);
+},{"./Arc":16,"./Circle":17,"./Face":22,"./Header":23,"./Helpers":24,"./Layer":25,"./Line":26,"./LineType":27,"./Point":28,"./Polyline":29,"./Polyline3d":30,"./Rectangle":31,"./Row":32,"./Text":33,"./handleSeed.js":34}]},{},[]);
