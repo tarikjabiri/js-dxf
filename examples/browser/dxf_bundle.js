@@ -12375,6 +12375,9 @@ class Text extends Entity
         new Row('10', this.x1), // X
         new Row('20', this.y1), // Y
         new Row('30', 0), // Z
+        // 7 --> Text style name (optional, default = STANDARD)
+        // They say Optional but essential for QCad to render the text correctly
+        new Row('7', 'STANDARD'),
         new Row('100', 'AcDbText'),
       ]
 
