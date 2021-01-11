@@ -20,6 +20,11 @@
             .setActiveLayer('l_yellow')
             .drawCircle(50, -30, 25);
 
+
+            d.addLayer('l_cyan', Drawing.ACI.CYAN, 'CENTER')
+            .setActiveLayer('l_cyan')
+            .drawRectClosed(90, 90, 250, 250);
+
             var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
             document.getElementById('dxf').href = URL.createObjectURL(b);
         }

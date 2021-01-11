@@ -11,7 +11,8 @@ const Point = require('./Point');
 const HEADER = require('./Header')
 const H = require('./Helpers')
 const Row = require('./Row')
-const handleSeed = require('./handleSeed.js')
+const handleSeed = require('./handleSeed.js');
+const Rectangle = require('./Rectangle');
 class Drawing
 {
     constructor()
@@ -81,6 +82,13 @@ class Drawing
         this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
         this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
         this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
+        return this;
+    }
+
+    drawRectClosed(x1, y1, x2, y2)
+    {
+        const rect = new Rectangle(x1, y1, x2, y2);
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0, this.handSeed++));
         return this;
     }
 
@@ -301,7 +309,9 @@ Drawing.LINE_TYPES =
 [
     {name: 'CONTINUOUS', description: '______', elements: []},
     {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
-    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]},
+    {name: 'BORDER',    description: '__ __ . __ __ . __ __', elements: [5.0, -2.5, 5.0, -2.5, 0, -2.5]},
+    {name: 'CENTER',    description: '____ _ ____ _ ____', elements: [5.0, -2.5, 2.5, -2.5]}
 ]
 
 Drawing.LAYERS =
