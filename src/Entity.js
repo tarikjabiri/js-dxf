@@ -1,3 +1,6 @@
+const Row = require('./Row')
+const H = require('./Helpers')
+const handleSeed = require('./handleSeed.js')
 /**
  * Base const handleSeed = require('./handleSeed.js')
 
@@ -16,6 +19,19 @@ class Entity
     constructor({entityType})
     {
         this.entityType = entityType
+    }
+
+    toDxfString()
+    {
+        const rows = [  // Row[]
+        new Row('00', this.entityType),
+        new Row('100', 'AcDbEntity'),
+        new Row('100', 'AcDbText'),
+        new Row('5', handleSeed()),
+        new Row('8', this.layer.name),
+      ]
+        rows.push(...this.toDxfRows())
+        return H.generateStringFromRows(rows)
     }
 }
 
