@@ -874,9 +874,12 @@ class Arc
 module.exports = Arc;
 
 },{"./handleSeed.js":34}],17:[function(require,module,exports){
-const handleSeed = require('./handleSeed.js')
-
-class Circle
+const Entity = require('./Entity')
+const Row = require('./Row')
+/**
+ * http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
+ */
+class Circle extends Entity
 {
     /**
      * @param {number} x1 - Center x
@@ -885,29 +888,25 @@ class Circle
      */
     constructor(x1, y1, r)
     {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.r = r;
+        super({ entityType: 'CIRCLE', subclassMarker: 'AcDbCircle' })
+        this.x1 = x1
+        this.y1 = y1
+        this.r = r
         
     }
 
-    toDxfString()
-    {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
-        let s = `0\nCIRCLE\n`;
-        s += `5\n${handleSeed()}\n`;
-        s += `100\nAcDbEntity\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `100\nAcDbCircle\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `40\n${this.r}\n`;
-        return s;
+    toDxfRows() {
+        return [
+            new Row('10', this.x1),
+            new Row('20', this.y1),
+            new Row('30', 0),
+            new Row('40', this.r)
+        ]
     }
 }
 
-module.exports = Circle;
-
-},{"./handleSeed.js":34}],18:[function(require,module,exports){
+module.exports = Circle
+},{"./Entity":21,"./Row":32}],18:[function(require,module,exports){
 // ToDo: Compress whitespaces
 const defaultDxfBlocks = [
   '  0',
@@ -12427,7 +12426,7 @@ class Drawing
         this.activeLayer = null;
         this.lineTypes = {};
         //this.handSeed = 0x11F
-        this.unit = Drawing.UNITS.Unitless
+        this.unit = Drawing.UNITS.Millimeters
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
@@ -12460,7 +12459,7 @@ class Drawing
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName, this.handSeed++);
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
 
@@ -12472,29 +12471,29 @@ class Drawing
 
     drawLine(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
         return this;
     }
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y, this.handSeed++));
+        this.activeLayer.addShape(new Point(x, y));
         return this;
     }
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1, this.handSeed++));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
         return this;
     }
 
     drawRectClosed(x1, y1, x2, y2)
     {
         const rect = new Rectangle(x1, y1, x2, y2);
-        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0, this.handSeed++));
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0));
         return this;
     }
 
@@ -12507,7 +12506,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle, this.handSeed++));
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
         return this;
     }
 
@@ -12518,7 +12517,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r, this.handSeed++));
+        this.activeLayer.addShape(new Circle(x1, y1, r));
         return this;
     }
 
@@ -12533,7 +12532,7 @@ class Drawing
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, this.handSeed++));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
         return this;
     }
 
@@ -12545,7 +12544,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth, this.handSeed++));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
         return this;
     }
 
@@ -12559,7 +12558,7 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points, this.handSeed++));
+        this.activeLayer.addShape(new Polyline3d(points));
         return this;
     }
 
@@ -12589,7 +12588,7 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, this.handSeed++));
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
         return this;
     }
 

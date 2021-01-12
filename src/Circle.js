@@ -1,6 +1,9 @@
-const handleSeed = require('./handleSeed.js')
-
-class Circle
+const Entity = require('./Entity')
+const Row = require('./Row')
+/**
+ * http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
+ */
+class Circle extends Entity
 {
     /**
      * @param {number} x1 - Center x
@@ -9,24 +12,21 @@ class Circle
      */
     constructor(x1, y1, r)
     {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.r = r;
+        super({ entityType: 'CIRCLE', subclassMarker: 'AcDbCircle' })
+        this.x1 = x1
+        this.y1 = y1
+        this.r = r
         
     }
 
-    toDxfString()
-    {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
-        let s = `0\nCIRCLE\n`;
-        s += `5\n${handleSeed()}\n`;
-        s += `100\nAcDbEntity\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `100\nAcDbCircle\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `40\n${this.r}\n`;
-        return s;
+    toDxfRows() {
+        return [
+            new Row('10', this.x1),
+            new Row('20', this.y1),
+            new Row('30', 0),
+            new Row('40', this.r)
+        ]
     }
 }
 
-module.exports = Circle;
+module.exports = Circle
