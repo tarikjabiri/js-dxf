@@ -21,7 +21,7 @@ class Drawing
         this.activeLayer = null;
         this.lineTypes = {};
         //this.handSeed = 0x11F
-        this.unit = Drawing.UNITS.Unitless
+        this.unit = Drawing.UNITS.Millimeters
 
         for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
         {
