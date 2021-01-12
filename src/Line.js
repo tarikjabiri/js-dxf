@@ -1,13 +1,11 @@
 const Entity = require('./Entity');
 const Row = require('./Row')
-const H = require('./Helpers')
-const handleSeed = require('./handleSeed.js')
 /**
  * http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
  */
 class Line extends Entity {
     constructor(x1, y1, x2, y2) {
-        super({ entityType: 'TEXT', subclassMarker: 'AcDbText' });
+        super({ entityType: 'LINE', subclassMarker: 'AcDbLine' });
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -15,7 +13,6 @@ class Line extends Entity {
     }
 
     toDxfRows() {
-        console.log('ji')
         return [
             // new Row('62', colorIndex),
             new Row('10', this.x1),

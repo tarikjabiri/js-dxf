@@ -11596,9 +11596,7 @@ const Row = require('./Row')
 const H = require('./Helpers')
 const handleSeed = require('./handleSeed.js')
 /**
- * Base const handleSeed = require('./handleSeed.js')
-
-classrepresenting a DXF entity
+ * Base class representing a DXF entity
  * About the DXF ENTITIES Section: http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
  */
 
@@ -11610,17 +11608,18 @@ class Entity
      * @memberof Entity
      */
     entityType
-    constructor({entityType})
+    constructor({entityType, subclassMarker})
     {
         this.entityType = entityType
+        this.subclassMarker = subclassMarker
     }
 
     toDxfString()
     {
         const rows = [  // Row[]
-        new Row('00', this.entityType),
+        new Row('0', this.entityType),
         new Row('100', 'AcDbEntity'),
-        new Row('100', 'AcDbText'),
+        new Row('100', this.subclassMarker),
         new Row('5', handleSeed()),
         new Row('8', this.layer.name),
       ]
@@ -12060,51 +12059,36 @@ class Layer
 module.exports = Layer;
 
 },{"./Row":32,"./handleSeed.js":34}],26:[function(require,module,exports){
+const Entity = require('./Entity');
 const Row = require('./Row')
-const H = require('./Helpers')
-const handleSeed = require('./handleSeed.js')
-class Line
-{
-    constructor(x1, y1, x2, y2)
-    {
+/**
+ * http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
+ */
+class Line extends Entity {
+    constructor(x1, y1, x2, y2) {
+        super({ entityType: 'LINE', subclassMarker: 'AcDbLine' });
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
-
-        
     }
 
-    toDxfRow () {
-      const output = [  // Row[]
-        new Row('0', 'LINE'),
-        new Row('5', handleSeed()),
-        new Row('100', 'AcDbEntity'),
-        new Row('8', this.layer.name),
-        new Row('100', 'AcDbLine'),
-        // new Row('62', colorIndex),
-        new Row('10', this.x1),
-        new Row('20', this.y1),
-        new Row('30', 0),
-        new Row('11', this.x2),
-        new Row('21', this.y2),
-        new Row('31', 0),
-      ]
-
-      return output
-
-    }
-
-    toDxfString()
-    {
-        const rows = this.toDxfRow()
-        return H.generateStringFromRows(rows)
+    toDxfRows() {
+        return [
+            // new Row('62', colorIndex),
+            new Row('10', this.x1),
+            new Row('20', this.y1),
+            new Row('30', 0),
+            new Row('11', this.x2),
+            new Row('21', this.y2),
+            new Row('31', 0),
+        ]
     }
 }
 
 module.exports = Line;
 
-},{"./Helpers":24,"./Row":32,"./handleSeed.js":34}],27:[function(require,module,exports){
+},{"./Entity":21,"./Row":32}],27:[function(require,module,exports){
 const Row = require('./Row')
 const handleSeed = require('./handleSeed.js')
 
@@ -12350,9 +12334,11 @@ module.exports = Row
 const Entity = require('./Entity');
 const Row = require('./Row')
 const H_ALIGN_CODES = ['left', 'center', 'right'];
-const V_ALIGN_CODES = ['baseline','bottom', 'middle', 'top'];
-class Text extends Entity
-{
+const V_ALIGN_CODES = ['baseline', 'bottom', 'middle', 'top'];
+/**
+ * http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
+ */
+class Text extends Entity {
     /**
      * @param {number} x1 - x
      * @param {number} y1 - y
@@ -12362,9 +12348,8 @@ class Text extends Entity
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
-    {
-        super({entityType: 'TEXT'});
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline') {
+        super({ entityType: 'TEXT', subclassMarker: 'AcDbText' });
         this.x1 = x1;
         this.y1 = y1;
         this.height = height;
@@ -12372,32 +12357,31 @@ class Text extends Entity
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
-        
     }
 
-    toDxfRows () {
-      const rows = [  // Row[]
-        new Row('1', this.value),
-        new Row('40', this.height),
-        new Row('50', this.rotation), // DEG
-        new Row('10', this.x1), // X
-        new Row('20', this.y1), // Y
-        new Row('30', 0), // Z
-        // 7 --> Text style name (optional, default = STANDARD)
-        // They say Optional but essential for QCad to render the text correctly
-        new Row('7', 'STANDARD'),
-        new Row('100', 'AcDbText'),
-      ]
+    toDxfRows() {
+        const rows = [
+            new Row('1', this.value),
+            new Row('40', this.height),
+            new Row('50', this.rotation), // DEG
+            new Row('10', this.x1), // X
+            new Row('20', this.y1), // Y
+            new Row('30', 0), // Z
+            // 7 --> Text style name (optional, default = STANDARD)
+            // They say Optional but essential for QCad to render the text correctly
+            new Row('7', 'STANDARD'),
+            new Row('100', 'AcDbText'),
+        ]
 
-      if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)){
-        rows.push(new Row('11', this.x1)), // X
-        rows.push(new Row('21', this.y1)), // Y
-        rows.push(new Row('31', 0)), // Y
-        rows.push(new Row('72', Math.max(H_ALIGN_CODES.indexOf(this.hAlign),0)))
-        rows.push(new Row('73', Math.max(V_ALIGN_CODES.indexOf(this.vAlign),0)))
-      }
+        if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)) {
+            rows.push(new Row('11', this.x1)), // X
+                rows.push(new Row('21', this.y1)), // Y
+                rows.push(new Row('31', 0)), // Y
+                rows.push(new Row('72', Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0)))
+            rows.push(new Row('73', Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0)))
+        }
 
-      return rows
+        return rows
     }
 }
 
