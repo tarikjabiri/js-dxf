@@ -54,7 +54,7 @@ class Drawing
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName, this.handSeed++);
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
 
@@ -66,29 +66,29 @@ class Drawing
 
     drawLine(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2, this.handSeed++));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
         return this;
     }
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y, this.handSeed++));
+        this.activeLayer.addShape(new Point(x, y));
         return this;
     }
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1, this.handSeed++));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2, this.handSeed++));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2),this.handSeed++);
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2),this.handSeed++);
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
         return this;
     }
 
     drawRectClosed(x1, y1, x2, y2)
     {
         const rect = new Rectangle(x1, y1, x2, y2);
-        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0, this.handSeed++));
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0));
         return this;
     }
 
@@ -101,7 +101,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle, this.handSeed++));
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
         return this;
     }
 
@@ -112,7 +112,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r, this.handSeed++));
+        this.activeLayer.addShape(new Circle(x1, y1, r));
         return this;
     }
 
@@ -127,7 +127,7 @@ class Drawing
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, this.handSeed++));
+        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
         return this;
     }
 
@@ -139,7 +139,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth, this.handSeed++));
+        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
         return this;
     }
 
@@ -153,7 +153,7 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points, this.handSeed++));
+        this.activeLayer.addShape(new Polyline3d(points));
         return this;
     }
 
@@ -183,7 +183,7 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, this.handSeed++));
+        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
         return this;
     }
 
