@@ -88,7 +88,7 @@ class Drawing
     drawRectClosed(x1, y1, x2, y2)
     {
         const rect = new Rectangle(x1, y1, x2, y2);
-        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), true, 0, 0));
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), 1));
         return this;
     }
 
@@ -139,7 +139,8 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        let flag = closed ? 1 : 0;
+        this.activeLayer.addShape(new Polyline(points, flag, startWidth, endWidth));
         return this;
     }
 

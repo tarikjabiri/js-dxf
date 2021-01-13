@@ -4,7 +4,7 @@
  * The Drawing.drawRect(x1, y1, x2, y2) draws 4 lines separated
  * I added Drawing.drawRectClosed(x1, y1, x2, y2)
  * 
- * I did'nt implement the toDxfString() function because I'll use the class Polyline
+ * I didn't implement the toDxfString() function because I'll use the class Polyline
  * in the Drawing.drawRectClosed(x1, y1, x2, y2) function
  * 
  * finally it will be just a closed Polyline xD

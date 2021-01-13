@@ -1,5 +1,6 @@
 const Row = require('./Row')
-const handleSeed = require('./handleSeed.js')
+const handleSeed = require('./handleSeed.js');
+const Entity = require('./Entity');
 
 class Layer
 {
@@ -61,10 +62,14 @@ class Layer
         this.trueColor = color;
     }
 
+    /**
+     * 
+     * @param {Entity} shape 
+     */
     addShape(shape)
     {
-        this.shapes.push(shape);
-        shape.layer = this;       // ToDo: Wont work in typescript. Extend Entities with shape.setLayer() method instead
+      shape.setLayer(this);  // ToDo: Wont work in typescript. Extend Entities with shape.setLayer() method instead
+      this.shapes.push(shape);
     }
 
     getShapes()
