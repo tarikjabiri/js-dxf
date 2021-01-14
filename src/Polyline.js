@@ -43,6 +43,7 @@ class Polyline extends Entity
             rows = [...rows, ...vertex.rows()];
         }.bind(this));
 
+        //rows.push(new Row(0, 'SEQEND'))
         return rows;
     }
 }
