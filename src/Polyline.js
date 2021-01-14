@@ -32,9 +32,8 @@ class Polyline extends Entity
         if (this.endWidth !== 0) {
             rows.push(new Row('41', this.endWidth));
         }
-        if (this.falg !== 0) {
-            rows.push(new Row('70', this.falg));
-        }
+
+        rows.push(new Row('70', this.falg));
 
         this.points.forEach(function(point) {
             const [x, y, bulge = 0] = point;
@@ -42,6 +41,8 @@ class Polyline extends Entity
             vertex.setLayer(this.layer)
             rows = [...rows, ...vertex.rows()];
         }.bind(this));
+
+        rows.push(new Row('0', 'SEQEND'));
 
         return rows;
     }

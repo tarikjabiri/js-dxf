@@ -1,22 +1,25 @@
-const handleSeed = require('./handleSeed.js')
+const Entity = require('./Entity.js');
+const Row = require('./Row.js');
 
-class Point
+class Point extends Entity
 {
-    constructor(x, y)
+    constructor(x, y, z = 0)
     {
+        super({ entityType: 'POINT', subclassMarker: 'AcDbPoint' })
         this.x = x;
         this.y = y;
-        
+        this.z = z;
     }
 
-    toDxfString()
+    toDxfRows()
     {
-        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
-        let s = `0\nPOINT\n`;
-        s += `5\n${handleSeed()}\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `10\n${this.x}\n20\n${this.y}\n30\n0\n`;
-        return s;
+        let rows = [];
+
+        rows.push(new Row('10', this.x));
+        rows.push(new Row('20', this.y));
+        rows.push(new Row('30', this.z));
+
+        return rows;
     }
 }
 
