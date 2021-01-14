@@ -43,7 +43,7 @@ class Polyline extends Entity
         }.bind(this));
 
         rows.push(new Row('0', 'SEQEND'));
-
+      
         return rows;
     }
 }
