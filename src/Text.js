@@ -39,8 +39,8 @@ class Text extends Entity {
         ];
 
         if (H_ALIGN_CODES.includes(this.hAlign, 1) || V_ALIGN_CODES.includes(this.vAlign, 1)) {
-            rows.push(new Row('11', this.x1));  // X
-            rows.push(new Row('21', this.y1));  // Y
+            rows.push(new Row('11', this.x));  // X
+            rows.push(new Row('21', this.y));  // Y
             rows.push(new Row('31', 0));        // Y
             rows.push(new Row('72', Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0)));
             rows.push(new Row('73', Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0)));
