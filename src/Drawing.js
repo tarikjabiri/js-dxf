@@ -12,6 +12,7 @@ const HEADER = require('./Header')
 const H = require('./Helpers')
 const Row = require('./Row')
 const handleSeed = require('./handleSeed.js');
+const Rectangle = require('./Rectangle');
 class Drawing
 {
     constructor()
@@ -77,21 +78,17 @@ class Drawing
 
     drawRect(x1, y1, x2, y2)
     {
-        // The rectangle is a polyline entity in AutoCAD so we have to do it like this
-        // The Rectangle class deleted because there is no entity called rectangle in the dxf reference
-        const corners = [
-            [x1, y1],
-            [x1, y2],
-            [x2, y2],
-            [x2, y1]
-        ];
+        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
+        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
+        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
+        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+        return this;
+    }
 
-        this.activeLayer.addShape(new Polyline(corners, 1));
-        
-        // this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        // this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        // this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        // this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+    drawRectClosed(x1, y1, x2, y2)
+    {
+        const rect = new Rectangle(x1, y1, x2, y2);
+        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), 1));
         return this;
     }
 
@@ -142,7 +139,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        const flag = closed ? 1 : 0;
+        let flag = closed ? 1 : 0;
         this.activeLayer.addShape(new Polyline(points, flag, startWidth, endWidth));
         return this;
     }

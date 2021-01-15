@@ -33,16 +33,17 @@ class Entity
 
     toDxfString()
     {
-        return H.generateStringFromRows(this.rows());
+        return H.generateStringFromRows(this.rows())
     }
 
-    rows() {
+    rows () {
+        
         let rows = [
             new Row('0', this.entityType),
             new Row('100', 'AcDbEntity'),
-            new Row('5', handleSeed()),
-            new Row('8', this.layer.name),
             new Row('100', this.subclassMarker),
+            new Row('5', handleSeed()),
+            new Row('8', this.layer.name)
         ];
         rows.push(...this.toDxfRows())
         return rows;
