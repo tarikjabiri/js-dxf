@@ -17,14 +17,12 @@
 
             // or fluent
             d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
-            .setActiveLayer('l_yellow')
-            .drawCircle(50, -30, 25);
-
-
-            d.addLayer('l_cyan', Drawing.ACI.CYAN, 'CENTER')
-            .setActiveLayer('l_cyan')
-            .drawRect(90, 90, 250, 250)
-            .drawEllipse(7, 42, -23, 16, 0.6736955142574869, 0, 6.2831853071795862);
+             .setActiveLayer('l_yellow')
+             .drawCircle(50, -30, 25)
+             .addLayer('l_cyan', Drawing.ACI.CYAN, 'CENTER')
+             .setActiveLayer('l_cyan')
+             .drawRect(90, 90, 250, 250)
+             .drawEllipse(7, 42, -23, 16, 0.6736955142574869, 0, 6.2831853071795862);
 
             var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
             document.getElementById('dxf').href = URL.createObjectURL(b);
