@@ -42,8 +42,8 @@ class Ellipse extends Entity
         rows.push(new Row('31', this.z_major_axis));
 
         rows.push(new Row('40', this.ratio_minor_axis));
-        rows.push(new Row('42', this.start_parameter));
-        rows.push(new Row('43', this.end_parameter));
+        rows.push(new Row('41', this.start_parameter));
+        rows.push(new Row('42', this.end_parameter));
 
         return rows;
     }
