@@ -42,6 +42,7 @@ class Entity
             new Row('100', 'AcDbEntity'),
             new Row('5', handleSeed()),
             new Row('8', this.layer.name),
+            new Row('6', 'BYLAYER'),
             new Row('100', this.subclassMarker),
         ];
         rows.push(...this.toDxfRows())

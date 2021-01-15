@@ -16,7 +16,7 @@ class Polyline extends Entity
      */
     constructor(points, flag = 0, startWidth = 0, endWidth = 0)
     {
-        super({ entityType: 'POLYLINE', subclassMarker: 'AcDb2dPolyline' })
+        super({ entityType: 'POLYLINE', subclassMarker: 'AcDb2dPolyline' });
         this.points = points;
         this.falg = flag; // default 0, if set to 1 is a closed polyline
         this.startWidth = startWidth;
@@ -43,7 +43,7 @@ class Polyline extends Entity
         }.bind(this));
 
         rows.push(new Row('0', 'SEQEND'));
-        
+
         return rows;
     }
 }
