@@ -229,7 +229,6 @@ declare module "dxf-writer" {
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
         drawPoint(x: number, y: number): Drawing;
         drawRect(x1: number, y1: number, x2: number, y2: number): Drawing;
-        drawRectClosed(x1: number, y1: number, x2: number, y2: number): Drawing;
 
         /**
          * @param {number} x1 - Center x
