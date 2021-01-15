@@ -23,7 +23,7 @@
 
             d.addLayer('l_cyan', Drawing.ACI.CYAN, 'CENTER')
             .setActiveLayer('l_cyan')
-            .drawRectClosed(90, 90, 250, 250);
+            .drawRect(90, 90, 250, 250);
 
             var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
             document.getElementById('dxf').href = URL.createObjectURL(b);
@@ -31,20 +31,7 @@
     </script>
 </head>
 <body>
-    <pre>
-            let d = new Drawing();
-
-            d.setUnits('Decimeters');
-            d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-            d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
-            d.setActiveLayer('l_green');
-            d.drawText(20, -70, 10, 0, 'go green!');
-
-            //or fluent
-            d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
-            .setActiveLayer('l_yellow')
-            .drawCircle(50, -30, 25);
-    </pre>
+    <pre></pre>
 <a href="" id="dxf" onclick=generateDrawing() download='test.dxf'>demo.dxf</a>
 <script>
     document.getElementsByTagName('pre')[0].innerText = document.getElementsByTagName('script')[1].innerText

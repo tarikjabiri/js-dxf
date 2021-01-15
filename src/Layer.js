@@ -1,6 +1,6 @@
-const Row = require('./Row')
 const handleSeed = require('./handleSeed.js');
 const Entity = require('./Entity');
+const Row = require('./Row')
 
 class Layer
 {
