@@ -1,54 +1,35 @@
-const Entity = require('./Entity.js');
-const Row = require('./Row.js');
+const handleSeed = require('./handleSeed.js')
 
-class Face extends Entity
+class Face
 {
-    /**
-     * 
-     * @param {number} x1   - x1 coordinate 
-     * @param {number} y1   - y1 coordinate 
-     * @param {number} z1   - z1 coordinate 
-     * @param {number} x2   - x2 coordinate 
-     * @param {number} y2   - y2 coordinate 
-     * @param {number} z2   - z2 coordinate 
-     * @param {number} x3   - x3 coordinate 
-     * @param {number} y3   - y3 coordinate 
-     * @param {number} z3   - z3 coordinate 
-     * @param {number} x4   - x4 coordinate 
-     * @param {number} y4   - y4 coordinate 
-     * @param {number} z4   - z4 coordinate 
-     */
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        super({ entityType: '3DFACE', subclassMarker: 'AcDbFace' })
-        this.x1 = x1; this.y1 = y1; this.z1 = z1;
-        this.x2 = x2; this.y2 = y2; this.z2 = z2;
-        this.x3 = x3; this.y3 = y3; this.z3 = z3;
-        this.x4 = x4; this.y4 = y4; this.z4 = z4;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.z1 = z1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.z2 = z2;
+        this.x3 = x3;
+        this.y3 = y3;
+        this.z3 = z3;
+        this.x4 = x4;
+        this.y4 = y4;
+        this.z4 = z4;
         
     }
 
-    toDxfRows()
+    toDxfString()
     {
-        let rows = [];
-
-        rows.push(new Row('10', this.x1));
-        rows.push(new Row('20', this.y1));
-        rows.push(new Row('30', this.z1));
-
-        rows.push(new Row('11', this.x2));
-        rows.push(new Row('21', this.y2));
-        rows.push(new Row('31', this.z2));
-
-        rows.push(new Row('12', this.x3));
-        rows.push(new Row('22', this.y3));
-        rows.push(new Row('32', this.z3));
-
-        rows.push(new Row('13', this.x4));
-        rows.push(new Row('23', this.y4));
-        rows.push(new Row('33', this.z4));
-
-        return rows;
+        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
+        let s = `0\n3DFACE\n`;
+        s += `5\n${handleSeed()}\n`;
+        s += `8\n${this.layer.name}\n`;
+        s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
+        s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
+        s += `12\n${this.x3}\n22\n${this.y3}\n32\n${this.z3}\n`;
+        s += `13\n${this.x4}\n23\n${this.y4}\n33\n${this.z4}\n`;
+        return s;
     }
 }
 
