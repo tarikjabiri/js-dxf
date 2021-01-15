@@ -12,6 +12,7 @@ const HEADER = require('./Header')
 const H = require('./Helpers')
 const Row = require('./Row')
 const handleSeed = require('./handleSeed.js');
+const Ellipse = require('./Ellipse');
 class Drawing
 {
     constructor()
@@ -158,6 +159,21 @@ class Drawing
             }
         });
         this.activeLayer.addShape(new Polyline3d(points));
+        return this;
+    }
+
+    /**
+     * @param {number} x_center X coordinate of Center point
+     * @param {number} y_center Y coordinate of Center point
+     * @param {number} x_major_axis X coordinate of Endpoint of major axis, relative to the center
+     * @param {number} y_major_axis Y coordinate of Endpoint of major axis, relative to the center
+     * @param {number} ratio_minor_axis Ratio of minor axis to major axis
+     * @param {number} start_parameter Start parameter (this value is 0.0 for a full ellipse)
+     * @param {number} end_parameter End parameter (this value is 2pi = 6.2831853071795862 for a full ellipse)
+     */
+    drawEllipse(x_center, y_center, x_major_axis, y_major_axis, ratio_minor_axis, start_parameter = 0.0, end_parameter = 6.2831853071795862)
+    {
+        this.activeLayer.addShape(new Ellipse(x_center, y_center, x_major_axis, y_major_axis, ratio_minor_axis, start_parameter, end_parameter));
         return this;
     }
 

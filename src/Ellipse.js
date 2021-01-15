@@ -14,7 +14,7 @@ class Ellipse extends Entity
      * @param {number} y_major_axis Y coordinate of Endpoint of major axis, relative to the center
      * @param {number} ratio_minor_axis Ratio of minor axis to major axis
      * @param {number} start_parameter Start parameter (this value is 0.0 for a full ellipse)
-     * @param {number} end_parameter End parameter (this value is 2pi = 6.2831853071795862 for a full ellipse) 6.2831853071795862
+     * @param {number} end_parameter End parameter (this value is 2pi = 6.2831853071795862 for a full ellipse)
      */
     constructor(x_center, y_center, x_major_axis, y_major_axis, ratio_minor_axis, start_parameter = 0.0, end_parameter = 6.2831853071795862)
     {
@@ -41,7 +41,7 @@ class Ellipse extends Entity
         rows.push(new Row('21', this.y_major_axis));
         rows.push(new Row('31', this.z_major_axis));
 
-        rows.push(new Row('41', this.ratio_minor_axis));
+        rows.push(new Row('40', this.ratio_minor_axis));
         rows.push(new Row('42', this.start_parameter));
         rows.push(new Row('43', this.end_parameter));
 
