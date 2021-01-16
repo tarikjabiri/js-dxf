@@ -18,7 +18,7 @@ class Polyline extends Entity
     {
         super({ entityType: 'POLYLINE', subclassMarker: 'AcDb2dPolyline' });
         this.points = points;
-        this.falg = flag; // default 0, if set to 1 is a closed polyline
+        this.flag = flag; // default 0, if set to 1 is a closed polyline
         this.startWidth = startWidth;
         this.endWidth = endWidth;
     }
@@ -33,7 +33,7 @@ class Polyline extends Entity
             rows.push(new Row('41', this.endWidth));
         }
 
-        rows.push(new Row('70', this.falg));
+        rows.push(new Row('70', this.flag));
 
         this.points.forEach(function(point) {
             const [x, y, bulge = 0] = point;
