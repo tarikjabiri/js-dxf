@@ -12,7 +12,7 @@ const HEADER = require('./Header')
 const H = require('./Helpers')
 const Row = require('./Row')
 const handleSeed = require('./handleSeed.js');
-const Rectangle = require('./Rectangle');
+const Ellipse = require('./Ellipse');
 class Drawing
 {
     constructor()
@@ -78,17 +78,21 @@ class Drawing
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
-        return this;
-    }
+        // The rectangle is a polyline entity in AutoCAD so we have to do it like this
+        // The Rectangle class deleted because there is no entity called rectangle in the dxf reference
+        const corners = [
+            [x1, y1],
+            [x1, y2],
+            [x2, y2],
+            [x2, y1]
+        ];
 
-    drawRectClosed(x1, y1, x2, y2)
-    {
-        const rect = new Rectangle(x1, y1, x2, y2);
-        this.activeLayer.addShape(new Polyline(rect.getCornersPoints(), 1));
+        this.activeLayer.addShape(new Polyline(corners, 1));
+        
+        // this.activeLayer.addShape(new Line(x1, y1, x2, y1));
+        // this.activeLayer.addShape(new Line(x1, y2, x2, y2));
+        // this.activeLayer.addShape(new Line(x1, y1, x1, y2));
+        // this.activeLayer.addShape(new Line(x2, y1, x2, y2));
         return this;
     }
 
@@ -139,7 +143,7 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        let flag = closed ? 1 : 0;
+        const flag = closed ? 1 : 0;
         this.activeLayer.addShape(new Polyline(points, flag, startWidth, endWidth));
         return this;
     }
@@ -155,6 +159,21 @@ class Drawing
             }
         });
         this.activeLayer.addShape(new Polyline3d(points));
+        return this;
+    }
+
+    /**
+     * @param {number} x_center X coordinate of Center point
+     * @param {number} y_center Y coordinate of Center point
+     * @param {number} x_major_axis X coordinate of Endpoint of major axis, relative to the center
+     * @param {number} y_major_axis Y coordinate of Endpoint of major axis, relative to the center
+     * @param {number} ratio_minor_axis Ratio of minor axis to major axis
+     * @param {number} start_parameter Start parameter (this value is 0.0 for a full ellipse)
+     * @param {number} end_parameter End parameter (this value is 2pi = 6.2831853071795862 for a full ellipse)
+     */
+    drawEllipse(x_center, y_center, x_major_axis, y_major_axis, ratio_minor_axis, start_parameter = 0.0, end_parameter = 6.2831853071795862)
+    {
+        this.activeLayer.addShape(new Ellipse(x_center, y_center, x_major_axis, y_major_axis, ratio_minor_axis, start_parameter, end_parameter));
         return this;
     }
 

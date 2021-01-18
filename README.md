@@ -24,6 +24,10 @@ d.drawText(20, -70, 10, 0, 'go green!');
 d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DOTTED')
  .setActiveLayer('l_yellow')
  .drawCircle(50, -30, 25);
+ .addLayer('l_cyan', Drawing.ACI.CYAN, 'CENTER')
+ .setActiveLayer('l_cyan')
+ .drawRect(90, 90, 250, 250)
+ .drawEllipse(7, 42, -23, 16, 0.6736955142574869, 0, 6.2831853071795862);
 
 fs.writeFileSync(__filename + '.dxf', d.toDxfString());
 ```
@@ -37,14 +41,15 @@ Example preview in the LibreCAD:
  - [editor](//ognjen-petrovic.github.io/js-dxf/examples/browser/editor/index.html)
 
 ## Supported entities: 
- - arc 
- - circle
- - line
- - point
- - polyline 
- - polyline 3D 
- - text
+ - Arc 
+ - Circle
+ - Line
+ - Point
+ - Polyline 
+ - Polyline 3D 
+ - Text
  - 3DFace
+ - Ellipse
  
 ## Supported colors: 
  - red

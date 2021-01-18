@@ -229,7 +229,6 @@ declare module "dxf-writer" {
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
         drawPoint(x: number, y: number): Drawing;
         drawRect(x1: number, y1: number, x2: number, y2: number): Drawing;
-        drawRectClosed(x1: number, y1: number, x2: number, y2: number): Drawing;
 
         /**
          * @param {number} x1 - Center x
@@ -278,6 +277,17 @@ declare module "dxf-writer" {
          * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
          */
         drawPolyline3d(points: Array<Point3D>): Drawing;
+
+        /**
+         * @param {number} x_center X coordinate of Center point
+         * @param {number} y_center Y coordinate of Center point
+         * @param {number} x_major_axis X coordinate of Endpoint of major axis, relative to the center
+         * @param {number} y_major_axis Y coordinate of Endpoint of major axis, relative to the center
+         * @param {number} ratio_minor_axis Ratio of minor axis to major axis
+         * @param {number} start_parameter Start parameter (this value is 0.0 for a full ellipse)
+         * @param {number} end_parameter End parameter (this value is 2pi = 6.2831853071795862 for a full ellipse)
+         */
+        drawEllipse(x_center: number, y_center: number, x_major_axis: number, y_major_axis: number, ratio_minor_axis: number, start_parameter: number, end_parameter: number);
 
         /**
          * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB

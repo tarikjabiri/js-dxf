@@ -6,23 +6,23 @@ const Row = require('./Row')
 class Circle extends Entity
 {
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {number} x - Center x
+     * @param {number} y - Center y
      * @param {number} r - radius
      */
-    constructor(x1, y1, r)
+    constructor(x, y, r)
     {
         super({ entityType: 'CIRCLE', subclassMarker: 'AcDbCircle' })
-        this.x1 = x1
-        this.y1 = y1
+        this.x = x
+        this.y = y
         this.r = r
         
     }
 
     toDxfRows() {
         return [
-            new Row('10', this.x1),
-            new Row('20', this.y1),
+            new Row('10', this.x),
+            new Row('20', this.y),
             new Row('30', 0),
             new Row('40', this.r)
         ]

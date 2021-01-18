@@ -16,9 +16,9 @@ class Polyline extends Entity
      */
     constructor(points, flag = 0, startWidth = 0, endWidth = 0)
     {
-        super({ entityType: 'POLYLINE', subclassMarker: 'AcDb2dPolyline' })
+        super({ entityType: 'POLYLINE', subclassMarker: 'AcDb2dPolyline' });
         this.points = points;
-        this.falg = flag; // default 0, if set to 1 is a closed polyline
+        this.flag = flag; // default 0, if set to 1 is a closed polyline
         this.startWidth = startWidth;
         this.endWidth = endWidth;
     }
@@ -32,9 +32,8 @@ class Polyline extends Entity
         if (this.endWidth !== 0) {
             rows.push(new Row('41', this.endWidth));
         }
-        if (this.falg !== 0) {
-            rows.push(new Row('70', this.falg));
-        }
+
+        rows.push(new Row('70', this.flag));
 
         this.points.forEach(function(point) {
             const [x, y, bulge = 0] = point;
@@ -43,7 +42,8 @@ class Polyline extends Entity
             rows = [...rows, ...vertex.rows()];
         }.bind(this));
 
-        //rows.push(new Row(0, 'SEQEND'))
+        rows.push(new Row('0', 'SEQEND'));
+
         return rows;
     }
 }
