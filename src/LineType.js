@@ -1,4 +1,7 @@
-class LineType
+const DatabaseObject = require('./DatabaseObject')
+
+
+class LineType extends DatabaseObject
 {
     /**
      * @param {string} name
@@ -7,6 +10,7 @@ class LineType
      */
     constructor(name, description, elements)
     {
+        super(["AcDbSymbolTableRecord", "AcDbLinetypeTableRecord"])
         this.name = name;
         this.description = description;
         this.elements = elements;
@@ -18,16 +22,18 @@ class LineType
     toDxfString()
     {
         let s = '0\nLTYPE\n';
-        s += '72\n65\n';
-        s += '70\n64\n';
+        s += super.toDxfString()
         s += `2\n${this.name}\n`;
         s += `3\n${this.description}\n`;
+        s += '70\n0\n';
+        s += '72\n65\n';
         s += `73\n${this.elements.length}\n`;
         s += `40\n${this.getElementsSum()}\n`;
-
-        for (let i = 0; i < this.elements.length; ++i)
+        for (const element of this.elements)
         {
-            s += `49\n${this.elements[i]}\n`;
+            s += `49\n${element}\n`;
+            /* Complex linetype element type, mandatory for AutoCAD */
+            s += '74\n0\n';
         }
 
         return s;

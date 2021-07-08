@@ -1,5 +1,13 @@
 const LineType = require('./LineType');
 const Layer = require('./Layer');
+const Table = require('./Table');
+const DimStyleTable = require('./DimStyleTable');
+const TextStyle = require('./TextStyle');
+const Viewport = require('./Viewport');
+const AppId = require('./AppId');
+const Block = require('./Block');
+const BlockRecord = require('./BlockRecord');
+const Dictionary = require('./Dictionary');
 const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
@@ -19,21 +27,25 @@ class Drawing
         this.activeLayer = null;
         this.lineTypes = {};
         this.headers = {};
+        this.tables = {};
+        this.blocks = {};
+        this.handleCount = 0;
+
+        this.ltypeTableHandle = this._generateHandle()
+        this.layerTableHandle = this._generateHandle()
+        this.blockRecordTableHandle = this._generateHandle()
+
+        this.dictionary = new Dictionary()
+        this._assignHandle(this.dictionary)
 
         this.setUnits('Unitless');
 
-        for (let i = 0; i < Drawing.LINE_TYPES.length; ++i)
-        {
-            this.addLineType(Drawing.LINE_TYPES[i].name,
-                             Drawing.LINE_TYPES[i].description,
-                             Drawing.LINE_TYPES[i].elements);
+        for (const lineType of Drawing.LINE_TYPES) {
+            this.addLineType(lineType.name, lineType.description, lineType.elements);
         }
 
-        for (let i = 0; i < Drawing.LAYERS.length; ++i)
-        {
-            this.addLayer(Drawing.LAYERS[i].name,
-                          Drawing.LAYERS[i].colorNumber,
-                          Drawing.LAYERS[i].lineTypeName);
+        for (const layer of Drawing.LAYERS) {
+            this.addLayer(layer.name, layer.colorNumber, layer.lineTypeName);
         }
 
         this.setActiveLayer('0');
@@ -47,13 +59,13 @@ class Drawing
      */
     addLineType(name, description, elements)
     {
-        this.lineTypes[name] = new LineType(name, description, elements);
+        this.lineTypes[name] = this._assignHandle(new LineType(name, description, elements));
         return this;
     }
 
     addLayer(name, colorNumber, lineTypeName)
     {
-        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
+        this.layers[name] = this._assignHandle(new Layer(name, colorNumber, lineTypeName));
         return this;
     }
 
@@ -63,24 +75,40 @@ class Drawing
         return this;
     }
 
+    addTable(name) {
+        const table = new Table(name)
+        this._assignHandle(table)
+        this.tables[name] = table
+        return table
+    }
+
+    addBlock(name) {
+        const block = new Block(name)
+        this._assignHandle(block)
+        block.setEndHandle(this._generateHandle())
+        block.setRecordHandle(this._generateHandle())
+        this.blocks[name] = block
+        return block
+    }
+
     drawLine(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
         return this;
     }
 
     drawPoint(x, y)
     {
-        this.activeLayer.addShape(new Point(x, y));
+        this.activeLayer.addShape(this._assignHandle(new Point(x, y)));
         return this;
     }
 
     drawRect(x1, y1, x2, y2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y1));
-        this.activeLayer.addShape(new Line(x1, y2, x2, y2));
-        this.activeLayer.addShape(new Line(x1, y1, x1, y2));
-        this.activeLayer.addShape(new Line(x2, y1, x2, y2));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y1)));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y2, x2, y2)));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x1, y2)));
+        this.activeLayer.addShape(this._assignHandle(new Line(x2, y1, x2, y2)));
         return this;
     }
 
@@ -93,7 +121,7 @@ class Drawing
      */
     drawArc(x1, y1, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle)));
         return this;
     }
 
@@ -104,7 +132,7 @@ class Drawing
      */
     drawCircle(x1, y1, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r)));
         return this;
     }
 
@@ -117,9 +145,11 @@ class Drawing
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
-    drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
+    drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left',
+             verticalAlignment = 'baseline')
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment));
+        this.activeLayer.addShape(this._assignHandle(
+            new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment)));
         return this;
     }
 
@@ -131,7 +161,9 @@ class Drawing
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
     {
-        this.activeLayer.addShape(new Polyline(points, closed, startWidth, endWidth));
+        const p = new Polyline(points, closed, startWidth, endWidth);
+        this._assignHandle(p);
+        this.activeLayer.addShape(p);
         return this;
     }
 
@@ -145,7 +177,10 @@ class Drawing
                 throw "Require 3D coordinate"
             }
         });
-        this.activeLayer.addShape(new Polyline3d(points));
+        const p = new Polyline3d(points);
+        this._assignHandle(p);
+        p.assignVertexHandles(this._generateHandle.bind(this))
+        this.activeLayer.addShape(p);
         return this;
     }
 
@@ -167,8 +202,10 @@ class Drawing
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = []) {
-        this.activeLayer.addShape(new Spline(controlPoints, degree, knots, weights, fitPoints));
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
+    {
+        this.activeLayer.addShape(this._assignHandle(
+            new Spline(controlPoints, degree, knots, weights, fitPoints)));
         return this;
     }
 
@@ -182,8 +219,10 @@ class Drawing
     * @param {number} startAngle - Start angle
     * @param {number} endAngle - End angle
     */
-    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI) {
-        this.activeLayer.addShape(new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle));
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI)
+    {
+        this.activeLayer.addShape(this._assignHandle(
+            new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle)));
         return this;
     }
 
@@ -203,38 +242,36 @@ class Drawing
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
     {
-        this.activeLayer.addShape(new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4));
+        this.activeLayer.addShape(this._assignHandle(
+            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)));
         return this;
+    }
+
+    _generateHandle()
+    {
+        return ++this.handleCount
+    }
+
+    _assignHandle(entity)
+    {
+        entity.handle = this._generateHandle()
+        return entity
     }
 
     _getDxfLtypeTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLTYPE\n';    //name table as LTYPE table
-
-        for (let lineTypeName in this.lineTypes)
-        {
-            s += this.lineTypes[lineTypeName].toDxfString();
-        }
-
-        s += '0\nENDTAB\n'; //end table
-
-        return s;
+        const t = new Table("LTYPE")
+        t.handle = this.ltypeTableHandle
+        Object.values(this.lineTypes).forEach(v => t.add(v))
+        return t.toDxfString()
     }
 
     _getDxfLayerTable()
     {
-        let s = '0\nTABLE\n'; //start table
-        s += '2\nLAYER\n'; //name table as LAYER table
-
-        for (let layerName in this.layers)
-        {
-            s += this.layers[layerName].toDxfString();
-        }
-
-        s += '0\nENDTAB\n';
-
-        return s;
+        const t = new Table("LAYER")
+        t.handle = this.layerTableHandle
+        Object.values(this.layers).forEach(v => t.add(v))
+        return t.toDxfString()
     }
 
      /**
@@ -269,6 +306,62 @@ class Drawing
         return this;
     }
 
+    /** Generate additional DXF metadata which are required to successfully open resulted document
+     * in AutoDesk products. Call this method before serializing the drawing to get the most
+     * compatible result.
+     */
+    generateAutocadExtras() {
+        if (!this.headers["ACADVER"]) {
+            /* AutoCAD 2007 version. */
+            this.header("ACADVER", [[1, "AC1021"]])
+        }
+
+        if (!this.lineTypes["ByBlock"]) {
+            this.addLineType("ByBlock", "", [])
+        }
+        if (!this.lineTypes["ByLayer"]) {
+            this.addLineType("ByLayer", "", [])
+        }
+
+        let vpTable = this.tables["VPORT"]
+        if (!vpTable) {
+            vpTable = this.addTable("VPORT")
+        }
+        let styleTable = this.tables["STYLE"]
+        if (!styleTable) {
+            styleTable = this.addTable("STYLE")
+        }
+        if (!this.tables["VIEW"]) {
+            this.addTable("VIEW")
+        }
+        if (!this.tables["UCS"]) {
+            this.addTable("UCS")
+        }
+        let appIdTable = this.tables["APPID"]
+        if (!appIdTable) {
+            appIdTable = this.addTable("APPID")
+        }
+        if (!this.tables["DIMSTYLE"]) {
+            const t = new DimStyleTable("DIMSTYLE")
+            this._assignHandle(t)
+            this.tables["DIMSTYLE"] = t
+        }
+
+        vpTable.add(this._assignHandle(new Viewport("*ACTIVE", 1000)))
+
+        /* Non-default text alignment is not applied without this entry. */
+        styleTable.add(this._assignHandle(new TextStyle("standard")))
+
+        appIdTable.add(this._assignHandle(new AppId("ACAD")))
+
+        this.addBlock("*Model_Space")
+        this.addBlock("*Paper_Space")
+
+        const d = new Dictionary()
+        this._assignHandle(d)
+        this.dictionary.addChildDictionary("ACAD_GROUP", d)
+    }
+
     toDxfString()
     {
         let s = '';
@@ -278,10 +371,19 @@ class Drawing
         //name section as HEADER section
         s += '2\nHEADER\n';
 
+        s += this._getHeader("HANDSEED", [[5, (this.handleCount + 1).toString(16)]])
         for (let header in this.headers) {
             s += this._getHeader(header, this.headers[header]);
         }
 
+        //end section
+        s += '0\nENDSEC\n';
+
+
+        //start section
+        s += '0\nSECTION\n';
+        // Empty CLASSES section for compatibility
+        s += '2\nCLASSES\n';
         //end section
         s += '0\nENDSEC\n';
 
@@ -294,6 +396,32 @@ class Drawing
         s += this._getDxfLtypeTable();
         s += this._getDxfLayerTable();
 
+        for (const table of Object.values(this.tables)) {
+            s += table.toDxfString()
+        }
+
+        let blockRecordTable = new Table("BLOCK_RECORD")
+        blockRecordTable.handle = this.blockRecordTableHandle
+        Object.values(this.blocks).forEach(b => {
+            const rec = new BlockRecord(b.name)
+            rec.handle = b.recordHandle
+            blockRecordTable.add(rec)
+        })
+        s += blockRecordTable.toDxfString()
+
+        //end section
+        s += '0\nENDSEC\n';
+
+
+        //start section
+        s += '0\nSECTION\n';
+        //name section as BLOCKS section
+        s += '2\nBLOCKS\n';
+
+        for (const block of  Object.values(this.blocks)) {
+            s += block.toDxfString()
+        }
+
         //end section
         s += '0\nENDSEC\n';
 
@@ -302,18 +430,22 @@ class Drawing
         s += '0\nSECTION\n';
         s += '2\nENTITIES\n';
 
-        for (let layerName in this.layers)
-        {
-            let layer = this.layers[layerName];
+        for (const layer of Object.values(this.layers)) {
             s += layer.shapesToDxf();
-            // let shapes = layer.getShapes();
         }
 
         s += '0\nENDSEC\n';
 
 
+        //OBJECTS section
+        s += '0\nSECTION\n';
+        s += '2\nOBJECTS\n';
+        s += this.dictionary.toDxfString();
+        s += '0\nENDSEC\n';
+
+
         //close file
-        s += '0\nEOF';
+        s += '0\nEOF\n';
 
         return s;
     }

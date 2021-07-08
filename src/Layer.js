@@ -1,7 +1,11 @@
-class Layer
+const DatabaseObject = require('./DatabaseObject')
+
+
+class Layer extends DatabaseObject
 {
-    constructor(name, colorNumber, lineTypeName)
+    constructor(name, colorNumber, lineTypeName = null)
     {
+        super(["AcDbSymbolTableRecord", "AcDbLayerTableRecord"])
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
@@ -12,7 +16,7 @@ class Layer
     toDxfString()
     {
         let s = '0\nLAYER\n';
-        s += '70\n64\n';
+        s += super.toDxfString();
         s += `2\n${this.name}\n`;
         if (this.trueColor !== -1)
         {
@@ -22,8 +26,15 @@ class Layer
         {
             s += `62\n${this.colorNumber}\n`;
         }
-        s += `6\n${this.lineTypeName}\n`;
-        return s;        
+        s += '70\n0\n';
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
+        /* Hard-pointer handle to PlotStyleName object; seems mandatory, but any value seems OK,
+         * including 0.
+         */
+        s += "390\n1\n";
+        return s;
     }
 
     setTrueColor(color)

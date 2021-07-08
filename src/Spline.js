@@ -1,4 +1,7 @@
-class Spline
+const DatabaseObject = require('./DatabaseObject')
+
+
+class Spline extends DatabaseObject
 {
     /**
      * Creates a spline. See https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
@@ -10,6 +13,7 @@ class Spline
      */
     constructor(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
     {
+        super(["AcDbEntity", "AcDbSpline"])
         if (controlPoints.length < degree + 1) {
             throw new Error(`For degree ${degree} spline, expected at least ${degree + 1} control points, but received only ${controlPoints.length}`);
         }
@@ -70,8 +74,8 @@ class Spline
     toDxfString() {
         // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
         let s = `0\nSPLINE\n`;
+        s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
-        s += `100\nAcDbSpline\n`;
         s += `210\n0.0\n220\n0.0\n230\n1.0\n`;
 
         s += `70\n${this.type}\n`;
