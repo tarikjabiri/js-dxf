@@ -1,4 +1,7 @@
-class Ellipse {
+const DatabaseObject = require('./DatabaseObject')
+
+
+class Ellipse extends DatabaseObject {
     /**
      * Creates an ellipse.
      * @param {number} x1 - Center x
@@ -10,6 +13,7 @@ class Ellipse {
      * @param {number} endAngle - End angle
      */
     constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
+        super(["AcDbEntity", "AcDbEllipse"])
         this.x1 = x1;
         this.y1 = y1;
         this.majorAxisX = majorAxisX;
@@ -22,6 +26,7 @@ class Ellipse {
     toDxfString() {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
         let s = `0\nELLIPSE\n`;
+        s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
         s += `10\n${this.x1}\n`;
         s += `20\n${this.y1}\n`;

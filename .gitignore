@@ -1,2 +1,5 @@
 /node_modules
 .vscode/settings.json
+.idea/
+*.iml
+
