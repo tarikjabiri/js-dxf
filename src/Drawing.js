@@ -96,11 +96,11 @@ class Drawing {
         return this;
     }
 
-    drawRect(x1, y1, x2, y2, bulge) {
+    drawRect(x1, y1, x2, y2, cornerRadius) {
         const w = x2 - x1;
         const h = y2 - y1;
         let p = null;
-        if (bulge) {
+        if (!cornerRadius) {
             p = new Polyline([
                 [x1, y1],
                 [x1, y1 + h],
@@ -109,14 +109,14 @@ class Drawing {
             ], true);
         } else {
             p = new Polyline([
-                [x1, y1 + bulge],  // 1
-                [x1, y1 + h - bulge, bulge], // 2
-                [x1 + bulge, y1 + h], // 3
-                [x1 + w - bulge, y1 + h, bulge], // 4
-                [x1 + w, y1 + h - bulge], // 5
-                [x1 + w, y1 + bulge, bulge] // 6
-                [x1 + w - bulge, y1], // 7
-                [x1 + bulge, y1, bulge] // 8
+                [x1 + cornerRadius, y1, cornerRadius],  // 1
+                [x1, y1 + cornerRadius], // 2
+                [x1, y1 + h - cornerRadius, cornerRadius], // 3
+                [x1 + cornerRadius, y1 + h], // 4
+                [x1 + w - cornerRadius, y1 + h, cornerRadius], // 5
+                [x1 + w, y1 + h - cornerRadius] // 6
+                [x1 + w - cornerRadius, y1 + cornerRadius, cornerRadius], // 7
+                [x1 + w - cornerRadius, y1] // 8
             ])
         }
 
