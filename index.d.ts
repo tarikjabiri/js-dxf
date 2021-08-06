@@ -228,7 +228,7 @@ declare module "dxf-writer" {
         setActiveLayer(name: string): Drawing;
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
         drawPoint(x: number, y: number): Drawing;
-        drawRect(x1: number, y1: number, x2: number, y2: number, cornerSize?: number): Drawing;
+        drawRect(x1: number, y1: number, x2: number, y2: number, cornerSize?: number, cornerBulge?: number): Drawing;
 
         /**
          * @param {number} x1 - Center x

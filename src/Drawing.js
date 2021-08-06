@@ -96,11 +96,11 @@ class Drawing {
         return this;
     }
 
-    drawRect(x1, y1, x2, y2, cornerRadius) {
+    drawRect(x1, y1, x2, y2, cornerSize, cornerBulge) {
         const w = x2 - x1;
         const h = y2 - y1;
         let p = null;
-        if (!cornerRadius) {
+        if (!cornerSize) {
             p = new Polyline([
                 [x1, y1],
                 [x1, y1 + h],
@@ -109,15 +109,15 @@ class Drawing {
             ], true);
         } else {
             p = new Polyline([
-                [x1 + cornerRadius, y1, cornerRadius],  // 1
-                [x1, y1 + cornerRadius], // 2
-                [x1, y1 + h - cornerRadius, cornerRadius], // 3
-                [x1 + cornerRadius, y1 + h], // 4
-                [x1 + w - cornerRadius, y1 + h, cornerRadius], // 5
-                [x1 + w, y1 + h - cornerRadius] // 6
-                [x1 + w - cornerRadius, y1 + cornerRadius, cornerRadius], // 7
-                [x1 + w - cornerRadius, y1] // 8
-            ])
+                [x1 + w - cornerSize, y1, cornerBulge],  // 1
+                [x1 + w, y1 + cornerSize], // 2
+                [x1 + w, y1 + h - cornerSize, cornerBulge], // 3
+                [x1 + w - cornerSize, y1 + h], // 4
+                [x1 + cornerSize, y1 + h, cornerBulge], // 5
+                [x1, y1 + h - cornerSize], // 6
+                [x1, y1 + cornerSize, cornerBulge], // 7
+                [x1 + cornerSize, y1], // 8
+            ], true)
         }
 
         this._assignHandle(p);
