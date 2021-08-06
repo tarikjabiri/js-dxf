@@ -228,7 +228,17 @@ declare module "dxf-writer" {
         setActiveLayer(name: string): Drawing;
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
         drawPoint(x: number, y: number): Drawing;
-        drawRect(x1: number, y1: number, x2: number, y2: number, cornerSize?: number, cornerBulge?: number): Drawing;
+
+        /**
+         * draws a closed rectangular polyline with option for round or diagonal corners
+         * @param {number} x1 
+         * @param {number} y1 
+         * @param {number} x2 
+         * @param {number} y2 
+         * @param {number} cornerLength given P (the 90deg corner point), and P1 (the point where arc begins), where cornerLength is the length of P to P1
+         * @param {number} cornerBulge defaults to 0, for diagonal corners
+         */
+        drawRect(x1: number, y1: number, x2: number, y2: number, cornerLength?: number, cornerBulge?: number): Drawing;
 
         /**
          * @param {number} x1 - Center x
