@@ -19,8 +19,10 @@ const Point = require('./Point');
 const Spline = require('./Spline')
 const Ellipse = require('./Ellipse');
 
-class Drawing {
-    constructor() {
+class Drawing
+{
+    constructor()
+    {
         this.layers = {};
         this.activeLayer = null;
         this.lineTypes = {};
@@ -55,17 +57,20 @@ class Drawing {
      * @param {string} description
      * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
-    addLineType(name, description, elements) {
+    addLineType(name, description, elements)
+    {
         this.lineTypes[name] = this._assignHandle(new LineType(name, description, elements));
         return this;
     }
 
-    addLayer(name, colorNumber, lineTypeName) {
+    addLayer(name, colorNumber, lineTypeName)
+    {
         this.layers[name] = this._assignHandle(new Layer(name, colorNumber, lineTypeName));
         return this;
     }
 
-    setActiveLayer(name) {
+    setActiveLayer(name)
+    {
         this.activeLayer = this.layers[name];
         return this;
     }
@@ -86,12 +91,14 @@ class Drawing {
         return block
     }
 
-    drawLine(x1, y1, x2, y2) {
+    drawLine(x1, y1, x2, y2)
+    {
         this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
         return this;
     }
 
-    drawPoint(x, y) {
+    drawPoint(x, y)
+    {
         this.activeLayer.addShape(this._assignHandle(new Point(x, y)));
         return this;
     }
@@ -133,7 +140,8 @@ class Drawing {
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
      */
-    drawArc(x1, y1, r, startAngle, endAngle) {
+    drawArc(x1, y1, r, startAngle, endAngle)
+    {
         this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle)));
         return this;
     }
@@ -143,7 +151,8 @@ class Drawing {
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    drawCircle(x1, y1, r) {
+    drawCircle(x1, y1, r)
+    {
         this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r)));
         return this;
     }
@@ -158,7 +167,8 @@ class Drawing {
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left',
-        verticalAlignment = 'baseline') {
+             verticalAlignment = 'baseline')
+    {
         this.activeLayer.addShape(this._assignHandle(
             new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment)));
         return this;
@@ -170,7 +180,8 @@ class Drawing {
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
      */
-    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0) {
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
+    {
         const p = new Polyline(points, closed, startWidth, endWidth);
         this._assignHandle(p);
         this.activeLayer.addShape(p);
@@ -180,9 +191,10 @@ class Drawing {
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
      */
-    drawPolyline3d(points) {
+    drawPolyline3d(points)
+    {
         points.forEach(point => {
-            if (point.length !== 3) {
+            if (point.length !== 3){
                 throw "Require 3D coordinate"
             }
         });
@@ -197,7 +209,8 @@ class Drawing {
      * 
      * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB
      */
-    setTrueColor(trueColor) {
+    setTrueColor(trueColor)
+    {
         this.activeLayer.setTrueColor(trueColor);
         return this;
     }
@@ -210,7 +223,8 @@ class Drawing {
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = []) {
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
+    {
         this.activeLayer.addShape(this._assignHandle(
             new Spline(controlPoints, degree, knots, weights, fitPoints)));
         return this;
@@ -218,15 +232,16 @@ class Drawing {
 
     /**
      * Draw an ellipse.
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
-     * @param {number} majorAxisX - Endpoint x of major axis, relative to center
-     * @param {number} majorAxisY - Endpoint y of major axis, relative to center
-     * @param {number} axisRatio - Ratio of minor axis to major axis
-     * @param {number} startAngle - Start angle
-     * @param {number} endAngle - End angle
-     */
-    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI) {
+    * @param {number} x1 - Center x
+    * @param {number} y1 - Center y
+    * @param {number} majorAxisX - Endpoint x of major axis, relative to center
+    * @param {number} majorAxisY - Endpoint y of major axis, relative to center
+    * @param {number} axisRatio - Ratio of minor axis to major axis
+    * @param {number} startAngle - Start angle
+    * @param {number} endAngle - End angle
+    */
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI)
+    {
         this.activeLayer.addShape(this._assignHandle(
             new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle)));
         return this;
@@ -246,49 +261,54 @@ class Drawing {
      * @param {number} y4 - y
      * @param {number} z4 - z
      */
-    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    {
         this.activeLayer.addShape(this._assignHandle(
             new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)));
         return this;
     }
 
-    _generateHandle() {
+    _generateHandle()
+    {
         return ++this.handleCount
     }
 
-    _assignHandle(entity) {
+    _assignHandle(entity)
+    {
         entity.handle = this._generateHandle()
         return entity
     }
 
-    _getDxfLtypeTable() {
+    _getDxfLtypeTable()
+    {
         const t = new Table("LTYPE")
         t.handle = this.ltypeTableHandle
         Object.values(this.lineTypes).forEach(v => t.add(v))
         return t.toDxfString()
     }
 
-    _getDxfLayerTable() {
+    _getDxfLayerTable()
+    {
         const t = new Table("LAYER")
         t.handle = this.layerTableHandle
         Object.values(this.layers).forEach(v => t.add(v))
         return t.toDxfString()
     }
 
-    /**
-     * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
-     * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
-     * 
-     * @param {string} variable 
-     * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
-     */
+     /**
+      * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
+      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
+      * 
+      * @param {string} variable 
+      * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
+      */
     header(variable, values) {
         this.headers[variable] = values;
         return this;
     }
 
-    _getHeader(variable, values) {
-        let s = '9\n$' + variable + '\n';
+    _getHeader(variable, values){
+        let s = '9\n$'+ variable +'\n';
 
         for (let value of values) {
             s += `${value[0]}\n${value[1]}\n`;
@@ -302,10 +322,8 @@ class Drawing {
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit] : Drawing.UNITS['Unitless'];
-        this.header('INSUNITS', [
-            [70, Drawing.UNITS[unit]]
-        ]);
+        let value = (typeof Drawing.UNITS[unit] != 'undefined') ? Drawing.UNITS[unit]:Drawing.UNITS['Unitless'];
+        this.header('INSUNITS', [[70, Drawing.UNITS[unit]]]);
         return this;
     }
 
@@ -316,9 +334,7 @@ class Drawing {
     generateAutocadExtras() {
         if (!this.headers["ACADVER"]) {
             /* AutoCAD 2007 version. */
-            this.header("ACADVER", [
-                [1, "AC1021"]
-            ])
+            this.header("ACADVER", [[1, "AC1021"]])
         }
 
         if (!this.lineTypes["ByBlock"]) {
@@ -367,7 +383,8 @@ class Drawing {
         this.dictionary.addChildDictionary("ACAD_GROUP", d)
     }
 
-    toDxfString() {
+    toDxfString()
+    {
         let s = '';
 
         //start section
@@ -375,9 +392,7 @@ class Drawing {
         //name section as HEADER section
         s += '2\nHEADER\n';
 
-        s += this._getHeader("HANDSEED", [
-            [5, (this.handleCount + 1).toString(16)]
-        ])
+        s += this._getHeader("HANDSEED", [[5, (this.handleCount + 1).toString(16)]])
         for (let header in this.headers) {
             s += this._getHeader(header, this.headers[header]);
         }
@@ -424,7 +439,7 @@ class Drawing {
         //name section as BLOCKS section
         s += '2\nBLOCKS\n';
 
-        for (const block of Object.values(this.blocks)) {
+        for (const block of  Object.values(this.blocks)) {
             s += block.toDxfString()
         }
 
@@ -460,63 +475,53 @@ class Drawing {
 
 //AutoCAD Color Index (ACI)
 //http://sub-atomic.com/~moses/acadcolors.html
-Drawing.ACI = {
-    LAYER: 0,
-    RED: 1,
-    YELLOW: 2,
-    GREEN: 3,
-    CYAN: 4,
-    BLUE: 5,
-    MAGENTA: 6,
-    WHITE: 7
+Drawing.ACI =
+{
+    LAYER : 0,
+    RED : 1,
+    YELLOW : 2,
+    GREEN : 3,
+    CYAN : 4,
+    BLUE : 5,
+    MAGENTA : 6,
+    WHITE : 7
 }
 
-Drawing.LINE_TYPES = [{
-        name: 'CONTINUOUS',
-        description: '______',
-        elements: []
-    },
-    {
-        name: 'DASHED',
-        description: '_ _ _ ',
-        elements: [5.0, -5.0]
-    },
-    {
-        name: 'DOTTED',
-        description: '. . . ',
-        elements: [0.0, -5.0]
-    }
+Drawing.LINE_TYPES =
+[
+    {name: 'CONTINUOUS', description: '______', elements: []},
+    {name: 'DASHED',    description: '_ _ _ ', elements: [5.0, -5.0]},
+    {name: 'DOTTED',    description: '. . . ', elements: [0.0, -5.0]}
 ]
 
-Drawing.LAYERS = [{
-    name: '0',
-    colorNumber: Drawing.ACI.WHITE,
-    lineTypeName: 'CONTINUOUS'
-}]
+Drawing.LAYERS =
+[
+    {name: '0',  colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CONTINUOUS'}
+]
 
 //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/header_section_group_codes_dxf_02.htm
 Drawing.UNITS = {
-    'Unitless': 0,
-    'Inches': 1,
-    'Feet': 2,
-    'Miles': 3,
-    'Millimeters': 4,
-    'Centimeters': 5,
-    'Meters': 6,
-    'Kilometers': 7,
-    'Microinches': 8,
-    'Mils': 9,
-    'Yards': 10,
-    'Angstroms': 11,
-    'Nanometers': 12,
-    'Microns': 13,
-    'Decimeters': 14,
-    'Decameters': 15,
-    'Hectometers': 16,
-    'Gigameters': 17,
-    'Astronomical units': 18,
-    'Light years': 19,
-    'Parsecs': 20
+    'Unitless':0,
+    'Inches':1,
+    'Feet':2,
+    'Miles':3,
+    'Millimeters':4,
+    'Centimeters':5,
+    'Meters':6,
+    'Kilometers':7,
+    'Microinches':8,
+    'Mils':9,
+    'Yards':10,
+    'Angstroms':11,
+    'Nanometers':12,
+    'Microns':13,
+    'Decimeters':14,
+    'Decameters':15,
+    'Hectometers':16,
+    'Gigameters':17,
+    'Astronomical units':18,
+    'Light years':19,
+    'Parsecs':20
 }
 
 module.exports = Drawing;
