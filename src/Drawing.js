@@ -103,12 +103,33 @@ class Drawing
         return this;
     }
 
-    drawRect(x1, y1, x2, y2)
-    {
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y1)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y2, x2, y2)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x1, y2)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x2, y1, x2, y2)));
+    drawRect(x1, y1, x2, y2, cornerLength, cornerBulge) {
+        const w = x2 - x1;
+        const h = y2 - y1;
+        cornerBulge = cornerBulge || 0;
+        let p = null;
+        if (!cornerLength) {
+            p = new Polyline([
+                [x1, y1],
+                [x1, y1 + h],
+                [x1 + w, y1 + h],
+                [x1 + w, y1]
+            ], true);
+        } else {
+            p = new Polyline([
+                [x1 + w - cornerLength, y1, cornerBulge],  // 1
+                [x1 + w, y1 + cornerLength], // 2
+                [x1 + w, y1 + h - cornerLength, cornerBulge], // 3
+                [x1 + w - cornerLength, y1 + h], // 4
+                [x1 + cornerLength, y1 + h, cornerBulge], // 5
+                [x1, y1 + h - cornerLength], // 6
+                [x1, y1 + cornerLength, cornerBulge], // 7
+                [x1 + cornerLength, y1], // 8
+            ], true)
+        }
+
+        this._assignHandle(p);
+        this.activeLayer.addShape(p);
         return this;
     }
 
