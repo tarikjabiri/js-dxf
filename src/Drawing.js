@@ -9,6 +9,7 @@ const Block = require('./Block');
 const BlockRecord = require('./BlockRecord');
 const Dictionary = require('./Dictionary');
 const Line = require('./Line');
+const Line3d = require('./Line3d');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
@@ -94,6 +95,12 @@ class Drawing
     drawLine(x1, y1, x2, y2)
     {
         this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
+        return this;
+    }
+
+    drawLine3d(x1, y1, z1, x2, y2, z2)
+    {
+        this.activeLayer.addShape(this._assignHandle(new Line3d(x1, y1, z1, x2, y2, z2)));
         return this;
     }
 
