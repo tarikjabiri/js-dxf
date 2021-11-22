@@ -5,7 +5,7 @@ class Point extends DatabaseObject
 {
     constructor(x, y)
     {
-        super(["AcDbEntity", "AcDbEntity"])
+        super(["AcDbEntity", "AcDbPoint"])
         this.x = x;
         this.y = y;
     }
