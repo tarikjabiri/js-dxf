@@ -11,8 +11,9 @@ class Ellipse extends DatabaseObject {
      * @param {number} axisRatio - Ratio of minor axis to major axis
      * @param {number} startAngle - Start angle
      * @param {number} endAngle - End angle
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
+    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle, lineTypeName) {
         super(["AcDbEntity", "AcDbEllipse"])
         this.x1 = x1;
         this.y1 = y1;
@@ -21,6 +22,7 @@ class Ellipse extends DatabaseObject {
         this.axisRatio = axisRatio;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString() {
@@ -28,6 +30,9 @@ class Ellipse extends DatabaseObject {
         let s = `0\nELLIPSE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n`;
         s += `20\n${this.y1}\n`;
         s += `30\n0\n`;

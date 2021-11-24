@@ -32,8 +32,9 @@ class Arc extends DatabaseObject
      * @param {number} r - radius
      * @param {number} startAngle - degree 
      * @param {number} endAngle - degree 
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, r, startAngle, endAngle)
+    constructor(x1, y1, r, startAngle, endAngle, lineTypeName)
     {
         super(["AcDbEntity", "AcDbArc"])
         this.x1 = x1;
@@ -41,6 +42,7 @@ class Arc extends DatabaseObject
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -49,6 +51,9 @@ class Arc extends DatabaseObject
         let s = `0\nARC\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
         return s;
@@ -141,13 +146,15 @@ class Circle extends DatabaseObject
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, r)
+    constructor(x1, y1, r, lineTypeName)
     {
         super(["AcDbEntity", "AcDbCircle"])
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -156,6 +163,9 @@ class Circle extends DatabaseObject
         let s = `0\nCIRCLE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n`;
         return s;
@@ -266,7 +276,7 @@ class DimStyleTable extends Table {
 }
 
 module.exports = DimStyleTable
-},{"./DatabaseObject":6,"./Table":18}],9:[function(require,module,exports){
+},{"./DatabaseObject":6,"./Table":19}],9:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -280,8 +290,9 @@ class Ellipse extends DatabaseObject {
      * @param {number} axisRatio - Ratio of minor axis to major axis
      * @param {number} startAngle - Start angle
      * @param {number} endAngle - End angle
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
+    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle, lineTypeName) {
         super(["AcDbEntity", "AcDbEllipse"])
         this.x1 = x1;
         this.y1 = y1;
@@ -290,6 +301,7 @@ class Ellipse extends DatabaseObject {
         this.axisRatio = axisRatio;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString() {
@@ -297,6 +309,9 @@ class Ellipse extends DatabaseObject {
         let s = `0\nELLIPSE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n`;
         s += `20\n${this.y1}\n`;
         s += `30\n0\n`;
@@ -317,7 +332,7 @@ const DatabaseObject = require('./DatabaseObject')
 
 class Face extends DatabaseObject
 {
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)
     {
         super(["AcDbEntity", "AcDbFace"])
         this.x1 = x1;
@@ -332,6 +347,7 @@ class Face extends DatabaseObject
         this.x4 = x4;
         this.y4 = y4;
         this.z4 = z4;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -340,6 +356,9 @@ class Face extends DatabaseObject
         let s = `0\n3DFACE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
         s += `12\n${this.x3}\n22\n${this.y3}\n32\n${this.z3}\n`;
@@ -425,13 +444,14 @@ const DatabaseObject = require('./DatabaseObject')
 
 class Line extends DatabaseObject
 {
-    constructor(x1, y1, x2, y2)
+    constructor(x1, y1, x2, y2, lineTypeName)
     {
         super(["AcDbEntity", "AcDbLine"])
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -440,6 +460,9 @@ class Line extends DatabaseObject
         let s = `0\nLINE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n0\n`;
         return s;
@@ -448,6 +471,40 @@ class Line extends DatabaseObject
 
 module.exports = Line;
 },{"./DatabaseObject":6}],13:[function(require,module,exports){
+const DatabaseObject = require('./DatabaseObject');
+
+
+class Line3d extends DatabaseObject
+{
+    constructor(x1, y1, z1, x2, y2, z2, lineTypeName)
+    {
+        super(["AcDbEntity", "AcDbLine"]);
+        this.x1 = x1;
+        this.y1 = y1;
+        this.z1 = z1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.z2 = z2;
+        this.lineTypeName = lineTypeName;
+    }
+
+    toDxfString()
+    {
+        //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
+        let s = `0\nLINE\n`;
+        s += super.toDxfString();
+        s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
+        s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
+        s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
+        return s;
+    }
+}
+
+module.exports = Line3d;
+},{"./DatabaseObject":6}],14:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -502,17 +559,18 @@ class LineType extends DatabaseObject
 }
 
 module.exports = LineType;
-},{"./DatabaseObject":6}],14:[function(require,module,exports){
+},{"./DatabaseObject":6}],15:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
 class Point extends DatabaseObject
 {
-    constructor(x, y)
+    constructor(x, y, lineTypeName)
     {
-        super(["AcDbEntity", "AcDbEntity"])
+        super(["AcDbEntity", "AcDbPoint"])
         this.x = x;
         this.y = y;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -521,13 +579,16 @@ class Point extends DatabaseObject
         let s = `0\nPOINT\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x}\n20\n${this.y}\n30\n0\n`;
         return s;
     }
 }
 
 module.exports = Point;
-},{"./DatabaseObject":6}],15:[function(require,module,exports){
+},{"./DatabaseObject":6}],16:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -538,14 +599,16 @@ class Polyline extends DatabaseObject
      * @param {boolean} closed
      * @param {number} startWidth
      * @param {number} endWidth
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(points, closed = false, startWidth = 0, endWidth = 0)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0, lineTypeName)
     {
         super(["AcDbEntity", "AcDbPolyline"])
         this.points = points;
         this.closed = closed;
         this.startWidth = startWidth;
         this.endWidth = endWidth;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -553,7 +616,9 @@ class Polyline extends DatabaseObject
         let s = `0\nLWPOLYLINE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
-        s += "6\nByLayer\n"
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += "62\n256\n"
         s += "370\n-1\n"
         s += `70\n${this.closed ? 1 : 0}\n`;
@@ -574,7 +639,7 @@ class Polyline extends DatabaseObject
 }
 
 module.exports = Polyline;
-},{"./DatabaseObject":6}],16:[function(require,module,exports){
+},{"./DatabaseObject":6}],17:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -583,11 +648,12 @@ class Polyline3d extends DatabaseObject
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
-    constructor(points)
+    constructor(points, lineTypeName)
     {
         super(["AcDbEntity", "AcDbPolyline3D"])
         this.points = points;
         this.pointHandles = null;
+        this.lineTypeName = lineTypeName;
     }
 
     assignVertexHandles(handleProvider) {
@@ -602,6 +668,9 @@ class Polyline3d extends DatabaseObject
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n8\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
 
         for (let i = 0; i < this.points.length; ++i)
         {
@@ -620,7 +689,7 @@ class Polyline3d extends DatabaseObject
 }
 
 module.exports = Polyline3d;
-},{"./DatabaseObject":6}],17:[function(require,module,exports){
+},{"./DatabaseObject":6}],18:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -633,8 +702,9 @@ class Spline extends DatabaseObject
      * @param {[number]} knots - Knot vector array. If null, will use a uniform knot vector. Default is null
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
+    constructor(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [], lineTypeName)
     {
         super(["AcDbEntity", "AcDbSpline"])
         if (controlPoints.length < degree + 1) {
@@ -670,6 +740,7 @@ class Spline extends DatabaseObject
         this.fitPoints = fitPoints;
         this.degree = degree;
         this.weights = weights;
+        this.lineTypeName = lineTypeName;
 
         const closed = 0;
         const periodic = 0;
@@ -699,6 +770,9 @@ class Spline extends DatabaseObject
         let s = `0\nSPLINE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `210\n0.0\n220\n0.0\n230\n1.0\n`;
 
         s += `70\n${this.type}\n`;
@@ -732,7 +806,7 @@ class Spline extends DatabaseObject
 
 module.exports = Spline
 
-},{"./DatabaseObject":6}],18:[function(require,module,exports){
+},{"./DatabaseObject":6}],19:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -762,7 +836,7 @@ class Table extends DatabaseObject {
 }
 
 module.exports = Table
-},{"./DatabaseObject":6}],19:[function(require,module,exports){
+},{"./DatabaseObject":6}],20:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -779,8 +853,9 @@ class Text extends DatabaseObject
      * @param {string} value - the string itself
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', lineTypeName)
     {
         super(["AcDbEntity", "AcDbText"])
         this.x1 = x1;
@@ -790,6 +865,7 @@ class Text extends DatabaseObject
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -798,6 +874,9 @@ class Text extends DatabaseObject
         let s = `0\nTEXT\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.height}\n`;
         s += `1\n${this.value}\n`;
@@ -817,7 +896,7 @@ class Text extends DatabaseObject
 }
 
 module.exports = Text;
-},{"./DatabaseObject":6}],20:[function(require,module,exports){
+},{"./DatabaseObject":6}],21:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -847,7 +926,7 @@ class TextStyle extends DatabaseObject {
 
 module.exports = TextStyle
 
-},{"./DatabaseObject":6}],21:[function(require,module,exports){
+},{"./DatabaseObject":6}],22:[function(require,module,exports){
 const DatabaseObject = require('./DatabaseObject')
 
 
@@ -884,6 +963,7 @@ const Block = require('./Block');
 const BlockRecord = require('./BlockRecord');
 const Dictionary = require('./Dictionary');
 const Line = require('./Line');
+const Line3d = require('./Line3d');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
 const Text = require('./Text');
@@ -966,24 +1046,51 @@ class Drawing
         return block
     }
 
-    drawLine(x1, y1, x2, y2)
+    drawLine(x1, y1, x2, y2, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2, lineTypeName)));
         return this;
     }
 
-    drawPoint(x, y)
+    drawLine3d(x1, y1, z1, x2, y2, z2, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Point(x, y)));
+        this.activeLayer.addShape(this._assignHandle(new Line3d(x1, y1, z1, x2, y2, z2, lineTypeName)));
         return this;
     }
 
-    drawRect(x1, y1, x2, y2)
+    drawPoint(x, y, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y1)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y2, x2, y2)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x1, y2)));
-        this.activeLayer.addShape(this._assignHandle(new Line(x2, y1, x2, y2)));
+        this.activeLayer.addShape(this._assignHandle(new Point(x, y, lineTypeName)));
+        return this;
+    }
+
+    drawRect(x1, y1, x2, y2, cornerLength, cornerBulge, lineTypeName) {
+        const w = x2 - x1;
+        const h = y2 - y1;
+        cornerBulge = cornerBulge || 0;
+        let p = null;
+        if (!cornerLength) {
+            p = new Polyline([
+                [x1, y1],
+                [x1, y1 + h],
+                [x1 + w, y1 + h],
+                [x1 + w, y1]
+            ], true, 0, 0, lineTypeName);
+        } else {
+            p = new Polyline([
+                [x1 + w - cornerLength, y1, cornerBulge],  // 1
+                [x1 + w, y1 + cornerLength], // 2
+                [x1 + w, y1 + h - cornerLength, cornerBulge], // 3
+                [x1 + w - cornerLength, y1 + h], // 4
+                [x1 + cornerLength, y1 + h, cornerBulge], // 5
+                [x1, y1 + h - cornerLength], // 6
+                [x1, y1 + cornerLength, cornerBulge], // 7
+                [x1 + cornerLength, y1], // 8
+            ], true, 0 , 0, lineTypeName)
+        }
+
+        this._assignHandle(p);
+        this.activeLayer.addShape(p);
         return this;
     }
 
@@ -994,9 +1101,9 @@ class Drawing
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
      */
-    drawArc(x1, y1, r, startAngle, endAngle)
+    drawArc(x1, y1, r, startAngle, endAngle, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle)));
+        this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle, lineTypeName)));
         return this;
     }
 
@@ -1005,9 +1112,9 @@ class Drawing
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    drawCircle(x1, y1, r)
+    drawCircle(x1, y1, r, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r)));
+        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r, lineTypeName)));
         return this;
     }
 
@@ -1021,10 +1128,10 @@ class Drawing
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left',
-             verticalAlignment = 'baseline')
+             verticalAlignment = 'baseline', lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment)));
+            new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, lineTypeName)));
         return this;
     }
 
@@ -1034,9 +1141,9 @@ class Drawing
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
      */
-    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0, lineTypeName)
     {
-        const p = new Polyline(points, closed, startWidth, endWidth);
+        const p = new Polyline(points, closed, startWidth, endWidth, lineTypeName);
         this._assignHandle(p);
         this.activeLayer.addShape(p);
         return this;
@@ -1045,14 +1152,14 @@ class Drawing
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
      */
-    drawPolyline3d(points)
+    drawPolyline3d(points, lineTypeName)
     {
         points.forEach(point => {
             if (point.length !== 3){
                 throw "Require 3D coordinate"
             }
         });
-        const p = new Polyline3d(points);
+        const p = new Polyline3d(points, lineTypeName);
         this._assignHandle(p);
         p.assignVertexHandles(this._generateHandle.bind(this))
         this.activeLayer.addShape(p);
@@ -1077,10 +1184,10 @@ class Drawing
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [], lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Spline(controlPoints, degree, knots, weights, fitPoints)));
+            new Spline(controlPoints, degree, knots, weights, fitPoints, lineTypeName)));
         return this;
     }
 
@@ -1094,10 +1201,10 @@ class Drawing
     * @param {number} startAngle - Start angle
     * @param {number} endAngle - End angle
     */
-    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI)
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI, lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle)));
+            new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle, lineTypeName)));
         return this;
     }
 
@@ -1115,10 +1222,10 @@ class Drawing
      * @param {number} y4 - y
      * @param {number} z4 - z
      */
-    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)));
+            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)));
         return this;
     }
 
@@ -1380,4 +1487,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Dictionary":7,"./DimStyleTable":8,"./Ellipse":9,"./Face":10,"./Layer":11,"./Line":12,"./LineType":13,"./Point":14,"./Polyline":15,"./Polyline3d":16,"./Spline":17,"./Table":18,"./Text":19,"./TextStyle":20,"./Viewport":21}]},{},[]);
+},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Dictionary":7,"./DimStyleTable":8,"./Ellipse":9,"./Face":10,"./Layer":11,"./Line":12,"./Line3d":13,"./LineType":14,"./Point":15,"./Polyline":16,"./Polyline3d":17,"./Spline":18,"./Table":19,"./Text":20,"./TextStyle":21,"./Viewport":22}]},{},[]);

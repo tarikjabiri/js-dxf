@@ -92,25 +92,25 @@ class Drawing
         return block
     }
 
-    drawLine(x1, y1, x2, y2)
+    drawLine(x1, y1, x2, y2, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
+        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2, lineTypeName)));
         return this;
     }
 
-    drawLine3d(x1, y1, z1, x2, y2, z2)
+    drawLine3d(x1, y1, z1, x2, y2, z2, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Line3d(x1, y1, z1, x2, y2, z2)));
+        this.activeLayer.addShape(this._assignHandle(new Line3d(x1, y1, z1, x2, y2, z2, lineTypeName)));
         return this;
     }
 
-    drawPoint(x, y)
+    drawPoint(x, y, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Point(x, y)));
+        this.activeLayer.addShape(this._assignHandle(new Point(x, y, lineTypeName)));
         return this;
     }
 
-    drawRect(x1, y1, x2, y2, cornerLength, cornerBulge) {
+    drawRect(x1, y1, x2, y2, cornerLength, cornerBulge, lineTypeName) {
         const w = x2 - x1;
         const h = y2 - y1;
         cornerBulge = cornerBulge || 0;
@@ -121,7 +121,7 @@ class Drawing
                 [x1, y1 + h],
                 [x1 + w, y1 + h],
                 [x1 + w, y1]
-            ], true);
+            ], true, 0, 0, lineTypeName);
         } else {
             p = new Polyline([
                 [x1 + w - cornerLength, y1, cornerBulge],  // 1
@@ -132,7 +132,7 @@ class Drawing
                 [x1, y1 + h - cornerLength], // 6
                 [x1, y1 + cornerLength, cornerBulge], // 7
                 [x1 + cornerLength, y1], // 8
-            ], true)
+            ], true, 0 , 0, lineTypeName)
         }
 
         this._assignHandle(p);
@@ -147,9 +147,9 @@ class Drawing
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
      */
-    drawArc(x1, y1, r, startAngle, endAngle)
+    drawArc(x1, y1, r, startAngle, endAngle, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle)));
+        this.activeLayer.addShape(this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle, lineTypeName)));
         return this;
     }
 
@@ -158,9 +158,9 @@ class Drawing
      * @param {number} y1 - Center y
      * @param {number} r - radius
      */
-    drawCircle(x1, y1, r)
+    drawCircle(x1, y1, r, lineTypeName)
     {
-        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r)));
+        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r, lineTypeName)));
         return this;
     }
 
@@ -174,10 +174,10 @@ class Drawing
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left',
-             verticalAlignment = 'baseline')
+             verticalAlignment = 'baseline', lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment)));
+            new Text(x1, y1, height, rotation, value, horizontalAlignment, verticalAlignment, lineTypeName)));
         return this;
     }
 
@@ -187,9 +187,9 @@ class Drawing
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
      */
-    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0)
+    drawPolyline(points, closed = false, startWidth = 0, endWidth = 0, lineTypeName)
     {
-        const p = new Polyline(points, closed, startWidth, endWidth);
+        const p = new Polyline(points, closed, startWidth, endWidth, lineTypeName);
         this._assignHandle(p);
         this.activeLayer.addShape(p);
         return this;
@@ -198,14 +198,14 @@ class Drawing
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
      */
-    drawPolyline3d(points)
+    drawPolyline3d(points, lineTypeName)
     {
         points.forEach(point => {
             if (point.length !== 3){
                 throw "Require 3D coordinate"
             }
         });
-        const p = new Polyline3d(points);
+        const p = new Polyline3d(points, lineTypeName);
         this._assignHandle(p);
         p.assignVertexHandles(this._generateHandle.bind(this))
         this.activeLayer.addShape(p);
@@ -230,10 +230,10 @@ class Drawing
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
+    drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [], lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Spline(controlPoints, degree, knots, weights, fitPoints)));
+            new Spline(controlPoints, degree, knots, weights, fitPoints, lineTypeName)));
         return this;
     }
 
@@ -247,10 +247,10 @@ class Drawing
     * @param {number} startAngle - Start angle
     * @param {number} endAngle - End angle
     */
-    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI)
+    drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI, lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle)));
+            new Ellipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle, lineTypeName)));
         return this;
     }
 
@@ -268,10 +268,10 @@ class Drawing
      * @param {number} y4 - y
      * @param {number} z4 - z
      */
-    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)
     {
         this.activeLayer.addShape(this._assignHandle(
-            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)));
+            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)));
         return this;
     }
 

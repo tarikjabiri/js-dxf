@@ -14,8 +14,9 @@ class Text extends DatabaseObject
      * @param {string} value - the string itself
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline')
+    constructor(x1, y1, height, rotation, value, horizontalAlignment = 'left', verticalAlignment = 'baseline', lineTypeName)
     {
         super(["AcDbEntity", "AcDbText"])
         this.x1 = x1;
@@ -25,6 +26,7 @@ class Text extends DatabaseObject
         this.value = value;
         this.hAlign = horizontalAlignment;
         this.vAlign = verticalAlignment;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -33,6 +35,9 @@ class Text extends DatabaseObject
         let s = `0\nTEXT\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.height}\n`;
         s += `1\n${this.value}\n`;

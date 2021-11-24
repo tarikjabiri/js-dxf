@@ -3,7 +3,7 @@ const DatabaseObject = require('./DatabaseObject')
 
 class Face extends DatabaseObject
 {
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)
     {
         super(["AcDbEntity", "AcDbFace"])
         this.x1 = x1;
@@ -18,6 +18,7 @@ class Face extends DatabaseObject
         this.x4 = x4;
         this.y4 = y4;
         this.z4 = z4;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -26,6 +27,9 @@ class Face extends DatabaseObject
         let s = `0\n3DFACE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
         s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
         s += `12\n${this.x3}\n22\n${this.y3}\n32\n${this.z3}\n`;

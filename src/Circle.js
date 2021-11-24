@@ -7,13 +7,15 @@ class Circle extends DatabaseObject
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, r)
+    constructor(x1, y1, r, lineTypeName)
     {
         super(["AcDbEntity", "AcDbCircle"])
         this.x1 = x1;
         this.y1 = y1;
         this.r = r;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -22,6 +24,9 @@ class Circle extends DatabaseObject
         let s = `0\nCIRCLE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n`;
         return s;

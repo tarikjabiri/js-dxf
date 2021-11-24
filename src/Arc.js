@@ -9,8 +9,9 @@ class Arc extends DatabaseObject
      * @param {number} r - radius
      * @param {number} startAngle - degree 
      * @param {number} endAngle - degree 
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(x1, y1, r, startAngle, endAngle)
+    constructor(x1, y1, r, startAngle, endAngle, lineTypeName)
     {
         super(["AcDbEntity", "AcDbArc"])
         this.x1 = x1;
@@ -18,6 +19,7 @@ class Arc extends DatabaseObject
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -26,6 +28,9 @@ class Arc extends DatabaseObject
         let s = `0\nARC\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
         s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
         return s;

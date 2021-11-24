@@ -6,11 +6,12 @@ class Polyline3d extends DatabaseObject
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
-    constructor(points)
+    constructor(points, lineTypeName)
     {
         super(["AcDbEntity", "AcDbPolyline3D"])
         this.points = points;
         this.pointHandles = null;
+        this.lineTypeName = lineTypeName;
     }
 
     assignVertexHandles(handleProvider) {
@@ -25,6 +26,9 @@ class Polyline3d extends DatabaseObject
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
         s += `66\n1\n70\n8\n`;
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
 
         for (let i = 0; i < this.points.length; ++i)
         {

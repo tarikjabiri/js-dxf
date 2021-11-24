@@ -8,14 +8,16 @@ class Polyline extends DatabaseObject
      * @param {boolean} closed
      * @param {number} startWidth
      * @param {number} endWidth
+     * @param {[string]} lineTypeName - the name of the lineType
      */
-    constructor(points, closed = false, startWidth = 0, endWidth = 0)
+    constructor(points, closed = false, startWidth = 0, endWidth = 0, lineTypeName)
     {
         super(["AcDbEntity", "AcDbPolyline"])
         this.points = points;
         this.closed = closed;
         this.startWidth = startWidth;
         this.endWidth = endWidth;
+        this.lineTypeName = lineTypeName;
     }
 
     toDxfString()
@@ -23,7 +25,9 @@ class Polyline extends DatabaseObject
         let s = `0\nLWPOLYLINE\n`;
         s += super.toDxfString()
         s += `8\n${this.layer.name}\n`;
-        s += "6\nByLayer\n"
+        if (this.lineTypeName) {
+            s += `6\n${this.lineTypeName}\n`;
+        }
         s += "62\n256\n"
         s += "370\n-1\n"
         s += `70\n${this.closed ? 1 : 0}\n`;
