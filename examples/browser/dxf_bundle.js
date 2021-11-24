@@ -1100,6 +1100,7 @@ class Drawing
      * @param {number} r - radius
      * @param {number} startAngle - degree
      * @param {number} endAngle - degree
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawArc(x1, y1, r, startAngle, endAngle, lineTypeName)
     {
@@ -1111,6 +1112,7 @@ class Drawing
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawCircle(x1, y1, r, lineTypeName)
     {
@@ -1126,6 +1128,7 @@ class Drawing
      * @param {string} value - the string itself
      * @param {string} [horizontalAlignment="left"] left | center | right
      * @param {string} [verticalAlignment="baseline"] baseline | bottom | middle | top
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawText(x1, y1, height, rotation, value, horizontalAlignment = 'left',
              verticalAlignment = 'baseline', lineTypeName)
@@ -1140,6 +1143,7 @@ class Drawing
      * @param {boolean} closed - Closed polyline flag
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0, lineTypeName)
     {
@@ -1151,6 +1155,7 @@ class Drawing
 
     /**
      * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ] 
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawPolyline3d(points, lineTypeName)
     {
@@ -1183,6 +1188,7 @@ class Drawing
      * @param {[number]} knots - Knot vector array. If null, will use a uniform knot vector. Default is null
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawSpline(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [], lineTypeName)
     {
@@ -1200,6 +1206,7 @@ class Drawing
     * @param {number} axisRatio - Ratio of minor axis to major axis
     * @param {number} startAngle - Start angle
     * @param {number} endAngle - End angle
+     * @param {[string]} lineTypeName - the name of the lineType
     */
     drawEllipse(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle = 0, endAngle = 2 * Math.PI, lineTypeName)
     {
@@ -1221,6 +1228,7 @@ class Drawing
      * @param {number} x4 - x
      * @param {number} y4 - y
      * @param {number} z4 - z
+     * @param {[string]} lineTypeName - the name of the lineType
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, lineTypeName)
     {
