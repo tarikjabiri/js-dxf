@@ -26,8 +26,8 @@ class Polyline extends DatabaseObject
         s += "6\nByLayer\n"
         s += "62\n256\n"
         s += "370\n-1\n"
-        s += `70\n${this.closed ? 1 : 0}\n`;
         s += `90\n${this.points.length}\n`
+        s += `70\n${this.closed ? 1 : 0}\n`
 
         for (const p of this.points) {
             s += `10\n${p[0]}\n20\n${p[1]}\n`;
