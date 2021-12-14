@@ -1,53 +1,44 @@
-const DatabaseObject = require('./DatabaseObject')
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
-
-class LineType extends DatabaseObject
-{
+class LineType extends DatabaseObject {
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
-    constructor(name, description, elements)
-    {
-        super(["AcDbSymbolTableRecord", "AcDbLinetypeTableRecord"])
+    constructor(name, description, elements) {
+        super(["AcDbSymbolTableRecord", "AcDbLinetypeTableRecord"]);
         this.name = name;
         this.description = description;
         this.elements = elements;
     }
 
-    /**
-     * @link https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
-     */
-    toDxfString()
-    {
-        let s = '0\nLTYPE\n';
-        s += super.toDxfString()
-        s += `2\n${this.name}\n`;
-        s += `3\n${this.description}\n`;
-        s += '70\n0\n';
-        s += '72\n65\n';
-        s += `73\n${this.elements.length}\n`;
-        s += `40\n${this.getElementsSum()}\n`;
-        for (const element of this.elements)
-        {
-            s += `49\n${element}\n`;
-            /* Complex linetype element type, mandatory for AutoCAD */
-            s += '74\n0\n';
-        }
+    tags() {
+        const manager = new TagsManager();
 
-        return s;
+        // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
+        manager.addTag(0, "LTYPE");
+        manager.addTags(super.tags());
+        manager.addTag(2, this.name);
+        manager.addTag(3, this.description);
+        manager.addTag(70, 0);
+        manager.addTag(72, 65);
+        manager.addTag(73, this.elements.length);
+        manager.addTag(40, this.getElementsSum());
+
+        this.elements.forEach((element) => {
+            manager.addTag(49, element);
+            manager.addTag(74, 0);
+        });
+
+        return manager.tags();
     }
 
-    getElementsSum()
-    {
-        let sum = 0;
-        for (let i = 0; i < this.elements.length; ++i)
-        {
-            sum += Math.abs(this.elements[i]);
-        }
-
-        return sum;
+    getElementsSum() {
+        return this.elements.reduce((sum, element) => {
+            return sum + Math.abs(element);
+        }, 0);
     }
 }
 

@@ -1,28 +1,30 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class TextStyle extends DatabaseObject {
     constructor(name) {
-        super(["AcDbSymbolTableRecord", "AcDbTextStyleTableRecord"])
-        this.name = name
+        super(["AcDbSymbolTableRecord", "AcDbTextStyleTableRecord"]);
+        this.name = name;
     }
 
-    toDxfString()
-    {
-        let s = "0\nSTYLE\n"
-        s += super.toDxfString()
-        s += `2\n${this.name}\n`
+    tags() {
+        const manager = new TagsManager();
+
+        manager.addTag(0, "STYLE");
+        manager.addTags(super.tags());
+        manager.addTag(2, this.name);
         /* No flags set */
-        s += "70\n0\n"
-        s += "40\n0\n"
-        s += "41\n1\n"
-        s += "50\n0\n"
-        s += "71\n0\n"
-        s += "42\n1\n"
-        s += `3\n${this.name}\n`
-        s += "4\n\n"
-        return s
+        manager.addTag(70, 0);
+        manager.addTag(40, 0);
+        manager.addTag(41, 1);
+        manager.addTag(50, 0);
+        manager.addTag(71, 0);
+        manager.addTag(42, 1);
+        manager.addTag(3, this.name);
+        manager.addTag(4, "");
+
+        return manager.tags();
     }
 }
 
-module.exports = TextStyle
+module.exports = TextStyle;

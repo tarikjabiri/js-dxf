@@ -1,29 +1,33 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class Table extends DatabaseObject {
     constructor(name) {
-        super("AcDbSymbolTable")
-        this.name = name
-        this.elements = []
+        super("AcDbSymbolTable");
+        this.name = name;
+        this.elements = [];
     }
 
     add(element) {
-        this.elements.push(element)
+        this.elements.push(element);
     }
 
-    toDxfString()
-    {
-        let s = "0\nTABLE\n"
-        s += `2\n${this.name}\n`
-        s += super.toDxfString()
-        s += `70\n${this.elements.length}\n`
-        for (const element of this.elements) {
-            s += element.toDxfString()
-        }
-        s += "0\nENDTAB\n"
-        return s
+    tags() {
+        const manager = new TagsManager();
+
+        manager.addTag(0, "TABLE");
+        manager.addTag(2, this.name);
+        manager.addTags(super.tags());
+        manager.addTag(70, this.elements.length);
+
+        this.elements.forEach((element) => {
+            manager.addTags(element.tags());
+        });
+
+        manager.addTag(0, "ENDTAB");
+
+        return manager.tags();
     }
 }
 
-module.exports = Table
+module.exports = Table;

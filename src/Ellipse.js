@@ -1,21 +1,21 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class Ellipse extends DatabaseObject {
     /**
      * Creates an ellipse.
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {number} x - Center x
+     * @param {number} y - Center y
      * @param {number} majorAxisX - Endpoint x of major axis, relative to center
      * @param {number} majorAxisY - Endpoint y of major axis, relative to center
      * @param {number} axisRatio - Ratio of minor axis to major axis
      * @param {number} startAngle - Start angle
      * @param {number} endAngle - End angle
      */
-    constructor(x1, y1, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
-        super(["AcDbEntity", "AcDbEllipse"])
-        this.x1 = x1;
-        this.y1 = y1;
+    constructor(x, y, majorAxisX, majorAxisY, axisRatio, startAngle, endAngle) {
+        super(["AcDbEntity", "AcDbEllipse"]);
+        this.x = x;
+        this.y = y;
         this.majorAxisX = majorAxisX;
         this.majorAxisY = majorAxisY;
         this.axisRatio = axisRatio;
@@ -23,21 +23,23 @@ class Ellipse extends DatabaseObject {
         this.endAngle = endAngle;
     }
 
-    toDxfString() {
+    tags() {
+        const manager = new TagsManager();
+
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
-        let s = `0\nELLIPSE\n`;
-        s += super.toDxfString()
-        s += `8\n${this.layer.name}\n`;
-        s += `10\n${this.x1}\n`;
-        s += `20\n${this.y1}\n`;
-        s += `30\n0\n`;
-        s += `11\n${this.majorAxisX}\n`;
-        s += `21\n${this.majorAxisY}\n`;
-        s += `31\n0\n`;
-        s += `40\n${this.axisRatio}\n`;
-        s += `41\n${this.startAngle}\n`;
-        s += `42\n${this.endAngle}\n`;
-        return s;
+        manager.addTag(0, "ELLIPSE");
+        manager.addTags(super.tags());
+        manager.addTag(8, this.layer.name);
+        manager.addPointTags(this.x, this.y);
+        manager.addTag(11, this.majorAxisX);
+        manager.addTag(21, this.majorAxisY);
+        manager.addTag(31, 0);
+
+        manager.addTag(40, this.axisRatio);
+        manager.addTag(41, this.startAngle);
+        manager.addTag(42, this.endAngle);
+
+        return manager.tags();
     }
 }
 

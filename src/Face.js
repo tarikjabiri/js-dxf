@@ -1,11 +1,9 @@
-const DatabaseObject = require('./DatabaseObject')
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
-
-class Face extends DatabaseObject
-{
-    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
-    {
-        super(["AcDbEntity", "AcDbFace"])
+class Face extends DatabaseObject {
+    constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+        super(["AcDbEntity", "AcDbFace"]);
         this.x1 = x1;
         this.y1 = y1;
         this.z1 = z1;
@@ -20,17 +18,31 @@ class Face extends DatabaseObject
         this.z4 = z4;
     }
 
-    toDxfString()
-    {
+    tags() {
+        const manager = new TagsManager();
+
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
-        let s = `0\n3DFACE\n`;
-        s += super.toDxfString()
-        s += `8\n${this.layer.name}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n${this.z1}\n`;
-        s += `11\n${this.x2}\n21\n${this.y2}\n31\n${this.z2}\n`;
-        s += `12\n${this.x3}\n22\n${this.y3}\n32\n${this.z3}\n`;
-        s += `13\n${this.x4}\n23\n${this.y4}\n33\n${this.z4}\n`;
-        return s;
+        manager.addTag(0, "3DFACE");
+        manager.addTags(super.tags());
+        manager.addTag(8, this.layer.name);
+        manager.addPointTags(this.x1, this.y1, this.z1);
+        manager.addTagsByElements([
+            [11, this.x2],
+            [21, this.y2],
+            [31, this.z2],
+        ]);
+        manager.addTagsByElements([
+            [12, this.x3],
+            [22, this.y3],
+            [32, this.z3],
+        ]);
+        manager.addTagsByElements([
+            [13, this.x4],
+            [23, this.y4],
+            [33, this.z4],
+        ]);
+
+        return manager.tags();
     }
 }
 

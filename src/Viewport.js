@@ -1,24 +1,25 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class Viewport extends DatabaseObject {
-    constructor(name, height)
-    {
-        super(["AcDbSymbolTableRecord", "AcDbViewportTableRecord"])
-        this.name = name
-        this.height = height
+    constructor(name, height) {
+        super(["AcDbSymbolTableRecord", "AcDbViewportTableRecord"]);
+        this.name = name;
+        this.height = height;
     }
 
-    toDxfString()
-    {
-        let s = "0\nVPORT\n"
-        s += super.toDxfString()
-        s += `2\n${this.name}\n`
-        s += `40\n${this.height}\n`
+    tags() {
+        const manager = new TagsManager();
+
+        manager.addTag(0, "VPORT");
+        manager.addTags(super.tags());
+        manager.addTag(2, this.name);
+        manager.addTag(40, this.height);
         /* No flags set */
-        s += "70\n0\n"
-        return s
+        manager.addTag(70, 0);
+
+        return manager.tags();
     }
 }
 
-module.exports = Viewport
+module.exports = Viewport;

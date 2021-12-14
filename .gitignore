@@ -2,4 +2,5 @@
 .vscode/settings.json
 .idea/
 *.iml
+package-lock.json
 
