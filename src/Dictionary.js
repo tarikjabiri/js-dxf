@@ -1,36 +1,38 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class Dictionary extends DatabaseObject {
-    constructor()
-    {
-        super("AcDbDictionary")
-        this.children = {}
+    constructor() {
+        super("AcDbDictionary");
+        this.children = {};
     }
 
     addChildDictionary(name, dictionary) {
         if (!this.handle) {
-            throw new Error("Handle must be set before adding children")
+            throw new Error("Handle must be set before adding children");
         }
-        dictionary.ownerHandle = this.handle
-        this.children[name] = dictionary
+        dictionary.ownerHandle = this.handle;
+        this.children[name] = dictionary;
     }
 
-    toDxfString()
-    {
-        let s = "0\nDICTIONARY\n"
-        s += super.toDxfString()
+    tags() {
+        const manager = new TagsManager();
+        manager.addTag(0, "DICTIONARY");
+        manager.addTags(super.tags());
         /* Duplicate record cloning flag - keep existing */
-        s += "281\n1\n"
+        manager.addTag(281, 1);
+
         for (const [name, item] of Object.entries(this.children)) {
-            s += `3\n${name}\n`
-            s += `350\n${item.handle.toString(16)}\n`
+            manager.addTag(3, name);
+            manager.addTag(350, item.handle.toString(16));
         }
+
         for (const item of Object.values(this.children)) {
-            s += item.toDxfString()
+            manager.addTags(item.tags());
         }
-        return s
+
+        return manager.tags();
     }
 }
 
-module.exports = Dictionary
+module.exports = Dictionary;

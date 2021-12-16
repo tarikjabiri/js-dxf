@@ -1,8 +1,7 @@
-const DatabaseObject = require('./DatabaseObject')
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
-
-class Spline extends DatabaseObject
-{
+class Spline extends DatabaseObject {
     /**
      * Creates a spline. See https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
      * @param {[Array]} controlPoints - Array of control points like [ [x1, y1], [x2, y2]... ]
@@ -11,11 +10,20 @@ class Spline extends DatabaseObject
      * @param {[number]} weights - Control point weights. If provided, must be one weight for each control point. Default is null
      * @param {[Array]} fitPoints - Array of fit points like [ [x1, y1], [x2, y2]... ]
      */
-    constructor(controlPoints, degree = 3, knots = null, weights = null, fitPoints = [])
-    {
-        super(["AcDbEntity", "AcDbSpline"])
+    constructor(
+        controlPoints,
+        degree = 3,
+        knots = null,
+        weights = null,
+        fitPoints = []
+    ) {
+        super(["AcDbEntity", "AcDbSpline"]);
         if (controlPoints.length < degree + 1) {
-            throw new Error(`For degree ${degree} spline, expected at least ${degree + 1} control points, but received only ${controlPoints.length}`);
+            throw new Error(
+                `For degree ${degree} spline, expected at least ${
+                    degree + 1
+                } control points, but received only ${controlPoints.length}`
+            );
         }
 
         if (knots == null) {
@@ -39,7 +47,11 @@ class Spline extends DatabaseObject
         }
 
         if (knots.length !== controlPoints.length + degree + 1) {
-            throw new Error(`Invalid knot vector length. Expected ${controlPoints.length + degree + 1} but received ${knots.length}.`);
+            throw new Error(
+                `Invalid knot vector length. Expected ${
+                    controlPoints.length + degree + 1
+                } but received ${knots.length}.`
+            );
         }
 
         this.controlPoints = controlPoints;
@@ -55,11 +67,7 @@ class Spline extends DatabaseObject
         const linear = 0;
 
         this.type =
-            closed * 1 +
-            periodic * 2 +
-            rational * 4 +
-            planar * 8 +
-            linear * 16;
+            closed * 1 + periodic * 2 + rational * 4 + planar * 8 + linear * 16;
 
         // Not certain where the values of these flags came from so I'm going to leave them commented for now
         // const closed = 0
@@ -68,43 +76,49 @@ class Spline extends DatabaseObject
         // const planar = 1
         // const linear = 0
         // const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
-
     }
 
-    toDxfString() {
+    tags() {
+        const manager = new TagsManager();
+
         // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
-        let s = `0\nSPLINE\n`;
-        s += super.toDxfString()
-        s += `8\n${this.layer.name}\n`;
-        s += `210\n0.0\n220\n0.0\n230\n1.0\n`;
+        manager.addTag(0, "SPLINE");
+        manager.addTags(super.tags());
+        manager.addTag(8, this.layer.name);
+        manager.addTagsByElements([
+            [210, 0.0],
+            [220, 0.0],
+            [230, 1.0],
+        ]);
 
-        s += `70\n${this.type}\n`;
-        s += `71\n${this.degree}\n`;
-        s += `72\n${this.knots.length}\n`;
-        s += `73\n${this.controlPoints.length}\n`;
-        s += `74\n${this.fitPoints.length}\n`;
-        s += `42\n1e-7\n`;
-        s += `43\n1e-7\n`;
-        s += `44\n1e-10\n`;
+        manager.addTag(70, this.type);
+        manager.addTag(71, this.degree);
+        manager.addTag(72, this.knots.length);
+        manager.addTag(73, this.controlPoints.length);
+        manager.addTag(74, this.fitPoints.length);
 
-        for (let i = 0; i < this.knots.length; ++i) {
-            s += `40\n${this.knots[i]}\n`;
-        }
+        manager.addTagsByElements([
+            [42, 1e-7],
+            [43, 1e-7],
+            [44, 1e-10],
+        ]);
+
+        this.knots.forEach((knot) => {
+            manager.addTag(40, knot);
+        });
 
         if (this.weights) {
-            for (let i = 0; i < this.knots.length; ++i) {
-                s += `41\n${this.weights[i]}\n`;
-            }
+            this.weights.forEach((weight) => {
+                manager.addTag(41, weight);
+            });
         }
 
-        for (let i = 0; i < this.controlPoints.length; ++i) {
-            s += `10\n${this.controlPoints[i][0]}\n`;
-            s += `20\n${this.controlPoints[i][1]}\n`;
-            s += `30\n0\n`;
-        }
+        this.controlPoints.forEach((point) => {
+            manager.addPointTags(point[0], point[1]);
+        });
 
-        return s;
+        return manager.tags();
     }
 }
 
-module.exports = Spline
+module.exports = Spline;

@@ -1,48 +1,47 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class Block extends DatabaseObject {
-    constructor(name)
-    {
-        super(["AcDbEntity", "AcDbBlockBegin"])
-        this.name = name
-        this.end = new DatabaseObject(["AcDbEntity","AcDbBlockEnd"])
-        this.recordHandle = null
+    constructor(name) {
+        super(["AcDbEntity", "AcDbBlockBegin"]);
+        this.name = name;
+        this.end = new DatabaseObject(["AcDbEntity", "AcDbBlockEnd"]);
+        this.recordHandle = null;
     }
 
     /* Internal method to set handle value for block end separator entity. */
     setEndHandle(handle) {
-        this.end.handle = handle
+        this.end.handle = handle;
     }
 
     /* Internal method to set handle value for block record in block records table. */
     setRecordHandle(handle) {
-        this.recordHandle = handle
+        this.recordHandle = handle;
     }
 
     //XXX need some API to add content
 
-    toDxfString()
-    {
-        let s = "0\nBLOCK\n"
-        s += super.toDxfString()
-        s += `2\n${this.name}\n`
+    tags() {
+        const manager = new TagsManager();
+
+        manager.addTag(0, "BLOCK");
+        manager.addTags(super.tags());
+        manager.addTag(2, this.name);
         /* No flags set */
-        s += "70\n0\n"
+        manager.addTag(70, 0);
         /* Block top left corner */
-        s += "10\n0\n"
-        s += "20\n0\n"
-        s += "30\n0\n"
-        s += `3\n${this.name}\n`
+        manager.addPointTags(0, 0);
+        manager.addTag(3, this.name);
         /* xref path name - nothing */
-        s += "1\n\n"
+        manager.addTag(1, "");
 
         //XXX dump content here
 
-        s += "0\nENDBLK\n"
-        s += this.end.toDxfString()
-        return s
+        manager.addTag(0, "ENDBLK");
+        manager.addTags(this.end.tags());
+
+        return manager.tags();
     }
 }
 
-module.exports = Block
+module.exports = Block;

@@ -1,25 +1,25 @@
-const DatabaseObject = require('./DatabaseObject')
-
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
 
 class BlockRecord extends DatabaseObject {
     constructor(name) {
-        super(["AcDbSymbolTableRecord", "AcDbBlockTableRecord"])
-        this.name = name
+        super(["AcDbSymbolTableRecord", "AcDbBlockTableRecord"]);
+        this.name = name;
     }
 
-    toDxfString()
-    {
-        let s = "0\nBLOCK_RECORD\n"
-        s += super.toDxfString()
-        s += `2\n${this.name}\n`
+    tags() {
+        const manager = new TagsManager();
+        manager.addTag(0, "BLOCK_RECORD");
+        manager.addTags(super.tags());
+        manager.addTag(2, this.name);
         /* No flags set */
-        s += "70\n0\n"
+        manager.addTag(70, 0);
         /* Block explodability */
-        s += "280\n1\n"
+        manager.addTag(280, 0);
         /* Block scalability */
-        s += "281\n0\n";
-        return s
+        manager.addTag(281, 1);
+        return manager.tags();
     }
 }
 
-module.exports = BlockRecord
+module.exports = BlockRecord;

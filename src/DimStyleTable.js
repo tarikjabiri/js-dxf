@@ -1,27 +1,29 @@
-const DatabaseObject = require('./DatabaseObject')
-const Table = require('./Table')
-
+const DatabaseObject = require("./DatabaseObject");
+const Table = require("./Table");
+const TagsManager = require("./TagsManager");
 
 class DimStyleTable extends Table {
     constructor(name) {
-        super(name)
-        this.subclassMarkers.push("AcDbDimStyleTable")
+        super(name);
+        this.subclassMarkers.push("AcDbDimStyleTable");
     }
 
-    toDxfString()
-    {
-        let s = "0\nTABLE\n"
-        s += `2\n${this.name}\n`
-        s += DatabaseObject.prototype.toDxfString.call(this)
-        s += `70\n${this.elements.length}\n`
+    tags() {
+        const manager = new TagsManager();
+        manager.addTag(0, "TABLE");
+        manager.addTag(2, this.name);
+        manager.addTags(DatabaseObject.prototype.tags.call(this));
+        manager.addTag(70, this.elements.length);
         /* DIMTOL */
-        s += "71\n1\n"
+        manager.addTag(71, 1);
+
         for (const element of this.elements) {
-            s += element.toDxfString()
+            manager.addTags(element.tags());
         }
-        s += "0\nENDTAB\n"
-        return s
+
+        manager.addTag(0, "ENDTAB");
+        return manager.tags();
     }
 }
 
-module.exports = DimStyleTable
+module.exports = DimStyleTable;
