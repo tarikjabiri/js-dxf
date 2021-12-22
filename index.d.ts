@@ -26,7 +26,7 @@ declare module "dxf-writer" {
     export type VerticalAlignment = "baseline" | "bottom" | "middle" | "top";
 
     export type Point2D = [number, number];
-    export type Point3D = [number, number];
+    export type Point3D = [number, number, number];
 
     // [GroupCode, value]
     export type HeaderValue = [number, number];
