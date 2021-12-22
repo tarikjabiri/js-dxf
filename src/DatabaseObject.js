@@ -1,16 +1,13 @@
+const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
 
-class DatabaseObject {
+class DatabaseObject extends Handle {
     constructor(subclass = null) {
-        /* Handle should be assigned externally by document instance */
-        this.handle = null;
-        this.ownerHandle = null;
+        super();
         this.subclassMarkers = [];
         if (subclass) {
             if (Array.isArray(subclass)) {
-                for (const sc of subclass) {
-                    this.subclassMarkers.push(sc);
-                }
+                this.subclassMarkers.push(...subclass);
             } else {
                 this.subclassMarkers.push(subclass);
             }
@@ -24,17 +21,11 @@ class DatabaseObject {
     tags() {
         const manager = new TagsManager();
 
-        if (this.handle) {
-            manager.addTag(5, this.handle.toString(16));
-        } else {
-            console.warn("No handle assigned to entity", this);
-        }
-        if (this.ownerHandle) {
-            manager.addTag(330, this.ownerHandle.toString(16));
-        }
-        for (const marker of this.subclassMarkers) {
-            manager.addTag(100, marker);
-        }
+        manager.addTags(this.handleTag());
+        manager.addTags(this.handleToOwnerTag());
+        this.subclassMarkers.forEach((subclassMarker) => {
+            manager.addTag(100, subclassMarker);
+        });
 
         return manager.tags();
     }

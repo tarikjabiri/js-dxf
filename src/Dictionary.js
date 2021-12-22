@@ -7,11 +7,16 @@ class Dictionary extends DatabaseObject {
         this.children = {};
     }
 
+    /**
+     *
+     * @param {*} name
+     * @param {DatabaseObject} dictionary
+     */
     addChildDictionary(name, dictionary) {
         if (!this.handle) {
             throw new Error("Handle must be set before adding children");
         }
-        dictionary.ownerHandle = this.handle;
+        dictionary.handleToOwner = this.handle;
         this.children[name] = dictionary;
     }
 
@@ -22,14 +27,15 @@ class Dictionary extends DatabaseObject {
         /* Duplicate record cloning flag - keep existing */
         manager.addTag(281, 1);
 
-        for (const [name, item] of Object.entries(this.children)) {
+        Object.entries(this.children).forEach((child) => {
+            const [name, item] = child;
             manager.addTag(3, name);
-            manager.addTag(350, item.handle.toString(16));
-        }
+            manager.addTags(item.handleTag(350));
+        });
 
-        for (const item of Object.values(this.children)) {
-            manager.addTags(item.tags());
-        }
+        Object.values(this.children).forEach((child) => {
+            manager.addTags(child.tags());
+        });
 
         return manager.tags();
     }
