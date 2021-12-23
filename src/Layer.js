@@ -45,8 +45,9 @@ class Layer extends DatabaseObject {
         return this.shapes;
     }
 
-    shapesTags() {
+    shapesTags(space) {
         return this.shapes.reduce((tags, shape) => {
+            shape.handleToOwner = space.handle;
             return [...tags, ...shape.tags()];
         }, []);
     }

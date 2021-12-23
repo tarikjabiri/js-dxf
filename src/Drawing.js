@@ -20,6 +20,7 @@ const Point = require("./Point");
 const Spline = require("./Spline");
 const Ellipse = require("./Ellipse");
 const TagsManager = require("./TagsManager");
+const Handle = require("./Handle");
 
 class Drawing {
     constructor() {
@@ -29,28 +30,22 @@ class Drawing {
         this.headers = {};
         this.tables = {};
         this.blocks = {};
-        this.handleCount = 0;
-
-        this.ltypeTableHandle = this._generateHandle();
-        this.layerTableHandle = this._generateHandle();
-        this.blockRecordTableHandle = this._generateHandle();
 
         this.dictionary = new Dictionary();
-        this._assignHandle(this.dictionary);
 
         this.setUnits("Unitless");
 
-        for (const lineType of Drawing.LINE_TYPES) {
+        Drawing.LINE_TYPES.forEach((lineType) => {
             this.addLineType(
                 lineType.name,
                 lineType.description,
                 lineType.elements
             );
-        }
+        });
 
-        for (const layer of Drawing.LAYERS) {
+        Drawing.LAYERS.forEach((layer) => {
             this.addLayer(layer.name, layer.colorNumber, layer.lineTypeName);
-        }
+        });
 
         this.setActiveLayer("0");
 
@@ -64,16 +59,12 @@ class Drawing {
      * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
     addLineType(name, description, elements) {
-        this.lineTypes[name] = this._assignHandle(
-            new LineType(name, description, elements)
-        );
+        this.lineTypes[name] = new LineType(name, description, elements);
         return this;
     }
 
     addLayer(name, colorNumber, lineTypeName) {
-        this.layers[name] = this._assignHandle(
-            new Layer(name, colorNumber, lineTypeName)
-        );
+        this.layers[name] = new Layer(name, colorNumber, lineTypeName);
         return this;
     }
 
@@ -84,34 +75,33 @@ class Drawing {
 
     addTable(name) {
         const table = new Table(name);
-        this._assignHandle(table);
         this.tables[name] = table;
         return table;
     }
 
+    /**
+     *
+     * @param {string} name The name of the block.
+     * @returns {Block}
+     */
     addBlock(name) {
         const block = new Block(name);
-        this._assignHandle(block);
-        block.setEndHandle(this._generateHandle());
-        block.setRecordHandle(this._generateHandle());
         this.blocks[name] = block;
         return block;
     }
 
     drawLine(x1, y1, x2, y2) {
-        this.activeLayer.addShape(this._assignHandle(new Line(x1, y1, x2, y2)));
+        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
         return this;
     }
 
     drawLine3d(x1, y1, z1, x2, y2, z2) {
-        this.activeLayer.addShape(
-            this._assignHandle(new Line3d(x1, y1, z1, x2, y2, z2))
-        );
+        this.activeLayer.addShape(new Line3d(x1, y1, z1, x2, y2, z2));
         return this;
     }
 
     drawPoint(x, y) {
-        this.activeLayer.addShape(this._assignHandle(new Point(x, y)));
+        this.activeLayer.addShape(new Point(x, y));
         return this;
     }
 
@@ -145,8 +135,6 @@ class Drawing {
                 true
             );
         }
-
-        this._assignHandle(p);
         this.activeLayer.addShape(p);
         return this;
     }
@@ -159,9 +147,7 @@ class Drawing {
      * @param {number} endAngle - degree
      */
     drawArc(x1, y1, r, startAngle, endAngle) {
-        this.activeLayer.addShape(
-            this._assignHandle(new Arc(x1, y1, r, startAngle, endAngle))
-        );
+        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
         return this;
     }
 
@@ -171,7 +157,7 @@ class Drawing {
      * @param {number} r - radius
      */
     drawCircle(x1, y1, r) {
-        this.activeLayer.addShape(this._assignHandle(new Circle(x1, y1, r)));
+        this.activeLayer.addShape(new Circle(x1, y1, r));
         return this;
     }
 
@@ -194,47 +180,42 @@ class Drawing {
         verticalAlignment = "baseline"
     ) {
         this.activeLayer.addShape(
-            this._assignHandle(
-                new Text(
-                    x1,
-                    y1,
-                    height,
-                    rotation,
-                    value,
-                    horizontalAlignment,
-                    verticalAlignment
-                )
+            new Text(
+                x1,
+                y1,
+                height,
+                rotation,
+                value,
+                horizontalAlignment,
+                verticalAlignment
             )
         );
         return this;
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {[number, number][]} points - Array of points like [ [x1, y1], [x2, y2]... ]
      * @param {boolean} closed - Closed polyline flag
      * @param {number} startWidth - Default start width
      * @param {number} endWidth - Default end width
      */
     drawPolyline(points, closed = false, startWidth = 0, endWidth = 0) {
-        const p = new Polyline(points, closed, startWidth, endWidth);
-        this._assignHandle(p);
-        this.activeLayer.addShape(p);
+        this.activeLayer.addShape(
+            new Polyline(points, closed, startWidth, endWidth)
+        );
         return this;
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
+     * @param {[number, number, number][]} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
      */
     drawPolyline3d(points) {
         points.forEach((point) => {
             if (point.length !== 3) {
-                throw "Require 3D coordinate";
+                throw "Require 3D coordinates";
             }
         });
-        const p = new Polyline3d(points);
-        this._assignHandle(p);
-        p.assignVertexHandles(this._generateHandle.bind(this));
-        this.activeLayer.addShape(p);
+        this.activeLayer.addShape(new Polyline3d(points));
         return this;
     }
 
@@ -263,9 +244,7 @@ class Drawing {
         fitPoints = []
     ) {
         this.activeLayer.addShape(
-            this._assignHandle(
-                new Spline(controlPoints, degree, knots, weights, fitPoints)
-            )
+            new Spline(controlPoints, degree, knots, weights, fitPoints)
         );
         return this;
     }
@@ -290,16 +269,14 @@ class Drawing {
         endAngle = 2 * Math.PI
     ) {
         this.activeLayer.addShape(
-            this._assignHandle(
-                new Ellipse(
-                    x1,
-                    y1,
-                    majorAxisX,
-                    majorAxisY,
-                    axisRatio,
-                    startAngle,
-                    endAngle
-                )
+            new Ellipse(
+                x1,
+                y1,
+                majorAxisX,
+                majorAxisY,
+                axisRatio,
+                startAngle,
+                endAngle
             )
         );
         return this;
@@ -321,32 +298,19 @@ class Drawing {
      */
     drawFace(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
         this.activeLayer.addShape(
-            this._assignHandle(
-                new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
-            )
+            new Face(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4)
         );
         return this;
     }
 
-    _generateHandle() {
-        return ++this.handleCount;
-    }
-
-    _assignHandle(entity) {
-        entity.handle = this._generateHandle();
-        return entity;
-    }
-
     _getLtypeTableTags() {
         const t = new Table("LTYPE");
-        t.handle = this.ltypeTableHandle;
         Object.values(this.lineTypes).forEach((v) => t.add(v));
         return t.tags();
     }
 
     _getLayerTableTags() {
         const t = new Table("LAYER");
-        t.handle = this.layerTableHandle;
         Object.values(this.layers).forEach((v) => t.add(v));
         return t.tags();
     }
@@ -413,33 +377,38 @@ class Drawing {
         }
         if (!this.tables["DIMSTYLE"]) {
             const t = new DimStyleTable("DIMSTYLE");
-            this._assignHandle(t);
             this.tables["DIMSTYLE"] = t;
         }
 
-        vpTable.add(this._assignHandle(new Viewport("*ACTIVE", 1000)));
+        vpTable.add(new Viewport("*ACTIVE", 1000));
 
         /* Non-default text alignment is not applied without this entry. */
-        styleTable.add(this._assignHandle(new TextStyle("standard")));
+        styleTable.add(new TextStyle("standard"));
 
-        appIdTable.add(this._assignHandle(new AppId("ACAD")));
+        appIdTable.add(new AppId("ACAD"));
 
-        this.addBlock("*Model_Space");
+        this.modelSpace = this.addBlock("*Model_Space");
         this.addBlock("*Paper_Space");
 
         const d = new Dictionary();
-        this._assignHandle(d);
         this.dictionary.addChildDictionary("ACAD_GROUP", d);
     }
 
     tags() {
         const manager = new TagsManager();
 
+        // Setup
+        const blockRecordTable = new Table("BLOCK_RECORD");
+        Object.values(this.blocks).forEach((b) => {
+            const rec = new BlockRecord(b.name);
+            blockRecordTable.add(rec);
+        });
+        const ltypeTableTags = this._getLtypeTableTags();
+        const layerTableTags = this._getLayerTableTags();
+
         // Header section start.
         manager.addSectionBegin("HEADER");
-        manager.addHeaderVariable("HANDSEED", [
-            [5, (this.handleCount + 1).toString(16)],
-        ]);
+        manager.addHeaderVariable("HANDSEED", [[5, Handle.handle()]]);
         Object.entries(this.headers).forEach((variable) => {
             const [name, values] = variable;
             manager.addHeaderVariable(name, values);
@@ -455,18 +424,12 @@ class Drawing {
 
         // Tables section start.
         manager.addSectionBegin("TABLES");
-        manager.addTags(this._getLtypeTableTags());
-        manager.addTags(this._getLayerTableTags());
+        manager.addTags(ltypeTableTags);
+        manager.addTags(layerTableTags);
         Object.values(this.tables).forEach((table) => {
             manager.addTags(table.tags());
         });
-        const blockRecordTable = new Table("BLOCK_RECORD");
-        blockRecordTable.handle = this.blockRecordTableHandle;
-        Object.values(this.blocks).forEach((b) => {
-            const rec = new BlockRecord(b.name);
-            rec.handle = b.recordHandle;
-            blockRecordTable.add(rec);
-        });
+
         manager.addTags(blockRecordTable.tags());
         manager.addSectionEnd();
         // Tables section end.
@@ -482,7 +445,7 @@ class Drawing {
         // Entities section start.
         manager.addSectionBegin("ENTITIES");
         Object.values(this.layers).forEach((layer) => {
-            manager.addTags(layer.shapesTags());
+            manager.addTags(layer.shapesTags(this.modelSpace));
         });
         manager.addSectionEnd();
         // Entities section end.

@@ -17,9 +17,9 @@ class DimStyleTable extends Table {
         /* DIMTOL */
         manager.addTag(71, 1);
 
-        for (const element of this.elements) {
+        this.elements.forEach((element) => {
             manager.addTags(element.tags());
-        }
+        });
 
         manager.addTag(0, "ENDTAB");
         return manager.tags();

@@ -9,18 +9,6 @@ class Block extends DatabaseObject {
         this.recordHandle = null;
     }
 
-    /* Internal method to set handle value for block end separator entity. */
-    setEndHandle(handle) {
-        this.end.handle = handle;
-    }
-
-    /* Internal method to set handle value for block record in block records table. */
-    setRecordHandle(handle) {
-        this.recordHandle = handle;
-    }
-
-    //XXX need some API to add content
-
     tags() {
         const manager = new TagsManager();
 

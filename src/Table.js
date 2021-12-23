@@ -9,6 +9,7 @@ class Table extends DatabaseObject {
     }
 
     add(element) {
+        element.handleToOwner = this.handle;
         this.elements.push(element);
     }
 

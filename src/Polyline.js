@@ -28,17 +28,18 @@ class Polyline extends DatabaseObject {
         manager.addTag(90, this.points.length);
         manager.addTag(70, this.closed ? 1 : 0);
 
-        for (const point of this.points) {
-            manager.addTag(10, point[0]);
-            manager.addTag(20, point[1]);
+        this.points.forEach((point) => {
+            const [x, y, z] = point;
+            manager.addTag(10, x);
+            manager.addTag(20, y);
             if (this.startWidth !== 0 || this.endWidth !== 0) {
                 manager.addTag(40, this.startWidth);
                 manager.addTag(41, this.endWidth);
             }
-            if (point[2] !== undefined) {
-                manager.addTag(42, point[2]);
+            if (z !== undefined) {
+                manager.addTag(42, z);
             }
-        }
+        });
 
         return manager.tags();
     }
