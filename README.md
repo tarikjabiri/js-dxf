@@ -42,6 +42,7 @@ Example preview in the LibreCAD:
  - ellipse
  - line
  - point
+ - polygon
  - polyline 
  - polyline 3D 
  - spline
