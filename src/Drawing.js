@@ -140,6 +140,44 @@ class Drawing {
     }
 
     /**
+     * Draw a regular convex polygon as a polyline entity.
+     *
+     * @see [Regular polygon | Wikipedia](https://en.wikipedia.org/wiki/Regular_polygon)
+     *
+     * @param {number} x - The X coordinate of the center of the polygon.
+     * @param {number} y - The Y coordinate of the center of the polygon.
+     * @param {number} numberOfSides - The number of sides.
+     * @param {number} raduis - The raduis.
+     * @param {number} rotation - The  rotation angle (in Degrees) of the polygon. By default 0.
+     * @param {boolean} circumscribed - If `true` is a polygon in which each side is a tangent to a circle.
+     * If `false` is a polygon in which all vertices lie on a circle. By default `false`.
+     *
+     * @returns {Drawing} - The current object of {@link Drawing}.
+     */
+    drawPolygon(
+        x,
+        y,
+        numberOfSides,
+        raduis,
+        rotation = 0,
+        circumscribed = false
+    ) {
+        const angle = (2 * Math.PI) / numberOfSides;
+        const vertices = [];
+        let d = raduis;
+        const rotationRad = (rotation * Math.PI) / 180;
+        if (circumscribed) d = raduis / Math.cos(Math.PI / numberOfSides);
+        for (let i = 0; i < numberOfSides; i++) {
+            vertices.push([
+                x + d * Math.sin(rotationRad + i * angle),
+                y + d * Math.cos(rotationRad + i * angle),
+            ]);
+        }
+        this.activeLayer.addShape(new Polyline(vertices, true));
+        return this;
+    }
+
+    /**
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius

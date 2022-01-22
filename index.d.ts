@@ -36,7 +36,6 @@ declare module "dxf-writer" {
     }
 
     export class Arc implements RenderableToDxf {
-
         public x1: number;
         public y1: number;
         public r: number;
@@ -55,7 +54,7 @@ declare module "dxf-writer" {
             y1: number,
             r: number,
             startAngle: number,
-            endAngle: number,
+            endAngle: number
         );
 
         toDxfString(): string;
@@ -101,7 +100,7 @@ declare module "dxf-writer" {
             z3: number,
             x4: number,
             y4: number,
-            z4: number,
+            z4: number
         );
         toDxfString(): string;
     }
@@ -199,15 +198,15 @@ declare module "dxf-writer" {
         toDxfString(): string;
     }
 
-    export type ACIKey = 'LAYER'
-        | 'RED'
-        | 'YELLOW'
-        | 'GREEN'
-        | 'CYAN'
-        | 'BLUE'
-        | 'MAGENTA'
-        | 'WHITE'
-        ;
+    export type ACIKey =
+        | "LAYER"
+        | "RED"
+        | "YELLOW"
+        | "GREEN"
+        | "CYAN"
+        | "BLUE"
+        | "MAGENTA"
+        | "WHITE";
 
     export default class Drawing implements RenderableToDxf {
         constructor();
@@ -222,23 +221,62 @@ declare module "dxf-writer" {
          * @param {string} description
          * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
          */
-        addLineType(name: string, description: string, elements: Array<number>): Drawing;
+        addLineType(
+            name: string,
+            description: string,
+            elements: Array<number>
+        ): Drawing;
 
-        addLayer(name: string, colorNumber: number, lineTypeName: string): Drawing;
+        addLayer(
+            name: string,
+            colorNumber: number,
+            lineTypeName: string
+        ): Drawing;
         setActiveLayer(name: string): Drawing;
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
         drawPoint(x: number, y: number): Drawing;
 
         /**
          * draws a closed rectangular polyline with option for round or diagonal corners
-         * @param {number} x1 
-         * @param {number} y1 
-         * @param {number} x2 
-         * @param {number} y2 
+         * @param {number} x1
+         * @param {number} y1
+         * @param {number} x2
+         * @param {number} y2
          * @param {number} cornerLength given P (the 90deg corner point), and P1 (the point where arc begins), where cornerLength is the length of P to P1
          * @param {number} cornerBulge defaults to 0, for diagonal corners
          */
-        drawRect(x1: number, y1: number, x2: number, y2: number, cornerLength?: number, cornerBulge?: number): Drawing;
+        drawRect(
+            x1: number,
+            y1: number,
+            x2: number,
+            y2: number,
+            cornerLength?: number,
+            cornerBulge?: number
+        ): Drawing;
+
+        /**
+         * Draw a regular convex polygon as a polyline entity.
+         *
+         * @see [Regular polygon | Wikipedia](https://en.wikipedia.org/wiki/Regular_polygon)
+         *
+         * @param {number} x - The X coordinate of the center of the polygon.
+         * @param {number} y - The Y coordinate of the center of the polygon.
+         * @param {number} numberOfSides - The number of sides.
+         * @param {number} raduis - The raduis.
+         * @param {number} rotation - The  rotation angle (in Degrees) of the polygon. By default 0.
+         * @param {boolean} circumscribed - If `true` is a polygon in which each side is a tangent to a circle.
+         * If `false` is a polygon in which all vertices lie on a circle. By default `false`.
+         *
+         * @returns {Drawing} - The current object of {@link Drawing}.
+         */
+        drawPolygon(
+            x: number,
+            y: number,
+            numberOfSides: number,
+            raduis: number,
+            rotation?: number,
+            circumscribed?: boolean
+        ): Drawing;
 
         /**
          * @param {number} x1 - Center x
@@ -247,7 +285,13 @@ declare module "dxf-writer" {
          * @param {number} startAngle - degree
          * @param {number} endAngle - degree
          */
-        drawArc(x1: number, y1: number, r: number, startAngle: number, endAngle: number): Drawing;
+        drawArc(
+            x1: number,
+            y1: number,
+            r: number,
+            startAngle: number,
+            endAngle: number
+        ): Drawing;
 
         /**
          * @param {number} x1 - Center x
@@ -272,7 +316,7 @@ declare module "dxf-writer" {
             rotation: number,
             value: string,
             horizontalAlignment?: HorizontalAlignment,
-            verticalAlignment?: VerticalAlignment,
+            verticalAlignment?: VerticalAlignment
         ): Drawing;
 
         /**
@@ -281,7 +325,12 @@ declare module "dxf-writer" {
          * @param {number} startWidth - Default start width
          * @param {number} endWidth - Default end width
          */
-        drawPolyline(points: Array<Point2D>, closed?: boolean, startWidth?: number, endWidth?: number): Drawing;
+        drawPolyline(
+            points: Array<Point2D>,
+            closed?: boolean,
+            startWidth?: number,
+            endWidth?: number
+        ): Drawing;
 
         /**
          * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
@@ -305,7 +354,7 @@ declare module "dxf-writer" {
             z3: number,
             x4: number,
             y4: number,
-            z4: number,
+            z4: number
         ): Drawing;
         _getDxfLtypeTable(): string;
         _getDxfLayerTable(): string;
@@ -332,7 +381,7 @@ declare module "dxf-writer" {
          * AutoCAD Color Index (ACI)
          * @see http://sub-atomic.com/~moses/acadcolors.html
          */
-        static ACI: { [key in ACIKey]: number};
+        static ACI: { [key in ACIKey]: number };
 
         static LINE_TYPES: LineType[];
 
