@@ -262,7 +262,7 @@ declare module "dxf-writer" {
          * @param {number} x - The X coordinate of the center of the polygon.
          * @param {number} y - The Y coordinate of the center of the polygon.
          * @param {number} numberOfSides - The number of sides.
-         * @param {number} raduis - The raduis.
+         * @param {number} radius - The radius.
          * @param {number} rotation - The  rotation angle (in Degrees) of the polygon. By default 0.
          * @param {boolean} circumscribed - If `true` is a polygon in which each side is a tangent to a circle.
          * If `false` is a polygon in which all vertices lie on a circle. By default `false`.
@@ -273,7 +273,7 @@ declare module "dxf-writer" {
             x: number,
             y: number,
             numberOfSides: number,
-            raduis: number,
+            radius: number,
             rotation?: number,
             circumscribed?: boolean
         ): Drawing;

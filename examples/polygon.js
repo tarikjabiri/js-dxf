@@ -13,7 +13,7 @@ d.drawText(-3, 0, 1, 0, "Inscribed");
 d.addLayer("circumscribed_polygon", Drawing.ACI.GREEN, "CONTINUOUS");
 d.setActiveLayer("circumscribed_polygon");
 
-d.drawPolygon(30, 0, 5, 10, 0,true); 
+d.drawPolygon(30, 0, 5, 10, 0, true);
 d.drawCircle(30, 0, 10);
 d.drawText(25, 0, 1, 0, "Circumscribed");
 

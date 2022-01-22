@@ -147,7 +147,7 @@ class Drawing {
      * @param {number} x - The X coordinate of the center of the polygon.
      * @param {number} y - The Y coordinate of the center of the polygon.
      * @param {number} numberOfSides - The number of sides.
-     * @param {number} raduis - The raduis.
+     * @param {number} radius - The radius.
      * @param {number} rotation - The  rotation angle (in Degrees) of the polygon. By default 0.
      * @param {boolean} circumscribed - If `true` is a polygon in which each side is a tangent to a circle.
      * If `false` is a polygon in which all vertices lie on a circle. By default `false`.
@@ -158,15 +158,15 @@ class Drawing {
         x,
         y,
         numberOfSides,
-        raduis,
+        radius,
         rotation = 0,
         circumscribed = false
     ) {
         const angle = (2 * Math.PI) / numberOfSides;
         const vertices = [];
-        let d = raduis;
+        let d = radius;
         const rotationRad = (rotation * Math.PI) / 180;
-        if (circumscribed) d = raduis / Math.cos(Math.PI / numberOfSides);
+        if (circumscribed) d = radius / Math.cos(Math.PI / numberOfSides);
         for (let i = 0; i < numberOfSides; i++) {
             vertices.push([
                 x + d * Math.sin(rotationRad + i * angle),
