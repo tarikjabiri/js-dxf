@@ -26,6 +26,17 @@ class Line extends DatabaseObject {
 
         return manager.tags();
     }
+
+    computeBoundingBox() {
+        return {
+            min: { x: Math.min(this.x1, this.x2), y: Math.min(this.y1, this.y2)},
+            max: { x: Math.max(this.x1, this.x2), y: Math.max(this.y1, this.y2)}
+        }
+        // return [
+        //     [Math.min(this.x1, this.x2), Math.min(this.y1, this.y2)],
+        //     [Math.max(this.x1, this.x2), Math.max(this.y1, this.y2)]
+        // ]
+    }
 }
 
 module.exports = Line;

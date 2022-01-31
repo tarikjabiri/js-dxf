@@ -26,6 +26,13 @@ class Circle extends DatabaseObject {
 
         return manager.tags();
     }
+
+    computeBoundingBox() {
+        return {
+            min: { x: this.x - this.r, y: this.y - this.r},
+            max: { x: this.x + this.r, y: this.y + this.r}
+        }
+    }
 }
 
 module.exports = Circle;
