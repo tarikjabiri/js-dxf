@@ -12,5 +12,6 @@ d.activeLayer.addShape(circle)
 
 const activeViewPort = d.tables.VPORT.elements.find(vp => vp.name == '*ACTIVE')
 activeViewPort.height = bbHeight
+activeViewPort.centerPoint = {x:-150, y:0}
 
 fs.writeFileSync(__filename + '.dxf', d.toDxfString())

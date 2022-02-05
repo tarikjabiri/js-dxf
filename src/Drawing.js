@@ -418,7 +418,7 @@ class Drawing {
             this.tables["DIMSTYLE"] = t;
         }
 
-        vpTable.add(new Viewport("*ACTIVE", 1000));
+        vpTable.add(new Viewport({name: "*ACTIVE"}));
 
         /* Non-default text alignment is not applied without this entry. */
         styleTable.add(new TextStyle("standard"));
