@@ -12,6 +12,7 @@ const Line = require("./Line");
 const Line3d = require("./Line3d");
 const Arc = require("./Arc");
 const Circle = require("./Circle");
+const Cylinder = require("./Cylinder");
 const Text = require("./Text");
 const Polyline = require("./Polyline");
 const Polyline3d = require("./Polyline3d");
@@ -196,6 +197,41 @@ class Drawing {
      */
     drawCircle(x1, y1, r) {
         this.activeLayer.addShape(new Circle(x1, y1, r));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - Center x
+     * @param {number} y1 - Center y
+     * @param {number} z1 - Center z
+     * @param {number} r - radius
+     * @param {number} thickness - thickness
+     * @param {number} extrusionDirectionX - Extrusion Direction x
+     * @param {number} extrusionDirectionY - Extrusion Direction y
+     * @param {number} extrusionDirectionZ - Extrusion Direction z
+     */
+    drawCylinder(
+        x1,
+        y1,
+        z1,
+        r,
+        thickness,
+        extrusionDirectionX,
+        extrusionDirectionY,
+        extrusionDirectionZ
+    ){
+        this.activeLayer.addShape(
+            new Cylinder(
+                x1,
+                y1,
+                z1,
+                r,
+                thickness,
+                extrusionDirectionX,
+                extrusionDirectionY,
+                extrusionDirectionZ
+            )
+        );
         return this;
     }
 
