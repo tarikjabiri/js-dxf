@@ -74,6 +74,39 @@ declare module "dxf-writer" {
         toDxfString(): string;
     }
 
+    export class Cylinder implements RenderableToDxf {
+        public x1: number;
+        public y1: number;
+        public z1: number;
+        public r: number;
+        public thickness: number;
+        public extrusionDirectionX: number;
+        public extrusionDirectionY: number;
+        public extrusionDirectionZ: number;
+
+        /**
+         * @param {number} x1 - Center x
+         * @param {number} y1 - Center y
+         * @param {number} z1 - Center z
+         * @param {number} r - radius
+         * @param {number} thickness - thickness
+         * @param {number} extrusionDirectionX - Extrusion Direction x
+         * @param {number} extrusionDirectionY - Extrusion Direction y
+         * @param {number} extrusionDirectionZ - Extrusion Direction z
+         */
+        constructor(
+            x1,
+            y1,
+            z1,
+            r,
+            thickness,
+            extrusionDirectionX,
+            extrusionDirectionY,
+            extrusionDirectionZ
+        );
+        toDxfString(): string;
+    }
+
     export class Face implements RenderableToDxf {
         public x1: number;
         public y1: number;
@@ -299,6 +332,27 @@ declare module "dxf-writer" {
          * @param {number} r - radius
          */
         drawCircle(x1: number, y1: number, r: number): Drawing;
+
+        /**
+         * @param {number} x1 - Center x
+         * @param {number} y1 - Center y
+         * @param {number} z1 - Center z
+         * @param {number} r - radius
+         * @param {number} thickness - thickness
+         * @param {number} extrusionDirectionX - Extrusion Direction x
+         * @param {number} extrusionDirectionY - Extrusion Direction y
+         * @param {number} extrusionDirectionZ - Extrusion Direction z
+         */
+        drawCylinder(
+            x1: number,
+            y1: number,
+            z1: number,
+            r: number,
+            thickness: number,
+            extrusionDirectionX: number,
+            extrusionDirectionY: number,
+            extrusionDirectionZ: number
+        ): Drawing;
 
         /**
          * @param {number} x1 - x
