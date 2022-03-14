@@ -95,14 +95,14 @@ declare module "dxf-writer" {
          * @param {number} extrusionDirectionZ - Extrusion Direction z
          */
         constructor(
-            x1,
-            y1,
-            z1,
-            r,
-            thickness,
-            extrusionDirectionX,
-            extrusionDirectionY,
-            extrusionDirectionZ
+            x1: number,
+            y1: number,
+            z1: number,
+            r: number,
+            thickness: number,
+            extrusionDirectionX: number,
+            extrusionDirectionY: number,
+            extrusionDirectionZ: number
         );
         toDxfString(): string;
     }
