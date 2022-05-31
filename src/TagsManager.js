@@ -57,7 +57,9 @@ class TagsManager {
      * @param {Tag[]} tags
      */
     addTags(tags) {
-        this._tags.push(...tags);
+        for (let tag of tags) {
+            this._tags.push(tag);
+        }
     }
 
     /**
