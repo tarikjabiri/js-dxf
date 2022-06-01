@@ -21,7 +21,7 @@ class AppId extends DatabaseObject {
 
 module.exports = AppId;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],2:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],2:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -61,7 +61,7 @@ class Arc extends DatabaseObject {
 
 module.exports = Arc;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],3:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],3:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -98,7 +98,7 @@ class Block extends DatabaseObject {
 
 module.exports = Block;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],4:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],4:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -125,7 +125,7 @@ class BlockRecord extends DatabaseObject {
 
 module.exports = BlockRecord;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],5:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],5:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -158,7 +158,62 @@ class Circle extends DatabaseObject {
 
 module.exports = Circle;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],6:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],6:[function(require,module,exports){
+const DatabaseObject = require("./DatabaseObject");
+const TagsManager = require("./TagsManager");
+
+class Cylinder extends DatabaseObject {
+    /**
+     * @param {number} x - Center x
+     * @param {number} y - Center y
+     * @param {number} z - Center z
+     * @param {number} r - radius
+     * @param {number} thickness - thickness
+     * @param {number} extrusionDirectionX - Extrusion Direction x
+     * @param {number} extrusionDirectionY - Extrusion Direction y
+     * @param {number} extrusionDirectionZ - Extrusion Direction z
+     */
+    constructor(
+        x,
+        y,
+        z,
+        r,
+        thickness,
+        extrusionDirectionX,
+        extrusionDirectionY,
+        extrusionDirectionZ
+    ) {
+        super(["AcDbEntity", "AcDbCircle"]);
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.r = r;
+        this.thickness = thickness;
+        this.extrusionDirectionX = extrusionDirectionX,
+        this.extrusionDirectionY = extrusionDirectionY,
+        this.extrusionDirectionZ = extrusionDirectionZ
+    }
+
+    tags() {
+        const manager = new TagsManager();
+
+        manager.addTag(0, "CIRCLE");
+        manager.addTags(super.tags());
+        manager.addTag(8, this.layer.name);
+        manager.addPointTags(this.x, this.y, this.z);
+        manager.addTag(40, this.r);
+        manager.addTag(39, this.thickness);
+        manager.addTag(210, this.extrusionDirectionX);
+        manager.addTag(220, this.extrusionDirectionY);
+        manager.addTag(230, this.extrusionDirectionZ);
+
+        return manager.tags();
+    }
+}
+
+module.exports = Cylinder;
+
+},{"./DatabaseObject":7,"./TagsManager":23}],7:[function(require,module,exports){
 const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
 
@@ -204,7 +259,7 @@ class DatabaseObject extends Handle {
 
 module.exports = DatabaseObject;
 
-},{"./Handle":11,"./TagsManager":22}],7:[function(require,module,exports){
+},{"./Handle":12,"./TagsManager":23}],8:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -250,7 +305,7 @@ class Dictionary extends DatabaseObject {
 
 module.exports = Dictionary;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],8:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],9:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Table = require("./Table");
 const TagsManager = require("./TagsManager");
@@ -281,7 +336,7 @@ class DimStyleTable extends Table {
 
 module.exports = DimStyleTable;
 
-},{"./DatabaseObject":6,"./Table":20,"./TagsManager":22}],9:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Table":21,"./TagsManager":23}],10:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -329,7 +384,7 @@ class Ellipse extends DatabaseObject {
 
 module.exports = Ellipse;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],10:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],11:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -380,7 +435,7 @@ class Face extends DatabaseObject {
 
 module.exports = Face;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],11:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],12:[function(require,module,exports){
 const Tag = require("./Tag");
 
 class Handle {
@@ -419,7 +474,7 @@ class Handle {
 
 module.exports = Handle;
 
-},{"./Tag":21}],12:[function(require,module,exports){
+},{"./Tag":22}],13:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -483,7 +538,7 @@ class Layer extends DatabaseObject {
 
 module.exports = Layer;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],13:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],14:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -516,7 +571,7 @@ class Line extends DatabaseObject {
 
 module.exports = Line;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],14:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],15:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -551,7 +606,7 @@ class Line3d extends DatabaseObject {
 
 module.exports = Line3d;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],15:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],16:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -598,7 +653,7 @@ class LineType extends DatabaseObject {
 
 module.exports = LineType;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],16:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],17:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -624,7 +679,7 @@ class Point extends DatabaseObject {
 
 module.exports = Point;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],17:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],18:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -674,7 +729,7 @@ class Polyline extends DatabaseObject {
 
 module.exports = Polyline;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],18:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],19:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
@@ -721,7 +776,7 @@ class Polyline3d extends DatabaseObject {
 
 module.exports = Polyline3d;
 
-},{"./DatabaseObject":6,"./Handle":11,"./TagsManager":22,"./Vertex":25}],19:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Handle":12,"./TagsManager":23,"./Vertex":26}],20:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -847,7 +902,7 @@ class Spline extends DatabaseObject {
 
 module.exports = Spline;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],20:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],21:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -883,7 +938,7 @@ class Table extends DatabaseObject {
 
 module.exports = Table;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],21:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],22:[function(require,module,exports){
 class Tag {
     constructor(groupCode, value) {
         this._code = groupCode;
@@ -897,7 +952,7 @@ class Tag {
 
 module.exports = Tag;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 const Tag = require("./Tag");
 
 class TagsManager {
@@ -957,7 +1012,9 @@ class TagsManager {
      * @param {Tag[]} tags
      */
     addTags(tags) {
-        this._tags.push(...tags);
+        for (let tag of tags) {
+            this._tags.push(tag);
+        }
     }
 
     /**
@@ -974,14 +1031,14 @@ class TagsManager {
      */
     toDxfString() {
         return this._tags.reduce((dxfString, tag) => {
-            return `${dxfString}${tag.dxfString()}`;
+            return `${dxfString}${tag.toDxfString()}`;
         }, "");
     }
 }
 
 module.exports = TagsManager;
 
-},{"./Tag":21}],23:[function(require,module,exports){
+},{"./Tag":22}],24:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1053,7 +1110,7 @@ class Text extends DatabaseObject {
 
 module.exports = Text;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],24:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],25:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1085,7 +1142,7 @@ class TextStyle extends DatabaseObject {
 
 module.exports = TextStyle;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],25:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],26:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1117,7 +1174,7 @@ class Vertex extends DatabaseObject {
 
 module.exports = Vertex;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],26:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],27:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1144,7 +1201,7 @@ class Viewport extends DatabaseObject {
 
 module.exports = Viewport;
 
-},{"./DatabaseObject":6,"./TagsManager":22}],"Drawing":[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":23}],"Drawing":[function(require,module,exports){
 const LineType = require("./LineType");
 const Layer = require("./Layer");
 const Table = require("./Table");
@@ -1159,6 +1216,7 @@ const Line = require("./Line");
 const Line3d = require("./Line3d");
 const Arc = require("./Arc");
 const Circle = require("./Circle");
+const Cylinder = require("./Cylinder");
 const Text = require("./Text");
 const Polyline = require("./Polyline");
 const Polyline3d = require("./Polyline3d");
@@ -1287,6 +1345,44 @@ class Drawing {
     }
 
     /**
+     * Draw a regular convex polygon as a polyline entity.
+     *
+     * @see [Regular polygon | Wikipedia](https://en.wikipedia.org/wiki/Regular_polygon)
+     *
+     * @param {number} x - The X coordinate of the center of the polygon.
+     * @param {number} y - The Y coordinate of the center of the polygon.
+     * @param {number} numberOfSides - The number of sides.
+     * @param {number} radius - The radius.
+     * @param {number} rotation - The  rotation angle (in Degrees) of the polygon. By default 0.
+     * @param {boolean} circumscribed - If `true` is a polygon in which each side is a tangent to a circle.
+     * If `false` is a polygon in which all vertices lie on a circle. By default `false`.
+     *
+     * @returns {Drawing} - The current object of {@link Drawing}.
+     */
+    drawPolygon(
+        x,
+        y,
+        numberOfSides,
+        radius,
+        rotation = 0,
+        circumscribed = false
+    ) {
+        const angle = (2 * Math.PI) / numberOfSides;
+        const vertices = [];
+        let d = radius;
+        const rotationRad = (rotation * Math.PI) / 180;
+        if (circumscribed) d = radius / Math.cos(Math.PI / numberOfSides);
+        for (let i = 0; i < numberOfSides; i++) {
+            vertices.push([
+                x + d * Math.sin(rotationRad + i * angle),
+                y + d * Math.cos(rotationRad + i * angle),
+            ]);
+        }
+        this.activeLayer.addShape(new Polyline(vertices, true));
+        return this;
+    }
+
+    /**
      * @param {number} x1 - Center x
      * @param {number} y1 - Center y
      * @param {number} r - radius
@@ -1305,6 +1401,41 @@ class Drawing {
      */
     drawCircle(x1, y1, r) {
         this.activeLayer.addShape(new Circle(x1, y1, r));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - Center x
+     * @param {number} y1 - Center y
+     * @param {number} z1 - Center z
+     * @param {number} r - radius
+     * @param {number} thickness - thickness
+     * @param {number} extrusionDirectionX - Extrusion Direction x
+     * @param {number} extrusionDirectionY - Extrusion Direction y
+     * @param {number} extrusionDirectionZ - Extrusion Direction z
+     */
+    drawCylinder(
+        x1,
+        y1,
+        z1,
+        r,
+        thickness,
+        extrusionDirectionX,
+        extrusionDirectionY,
+        extrusionDirectionZ
+    ){
+        this.activeLayer.addShape(
+            new Cylinder(
+                x1,
+                y1,
+                z1,
+                r,
+                thickness,
+                extrusionDirectionX,
+                extrusionDirectionY,
+                extrusionDirectionZ
+            )
+        );
         return this;
     }
 
@@ -1665,4 +1796,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Dictionary":7,"./DimStyleTable":8,"./Ellipse":9,"./Face":10,"./Handle":11,"./Layer":12,"./Line":13,"./Line3d":14,"./LineType":15,"./Point":16,"./Polyline":17,"./Polyline3d":18,"./Spline":19,"./Table":20,"./TagsManager":22,"./Text":23,"./TextStyle":24,"./Viewport":26}]},{},[]);
+},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Cylinder":6,"./Dictionary":8,"./DimStyleTable":9,"./Ellipse":10,"./Face":11,"./Handle":12,"./Layer":13,"./Line":14,"./Line3d":15,"./LineType":16,"./Point":17,"./Polyline":18,"./Polyline3d":19,"./Spline":20,"./Table":21,"./TagsManager":23,"./Text":24,"./TextStyle":25,"./Viewport":27}]},{},[]);
