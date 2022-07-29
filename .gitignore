@@ -3,4 +3,5 @@
 .idea/
 *.iml
 package-lock.json
+pnpm-lock.yaml
 
