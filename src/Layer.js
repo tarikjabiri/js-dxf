@@ -11,25 +11,20 @@ class Layer extends DatabaseObject {
         this.trueColor = -1;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "LAYER");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        if (this.trueColor !== -1) {
-            manager.addTag(420, this.trueColor);
-        } else {
-            manager.addTag(62, this.colorNumber);
-        }
-        manager.addTag(70, 0);
-        if (this.lineTypeName) {
-            manager.addTag(6, this.lineTypeName);
-        }
+    tags(manager) {
+        manager.push(0, "LAYER");
+        super.tags(manager);
+        manager.push(2, this.name);
+        if (this.trueColor !== -1) manager.push(420, this.trueColor);
+        else manager.push(62, this.colorNumber);
+
+        manager.push(70, 0);
+        if (this.lineTypeName) manager.push(6, this.lineTypeName);
+
         /* Hard-pointer handle to PlotStyleName object; seems mandatory, but any value seems OK,
          * including 0.
          */
-        manager.addTag(390, 1);
-        return manager.tags();
+        manager.push(390, 1);
     }
 
     setTrueColor(color) {
@@ -45,17 +40,11 @@ class Layer extends DatabaseObject {
         return this.shapes;
     }
 
-    shapesTags(space) {
-        return this.shapes.reduce((tags, shape) => {
-            shape.handleToOwner = space.handle;
-            return [...tags, ...shape.tags()];
-        }, []);
-    }
-
-    shapesToDxf() {
-        return this.shapes.reduce((dxfString, shape) => {
-            return `${dxfString}${shape.toDxfString()}`;
-        }, "");
+    shapesTags(space, manager) {
+        for (const shape of this.shapes) {
+            shape.ownerObjectHandle = space.handle;
+            shape.tags(manager);
+        }
     }
 }
 

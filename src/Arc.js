@@ -18,20 +18,16 @@ class Arc extends DatabaseObject {
         this.endAngle = endAngle;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        manager.addTag(0, "ARC");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
+        manager.push(0, "ARC");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
         manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.r);
-        manager.addTag(100, "AcDbArc");
-        manager.addTag(50, this.startAngle);
-        manager.addTag(51, this.endAngle);
-
-        return manager.tags();
+        manager.push(40, this.r);
+        manager.push(100, "AcDbArc");
+        manager.push(50, this.startAngle);
+        manager.push(51, this.endAngle);
     }
 }
 

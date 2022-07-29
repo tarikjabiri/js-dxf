@@ -9,25 +9,21 @@ class Table extends DatabaseObject {
     }
 
     add(element) {
-        element.handleToOwner = this.handle;
+        element.ownerObjectHandle = this.handle;
         this.elements.push(element);
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "TABLE");
-        manager.addTag(2, this.name);
-        manager.addTags(super.tags());
-        manager.addTag(70, this.elements.length);
+    tags(manager) {
+        manager.push(0, "TABLE");
+        manager.push(2, this.name);
+        super.tags(manager);
+        manager.push(70, this.elements.length);
 
         this.elements.forEach((element) => {
-            manager.addTags(element.tags());
+            element.tags(manager);
         });
 
-        manager.addTag(0, "ENDTAB");
-
-        return manager.tags();
+        manager.push(0, "ENDTAB");
     }
 }
 

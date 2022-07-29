@@ -33,37 +33,33 @@ class Text extends DatabaseObject {
         this.vAlign = verticalAlignment;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
-        manager.addTag(0, "TEXT");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.height);
-        manager.addTag(1, this.value);
-        manager.addTag(50, this.rotation);
+        manager.push(0, "TEXT");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(40, this.height);
+        manager.push(1, this.value);
+        manager.push(50, this.rotation);
 
         if (
             H_ALIGN_CODES.includes(this.hAlign, 1) ||
             V_ALIGN_CODES.includes(this.vAlign, 1)
         ) {
-            manager.addTag(72, Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0));
-            manager.addTagsByElements([
-                [11, this.x],
-                [21, this.y],
-                [31, 0],
-            ]);
+            manager.push(72, Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0));
+
+            manager.push(11, this.x);
+            manager.push(21, this.y);
+            manager.push(31, 0);
+
             /* AutoCAD needs this one more time, yes, exactly here. */
-            manager.addTag(100, "AcDbText");
-            manager.addTag(73, Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0));
+            manager.push(100, "AcDbText");
+            manager.push(73, Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0));
         } else {
             /* AutoCAD needs this one more time. */
-            manager.addTag(100, "AcDbText");
+            manager.push(100, "AcDbText");
         }
-
-        return manager.tags();
     }
 }
 

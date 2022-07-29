@@ -78,46 +78,39 @@ class Spline extends DatabaseObject {
         // const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
-        manager.addTag(0, "SPLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTagsByElements([
-            [210, 0.0],
-            [220, 0.0],
-            [230, 1.0],
-        ]);
+        manager.push(0, "SPLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
 
-        manager.addTag(70, this.type);
-        manager.addTag(71, this.degree);
-        manager.addTag(72, this.knots.length);
-        manager.addTag(73, this.controlPoints.length);
-        manager.addTag(74, this.fitPoints.length);
+        manager.push(210, 0.0);
+        manager.push(220, 0.0);
+        manager.push(230, 1.0);
 
-        manager.addTagsByElements([
-            [42, 1e-7],
-            [43, 1e-7],
-            [44, 1e-10],
-        ]);
+        manager.push(70, this.type);
+        manager.push(71, this.degree);
+        manager.push(72, this.knots.length);
+        manager.push(73, this.controlPoints.length);
+        manager.push(74, this.fitPoints.length);
+
+        manager.push(42, 1e-7);
+        manager.push(43, 1e-7);
+        manager.push(44, 1e-10);
 
         this.knots.forEach((knot) => {
-            manager.addTag(40, knot);
+            manager.push(40, knot);
         });
 
         if (this.weights) {
             this.weights.forEach((weight) => {
-                manager.addTag(41, weight);
+                manager.push(41, weight);
             });
         }
 
         this.controlPoints.forEach((point) => {
-            manager.addPointTags(point[0], point[1]);
+            manager.point(point[0], point[1]);
         });
-
-        return manager.tags();
     }
 }
 

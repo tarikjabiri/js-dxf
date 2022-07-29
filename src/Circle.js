@@ -14,17 +14,13 @@ class Circle extends DatabaseObject {
         this.r = r;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
-        manager.addTag(0, "CIRCLE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.r);
-
-        return manager.tags();
+        manager.push(0, "CIRCLE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(40, this.r);
     }
 }
 

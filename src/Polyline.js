@@ -16,32 +16,26 @@ class Polyline extends DatabaseObject {
         this.endWidth = endWidth;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "LWPOLYLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTag(6, "ByLayer");
-        manager.addTag(62, 256);
-        manager.addTag(370, -1);
-        manager.addTag(90, this.points.length);
-        manager.addTag(70, this.closed ? 1 : 0);
+    tags(manager) {
+        manager.push(0, "LWPOLYLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.push(6, "ByLayer");
+        manager.push(62, 256);
+        manager.push(370, -1);
+        manager.push(90, this.points.length);
+        manager.push(70, this.closed ? 1 : 0);
 
         this.points.forEach((point) => {
             const [x, y, z] = point;
-            manager.addTag(10, x);
-            manager.addTag(20, y);
+            manager.push(10, x);
+            manager.push(20, y);
             if (this.startWidth !== 0 || this.endWidth !== 0) {
-                manager.addTag(40, this.startWidth);
-                manager.addTag(41, this.endWidth);
+                manager.push(40, this.startWidth);
+                manager.push(41, this.endWidth);
             }
-            if (z !== undefined) {
-                manager.addTag(42, z);
-            }
+            if (z !== undefined) manager.push(42, z);
         });
-
-        return manager.tags();
     }
 }
 

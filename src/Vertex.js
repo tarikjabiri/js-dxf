@@ -15,15 +15,12 @@ class Vertex extends DatabaseObject {
         this.z = z;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "VERTEX");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y, this.z);
-        manager.addTag(70, 32);
-        return manager.tags();
+    tags(manager) {
+        manager.push(0, "VERTEX");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y, this.z);
+        manager.push(70, 32);
     }
 }
 

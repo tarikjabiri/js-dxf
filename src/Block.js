@@ -9,26 +9,22 @@ class Block extends DatabaseObject {
         this.recordHandle = null;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "BLOCK");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
+    tags(manager) {
+        manager.push(0, "BLOCK");
+        super.tags(manager);
+        manager.push(2, this.name);
         /* No flags set */
-        manager.addTag(70, 0);
+        manager.push(70, 0);
         /* Block top left corner */
-        manager.addPointTags(0, 0);
-        manager.addTag(3, this.name);
+        manager.point(0, 0);
+        manager.push(3, this.name);
         /* xref path name - nothing */
-        manager.addTag(1, "");
+        manager.push(1, "");
 
         //XXX dump content here
 
-        manager.addTag(0, "ENDBLK");
-        manager.addTags(this.end.tags());
-
-        return manager.tags();
+        manager.push(0, "ENDBLK");
+        this.end.tags(manager);
     }
 }
 

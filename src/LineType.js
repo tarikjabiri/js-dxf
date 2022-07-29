@@ -14,25 +14,21 @@ class LineType extends DatabaseObject {
         this.elements = elements;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
-        manager.addTag(0, "LTYPE");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        manager.addTag(3, this.description);
-        manager.addTag(70, 0);
-        manager.addTag(72, 65);
-        manager.addTag(73, this.elements.length);
-        manager.addTag(40, this.getElementsSum());
+        manager.push(0, "LTYPE");
+        super.tags(manager);
+        manager.push(2, this.name);
+        manager.push(3, this.description);
+        manager.push(70, 0);
+        manager.push(72, 65);
+        manager.push(73, this.elements.length);
+        manager.push(40, this.getElementsSum());
 
         this.elements.forEach((element) => {
-            manager.addTag(49, element);
-            manager.addTag(74, 0);
+            manager.push(49, element);
+            manager.push(74, 0);
         });
-
-        return manager.tags();
     }
 
     getElementsSum() {

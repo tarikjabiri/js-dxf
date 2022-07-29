@@ -8,21 +8,19 @@ class DimStyleTable extends Table {
         this.subclassMarkers.push("AcDbDimStyleTable");
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "TABLE");
-        manager.addTag(2, this.name);
-        manager.addTags(DatabaseObject.prototype.tags.call(this));
-        manager.addTag(70, this.elements.length);
+    tags(manager) {
+        manager.push(0, "TABLE");
+        manager.push(2, this.name);
+        DatabaseObject.prototype.tags.call(this, manager);
+        manager.push(70, this.elements.length);
         /* DIMTOL */
-        manager.addTag(71, 1);
+        manager.push(71, 1);
 
-        this.elements.forEach((element) => {
-            manager.addTags(element.tags());
-        });
+        for (const e of this.elements) {
+            e.tags(manager);
+        }
 
-        manager.addTag(0, "ENDTAB");
-        return manager.tags();
+        manager.push(0, "ENDTAB");
     }
 }
 

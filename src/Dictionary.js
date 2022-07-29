@@ -13,31 +13,27 @@ class Dictionary extends DatabaseObject {
      * @param {DatabaseObject} dictionary
      */
     addChildDictionary(name, dictionary) {
-        if (!this.handle) {
-            throw new Error("Handle must be set before adding children");
-        }
-        dictionary.handleToOwner = this.handle;
+        dictionary.ownerObjectHandle = this.handle;
         this.children[name] = dictionary;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "DICTIONARY");
-        manager.addTags(super.tags());
+    tags(manager) {
+        manager.push(0, "DICTIONARY");
+        super.tags(manager);
         /* Duplicate record cloning flag - keep existing */
-        manager.addTag(281, 1);
+        manager.push(281, 1);
 
-        Object.entries(this.children).forEach((child) => {
-            const [name, item] = child;
-            manager.addTag(3, name);
-            manager.addTags(item.handleTag(350));
-        });
+        const entries = Object.entries(this.children);
+        for (const entry of entries) {
+            const [name, dic] = entry;
+            manager.push(3, name);
+            manager.push(350, dic.handle);
+        }
 
-        Object.values(this.children).forEach((child) => {
-            manager.addTags(child.tags());
-        });
-
-        return manager.tags();
+        const children = Object.values(this.children);
+        for (const c of children) {
+            c.tags(manager);
+        }
     }
 }
 
