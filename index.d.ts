@@ -56,8 +56,7 @@ declare module "dxf-writer" {
             startAngle: number,
             endAngle: number
         );
-
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Circle implements RenderableToDxf {
@@ -71,7 +70,7 @@ declare module "dxf-writer" {
          * @param {number} r - radius
          */
         constructor(x1: number, y1: number, r: number);
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Cylinder implements RenderableToDxf {
@@ -104,7 +103,7 @@ declare module "dxf-writer" {
             extrusionDirectionY: number,
             extrusionDirectionZ: number
         );
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Face implements RenderableToDxf {
@@ -135,7 +134,7 @@ declare module "dxf-writer" {
             y4: number,
             z4: number
         );
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Layer implements RenderableToDxf {
@@ -151,7 +150,8 @@ declare module "dxf-writer" {
         setTrueColor(color: number): void;
         addShape(shape: RenderableToDxf): void;
         getShapes(): Array<RenderableToDxf>;
-        shapesToDxf(): string;
+        shapesTags(space: Block, manager: TagsManager): void;
+        tags(manager: TagsManager): void;
     }
 
     export class Line implements RenderableToDxf {
@@ -161,22 +161,20 @@ declare module "dxf-writer" {
         public y2: number;
 
         constructor(x1: number, y1: number, x2: number, y2: number);
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class LineType implements RenderableToDxf {
         public name: string;
         public description: string;
         public elements: Array<number>;
-
         /**
          * @param {string} name
          * @param {string} description
          * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
          */
         constructor(name: string, description: string, elements: Array<number>);
-
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
         getElementsSum(): number;
     }
 
@@ -185,21 +183,21 @@ declare module "dxf-writer" {
         public y: number;
 
         constructor(x: number, y: number);
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Polyline implements RenderableToDxf {
         public points: Array<Point2D>;
 
         constructor(points: Array<Point2D>);
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Polyline3D implements RenderableToDxf {
         public points: Array<Point3D>;
 
         constructor(points: Array<Point3D>);
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export class Text implements RenderableToDxf {
@@ -228,7 +226,7 @@ declare module "dxf-writer" {
             horizontalAlignment?: HorizontalAlignment,
             verticalAlignment?: VerticalAlignment
         );
-        toDxfString(): string;
+        tags(manager: TagsManager): void;
     }
 
     export type ACIKey =
@@ -410,8 +408,6 @@ declare module "dxf-writer" {
             y4: number,
             z4: number
         ): Drawing;
-        _getDxfLtypeTable(): string;
-        _getDxfLayerTable(): string;
 
         /**
          * @see https://www.autodesk.com/techpubs/autocad/acadr14/dxf/header_section_al_u05_c.htm
@@ -421,7 +417,6 @@ declare module "dxf-writer" {
          * @param {array} values Array of "two elements arrays". [  [value1_GroupCode, value1_value], [value2_GroupCode, value2_value]  ]
          */
         header(variable: string, values: Array<HeaderValue>): Drawing;
-        _getHeader(variable: string, values: Array<HeaderValue>): string;
 
         /**
          *
