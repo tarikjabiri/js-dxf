@@ -8,20 +8,18 @@ class AppId extends DatabaseObject {
         this.name = name;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "APPID");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
+    tags(manager) {
+        manager.push(0, "APPID");
+        super.tags(manager);
+        manager.push(2, this.name);
         /* No flags set */
-        manager.addTag(70, 0);
-        return manager.tags();
+        manager.push(70, 0);
     }
 }
 
 module.exports = AppId;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],2:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],2:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -42,26 +40,22 @@ class Arc extends DatabaseObject {
         this.endAngle = endAngle;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        manager.addTag(0, "ARC");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
+        manager.push(0, "ARC");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
         manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.r);
-        manager.addTag(100, "AcDbArc");
-        manager.addTag(50, this.startAngle);
-        manager.addTag(51, this.endAngle);
-
-        return manager.tags();
+        manager.push(40, this.r);
+        manager.push(100, "AcDbArc");
+        manager.push(50, this.startAngle);
+        manager.push(51, this.endAngle);
     }
 }
 
 module.exports = Arc;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],3:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],3:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -73,32 +67,28 @@ class Block extends DatabaseObject {
         this.recordHandle = null;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "BLOCK");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
+    tags(manager) {
+        manager.push(0, "BLOCK");
+        super.tags(manager);
+        manager.push(2, this.name);
         /* No flags set */
-        manager.addTag(70, 0);
+        manager.push(70, 0);
         /* Block top left corner */
-        manager.addPointTags(0, 0);
-        manager.addTag(3, this.name);
+        manager.point(0, 0);
+        manager.push(3, this.name);
         /* xref path name - nothing */
-        manager.addTag(1, "");
+        manager.push(1, "");
 
         //XXX dump content here
 
-        manager.addTag(0, "ENDBLK");
-        manager.addTags(this.end.tags());
-
-        return manager.tags();
+        manager.push(0, "ENDBLK");
+        this.end.tags(manager);
     }
 }
 
 module.exports = Block;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],4:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],4:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -108,24 +98,22 @@ class BlockRecord extends DatabaseObject {
         this.name = name;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "BLOCK_RECORD");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
+    tags(manager) {
+        manager.push(0, "BLOCK_RECORD");
+        super.tags(manager);
+        manager.push(2, this.name);
         /* No flags set */
-        manager.addTag(70, 0);
+        manager.push(70, 0);
         /* Block explodability */
-        manager.addTag(280, 0);
+        manager.push(280, 0);
         /* Block scalability */
-        manager.addTag(281, 1);
-        return manager.tags();
+        manager.push(281, 1);
     }
 }
 
 module.exports = BlockRecord;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],5:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],5:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -142,23 +130,19 @@ class Circle extends DatabaseObject {
         this.r = r;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
-        manager.addTag(0, "CIRCLE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.r);
-
-        return manager.tags();
+        manager.push(0, "CIRCLE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(40, this.r);
     }
 }
 
 module.exports = Circle;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],6:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],6:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -189,37 +173,34 @@ class Cylinder extends DatabaseObject {
         this.z = z;
         this.r = r;
         this.thickness = thickness;
-        this.extrusionDirectionX = extrusionDirectionX,
-        this.extrusionDirectionY = extrusionDirectionY,
-        this.extrusionDirectionZ = extrusionDirectionZ
+        (this.extrusionDirectionX = extrusionDirectionX),
+            (this.extrusionDirectionY = extrusionDirectionY),
+            (this.extrusionDirectionZ = extrusionDirectionZ);
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "CIRCLE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y, this.z);
-        manager.addTag(40, this.r);
-        manager.addTag(39, this.thickness);
-        manager.addTag(210, this.extrusionDirectionX);
-        manager.addTag(220, this.extrusionDirectionY);
-        manager.addTag(230, this.extrusionDirectionZ);
-
-        return manager.tags();
+    tags(manager) {
+        manager.push(0, "CIRCLE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y, this.z);
+        manager.push(40, this.r);
+        manager.push(39, this.thickness);
+        manager.push(210, this.extrusionDirectionX);
+        manager.push(220, this.extrusionDirectionY);
+        manager.push(230, this.extrusionDirectionZ);
     }
 }
 
 module.exports = Cylinder;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],7:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],7:[function(require,module,exports){
 const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
 
-class DatabaseObject extends Handle {
+class DatabaseObject {
     constructor(subclass = null) {
-        super();
+        this.handle = Handle.next();
+        this.ownerObjectHandle = "0";
         this.subclassMarkers = [];
         if (subclass) {
             if (Array.isArray(subclass)) {
@@ -231,35 +212,21 @@ class DatabaseObject extends Handle {
     }
 
     /**
-     * Get the array of tags.
-     * @returns {Tag[]}
+     *
+     * @param {TagsManager} manager
      */
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTags(this.handleTag());
-        manager.addTags(this.handleToOwnerTag());
-        this.subclassMarkers.forEach((subclassMarker) => {
-            manager.addTag(100, subclassMarker);
-        });
-
-        return manager.tags();
-    }
-
-    /**
-     * Get the dxf string
-     * @returns {String}
-     */
-    toDxfString() {
-        const manager = new TagsManager();
-        manager.addTags(this.tags());
-        return manager.toDxfString();
+    tags(manager) {
+        manager.push(5, this.handle);
+        manager.push(330, this.ownerObjectHandle);
+        for (const s of this.subclassMarkers) {
+            manager.push(100, s);
+        }
     }
 }
 
 module.exports = DatabaseObject;
 
-},{"./Handle":12,"./TagsManager":23}],8:[function(require,module,exports){
+},{"./Handle":12,"./TagsManager":22}],8:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -275,37 +242,33 @@ class Dictionary extends DatabaseObject {
      * @param {DatabaseObject} dictionary
      */
     addChildDictionary(name, dictionary) {
-        if (!this.handle) {
-            throw new Error("Handle must be set before adding children");
-        }
-        dictionary.handleToOwner = this.handle;
+        dictionary.ownerObjectHandle = this.handle;
         this.children[name] = dictionary;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "DICTIONARY");
-        manager.addTags(super.tags());
+    tags(manager) {
+        manager.push(0, "DICTIONARY");
+        super.tags(manager);
         /* Duplicate record cloning flag - keep existing */
-        manager.addTag(281, 1);
+        manager.push(281, 1);
 
-        Object.entries(this.children).forEach((child) => {
-            const [name, item] = child;
-            manager.addTag(3, name);
-            manager.addTags(item.handleTag(350));
-        });
+        const entries = Object.entries(this.children);
+        for (const entry of entries) {
+            const [name, dic] = entry;
+            manager.push(3, name);
+            manager.push(350, dic.handle);
+        }
 
-        Object.values(this.children).forEach((child) => {
-            manager.addTags(child.tags());
-        });
-
-        return manager.tags();
+        const children = Object.values(this.children);
+        for (const c of children) {
+            c.tags(manager);
+        }
     }
 }
 
 module.exports = Dictionary;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],9:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],9:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Table = require("./Table");
 const TagsManager = require("./TagsManager");
@@ -316,27 +279,25 @@ class DimStyleTable extends Table {
         this.subclassMarkers.push("AcDbDimStyleTable");
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "TABLE");
-        manager.addTag(2, this.name);
-        manager.addTags(DatabaseObject.prototype.tags.call(this));
-        manager.addTag(70, this.elements.length);
+    tags(manager) {
+        manager.push(0, "TABLE");
+        manager.push(2, this.name);
+        DatabaseObject.prototype.tags.call(this, manager);
+        manager.push(70, this.elements.length);
         /* DIMTOL */
-        manager.addTag(71, 1);
+        manager.push(71, 1);
 
-        this.elements.forEach((element) => {
-            manager.addTags(element.tags());
-        });
+        for (const e of this.elements) {
+            e.tags(manager);
+        }
 
-        manager.addTag(0, "ENDTAB");
-        return manager.tags();
+        manager.push(0, "ENDTAB");
     }
 }
 
 module.exports = DimStyleTable;
 
-},{"./DatabaseObject":7,"./Table":21,"./TagsManager":23}],10:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Table":21,"./TagsManager":22}],10:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -362,29 +323,25 @@ class Ellipse extends DatabaseObject {
         this.endAngle = endAngle;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
-        manager.addTag(0, "ELLIPSE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(11, this.majorAxisX);
-        manager.addTag(21, this.majorAxisY);
-        manager.addTag(31, 0);
+        manager.push(0, "ELLIPSE");
+        super.tags();
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(11, this.majorAxisX);
+        manager.push(21, this.majorAxisY);
+        manager.push(31, 0);
 
-        manager.addTag(40, this.axisRatio);
-        manager.addTag(41, this.startAngle);
-        manager.addTag(42, this.endAngle);
-
-        return manager.tags();
+        manager.push(40, this.axisRatio);
+        manager.push(41, this.startAngle);
+        manager.push(42, this.endAngle);
     }
 }
 
 module.exports = Ellipse;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],11:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],11:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -405,76 +362,45 @@ class Face extends DatabaseObject {
         this.z4 = z4;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/3dface_al_u05_c.htm
-        manager.addTag(0, "3DFACE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x1, this.y1, this.z1);
-        manager.addTagsByElements([
-            [11, this.x2],
-            [21, this.y2],
-            [31, this.z2],
-        ]);
-        manager.addTagsByElements([
-            [12, this.x3],
-            [22, this.y3],
-            [32, this.z3],
-        ]);
-        manager.addTagsByElements([
-            [13, this.x4],
-            [23, this.y4],
-            [33, this.z4],
-        ]);
+        manager.push(0, "3DFACE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x1, this.y1, this.z1);
 
-        return manager.tags();
+        manager.push(11, this.x2);
+        manager.push(21, this.y2);
+        manager.push(31, this.z2);
+
+        manager.push(12, this.x3);
+        manager.push(22, this.y3);
+        manager.push(32, this.z3);
+
+        manager.push(13, this.x4);
+        manager.push(23, this.y4);
+        manager.push(33, this.z4);
     }
 }
 
 module.exports = Face;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],12:[function(require,module,exports){
-const Tag = require("./Tag");
-
+},{"./DatabaseObject":7,"./TagsManager":22}],12:[function(require,module,exports){
 class Handle {
     static seed = 0;
 
-    static handle() {
+    static next() {
         return (++Handle.seed).toString(16).toUpperCase();
     }
 
-    constructor(handleToOwner = null) {
-        this._handle = Handle.handle();
-        this._handleToOwner = handleToOwner;
-    }
-
-    handleTag(groupCode = 5) {
-        return [new Tag(groupCode, this._handle)];
-    }
-
-    handleToOwnerTag(groupCode = 330) {
-        if (!this._handleToOwner) return [new Tag(groupCode, 0)];
-        return [new Tag(groupCode, this._handleToOwner)];
-    }
-
-    set handleToOwner(handleToOwner) {
-        this._handleToOwner = handleToOwner;
-    }
-
-    get handleToOwner() {
-        return this._handleToOwner;
-    }
-
-    get handle() {
-        return this._handle;
+    static peek() {
+        return (Handle.seed + 1).toString(16).toUpperCase();
     }
 }
 
 module.exports = Handle;
 
-},{"./Tag":22}],13:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -488,25 +414,20 @@ class Layer extends DatabaseObject {
         this.trueColor = -1;
     }
 
-    tags() {
-        const manager = new TagsManager();
-        manager.addTag(0, "LAYER");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        if (this.trueColor !== -1) {
-            manager.addTag(420, this.trueColor);
-        } else {
-            manager.addTag(62, this.colorNumber);
-        }
-        manager.addTag(70, 0);
-        if (this.lineTypeName) {
-            manager.addTag(6, this.lineTypeName);
-        }
+    tags(manager) {
+        manager.push(0, "LAYER");
+        super.tags(manager);
+        manager.push(2, this.name);
+        if (this.trueColor !== -1) manager.push(420, this.trueColor);
+        else manager.push(62, this.colorNumber);
+
+        manager.push(70, 0);
+        if (this.lineTypeName) manager.push(6, this.lineTypeName);
+
         /* Hard-pointer handle to PlotStyleName object; seems mandatory, but any value seems OK,
          * including 0.
          */
-        manager.addTag(390, 1);
-        return manager.tags();
+        manager.push(390, 1);
     }
 
     setTrueColor(color) {
@@ -522,23 +443,17 @@ class Layer extends DatabaseObject {
         return this.shapes;
     }
 
-    shapesTags(space) {
-        return this.shapes.reduce((tags, shape) => {
-            shape.handleToOwner = space.handle;
-            return [...tags, ...shape.tags()];
-        }, []);
-    }
-
-    shapesToDxf() {
-        return this.shapes.reduce((dxfString, shape) => {
-            return `${dxfString}${shape.toDxfString()}`;
-        }, "");
+    shapesTags(space, manager) {
+        for (const shape of this.shapes) {
+            shape.ownerObjectHandle = space.handle;
+            shape.tags(manager);
+        }
     }
 }
 
 module.exports = Layer;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],14:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],14:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -551,27 +466,22 @@ class Line extends DatabaseObject {
         this.y2 = y2;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        manager.addTag(0, "LINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x1, this.y1);
-        manager.addTagsByElements([
-            [11, this.x2],
-            [21, this.y2],
-            [31, 0],
-        ]);
+        manager.push(0, "LINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x1, this.y1);
 
-        return manager.tags();
+        manager.push(11, this.x2);
+        manager.push(21, this.y2);
+        manager.push(31, 0);
     }
 }
 
 module.exports = Line;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],15:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],15:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -586,27 +496,22 @@ class Line3d extends DatabaseObject {
         this.z2 = z2;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        manager.addTag(0, "LINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x1, this.y1, this.z1);
-        manager.addTagsByElements([
-            [11, this.x2],
-            [21, this.y2],
-            [31, this.z2],
-        ]);
+        manager.push(0, "LINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x1, this.y1, this.z1);
 
-        return manager.tags();
+        manager.push(11, this.x2);
+        manager.push(21, this.y2);
+        manager.push(31, this.z2);
     }
 }
 
 module.exports = Line3d;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],16:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],16:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -623,25 +528,21 @@ class LineType extends DatabaseObject {
         this.elements = elements;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
-        manager.addTag(0, "LTYPE");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        manager.addTag(3, this.description);
-        manager.addTag(70, 0);
-        manager.addTag(72, 65);
-        manager.addTag(73, this.elements.length);
-        manager.addTag(40, this.getElementsSum());
+        manager.push(0, "LTYPE");
+        super.tags(manager);
+        manager.push(2, this.name);
+        manager.push(3, this.description);
+        manager.push(70, 0);
+        manager.push(72, 65);
+        manager.push(73, this.elements.length);
+        manager.push(40, this.getElementsSum());
 
         this.elements.forEach((element) => {
-            manager.addTag(49, element);
-            manager.addTag(74, 0);
+            manager.push(49, element);
+            manager.push(74, 0);
         });
-
-        return manager.tags();
     }
 
     getElementsSum() {
@@ -653,7 +554,7 @@ class LineType extends DatabaseObject {
 
 module.exports = LineType;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],17:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],17:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -664,22 +565,18 @@ class Point extends DatabaseObject {
         this.y = y;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
-        manager.addTag(0, "POINT");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-
-        return manager.tags();
+        manager.push(0, "POINT");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
     }
 }
 
 module.exports = Point;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],18:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],18:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -698,38 +595,32 @@ class Polyline extends DatabaseObject {
         this.endWidth = endWidth;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "LWPOLYLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTag(6, "ByLayer");
-        manager.addTag(62, 256);
-        manager.addTag(370, -1);
-        manager.addTag(90, this.points.length);
-        manager.addTag(70, this.closed ? 1 : 0);
+    tags(manager) {
+        manager.push(0, "LWPOLYLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.push(6, "ByLayer");
+        manager.push(62, 256);
+        manager.push(370, -1);
+        manager.push(90, this.points.length);
+        manager.push(70, this.closed ? 1 : 0);
 
         this.points.forEach((point) => {
             const [x, y, z] = point;
-            manager.addTag(10, x);
-            manager.addTag(20, y);
+            manager.push(10, x);
+            manager.push(20, y);
             if (this.startWidth !== 0 || this.endWidth !== 0) {
-                manager.addTag(40, this.startWidth);
-                manager.addTag(41, this.endWidth);
+                manager.push(40, this.startWidth);
+                manager.push(41, this.endWidth);
             }
-            if (z !== undefined) {
-                manager.addTag(42, z);
-            }
+            if (z !== undefined) manager.push(42, z);
         });
-
-        return manager.tags();
     }
 }
 
 module.exports = Polyline;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],19:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],19:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
@@ -744,39 +635,35 @@ class Polyline3d extends DatabaseObject {
         this.verticies = points.map((point) => {
             const [x, y, z] = point;
             const vertex = new Vertex(x, y, z);
-            vertex.handleToOwner = this.handle;
+            vertex.ownerObjectHandle = this.handle;
             return vertex;
         });
-        this.seqendHandle = Handle.handle();
+        this.seqendHandle = Handle.next();
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "POLYLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTag(66, 1);
-        manager.addTag(70, 0);
-        manager.addPointTags(0, 0);
+    tags(manager) {
+        manager.push(0, "POLYLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.push(66, 1);
+        manager.push(70, 0);
+        manager.point(0, 0);
 
         this.verticies.forEach((vertex) => {
             vertex.layer = this.layer;
-            manager.addTags(vertex.tags());
+            vertex.tags(manager);
         });
 
-        manager.addTag(0, "SEQEND");
-        manager.addTag(5, this.seqendHandle);
-        manager.addTag(100, "AcDbEntity");
-        manager.addTag(8, this.layer.name);
-
-        return manager.tags();
+        manager.push(0, "SEQEND");
+        manager.push(5, this.seqendHandle);
+        manager.push(100, "AcDbEntity");
+        manager.push(8, this.layer.name);
     }
 }
 
 module.exports = Polyline3d;
 
-},{"./DatabaseObject":7,"./Handle":12,"./TagsManager":23,"./Vertex":26}],20:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Handle":12,"./TagsManager":22,"./Vertex":25}],20:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -857,52 +744,45 @@ class Spline extends DatabaseObject {
         // const splineType = 1024 * closed + 128 * periodic + 8 * rational + 4 * planar + 2 * linear
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acad2000/dxf/spline_dxf_06.htm
-        manager.addTag(0, "SPLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTagsByElements([
-            [210, 0.0],
-            [220, 0.0],
-            [230, 1.0],
-        ]);
+        manager.push(0, "SPLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
 
-        manager.addTag(70, this.type);
-        manager.addTag(71, this.degree);
-        manager.addTag(72, this.knots.length);
-        manager.addTag(73, this.controlPoints.length);
-        manager.addTag(74, this.fitPoints.length);
+        manager.push(210, 0.0);
+        manager.push(220, 0.0);
+        manager.push(230, 1.0);
 
-        manager.addTagsByElements([
-            [42, 1e-7],
-            [43, 1e-7],
-            [44, 1e-10],
-        ]);
+        manager.push(70, this.type);
+        manager.push(71, this.degree);
+        manager.push(72, this.knots.length);
+        manager.push(73, this.controlPoints.length);
+        manager.push(74, this.fitPoints.length);
+
+        manager.push(42, 1e-7);
+        manager.push(43, 1e-7);
+        manager.push(44, 1e-10);
 
         this.knots.forEach((knot) => {
-            manager.addTag(40, knot);
+            manager.push(40, knot);
         });
 
         if (this.weights) {
             this.weights.forEach((weight) => {
-                manager.addTag(41, weight);
+                manager.push(41, weight);
             });
         }
 
         this.controlPoints.forEach((point) => {
-            manager.addPointTags(point[0], point[1]);
+            manager.point(point[0], point[1]);
         });
-
-        return manager.tags();
     }
 }
 
 module.exports = Spline;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],21:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],21:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -914,131 +794,76 @@ class Table extends DatabaseObject {
     }
 
     add(element) {
-        element.handleToOwner = this.handle;
+        element.ownerObjectHandle = this.handle;
         this.elements.push(element);
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "TABLE");
-        manager.addTag(2, this.name);
-        manager.addTags(super.tags());
-        manager.addTag(70, this.elements.length);
+    tags(manager) {
+        manager.push(0, "TABLE");
+        manager.push(2, this.name);
+        super.tags(manager);
+        manager.push(70, this.elements.length);
 
         this.elements.forEach((element) => {
-            manager.addTags(element.tags());
+            element.tags(manager);
         });
 
-        manager.addTag(0, "ENDTAB");
-
-        return manager.tags();
+        manager.push(0, "ENDTAB");
     }
 }
 
 module.exports = Table;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],22:[function(require,module,exports){
-class Tag {
-    constructor(groupCode, value) {
-        this._code = groupCode;
-        this._value = value;
-    }
-
-    toDxfString() {
-        return `\t${this._code}\n${this._value}\n`;
-    }
-}
-
-module.exports = Tag;
-
-},{}],23:[function(require,module,exports){
-const Tag = require("./Tag");
-
+},{"./DatabaseObject":7,"./TagsManager":22}],22:[function(require,module,exports){
 class TagsManager {
     constructor() {
-        this._tags = [];
+        this.lines = [];
     }
 
     /**
      *
-     * @param {number} x X coordinate of the point.
-     * @param {number} y Y coordinate of the point.
-     * @param {number} z Z coordinate of the point.
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
      */
-    addPointTags(x, y, z = 0) {
-        this.addTag(10, x);
-        this.addTag(20, y);
-        this.addTag(30, z);
+    point(x, y, z = 0) {
+        this.push(10, x);
+        this.push(20, y);
+        this.push(30, z);
     }
 
-    addSectionBegin(name) {
-        this.addTag(0, "SECTION");
-        this.addTag(2, name);
+    /**
+     *
+     * @param {string} name The name of the section
+     */
+    start(name) {
+        this.push(0, "SECTION");
+        this.push(2, name);
     }
 
-    addSectionEnd() {
-        this.addTag(0, "ENDSEC");
+    end() {
+        this.push(0, "ENDSEC");
     }
 
     addHeaderVariable(name, tagsElements) {
-        this.addTag(9, `$${name}`);
+        this.push(9, `$${name}`);
         tagsElements.forEach((tagElement) => {
-            this.addTag(tagElement[0], tagElement[1]);
+            this.push(tagElement[0], tagElement[1]);
         });
     }
 
-    /**
-     *
-     * @param {[number, string|number][]} tagsElements
-     */
-    addTagsByElements(tagsElements) {
-        tagsElements.forEach((tagElement) => {
-            this.addTag(tagElement[0], tagElement[1]);
-        });
+    push(code, value) {
+        this.lines.push(code, value);
     }
 
-    /**
-     *  Add a tag to the array of tags.
-     * @param {number} groupCode
-     * @param {number|string} value
-     */
-    addTag(groupCode, value) {
-        this._tags.push(new Tag(groupCode, value));
-    }
-
-    /**
-     * Append an array of tags to the array of tags
-     * @param {Tag[]} tags
-     */
-    addTags(tags) {
-        for (let tag of tags) {
-            this._tags.push(tag);
-        }
-    }
-
-    /**
-     * Get the array of tags.
-     * @returns {Tag[]}
-     */
-    tags() {
-        return this._tags;
-    }
-
-    /**
-     * Get the dxf string.
-     * @returns {string}
-     */
     toDxfString() {
-        return this._tags.reduce((dxfString, tag) => {
-            return `${dxfString}${tag.toDxfString()}`;
-        }, "");
+        return this.lines.join("\n");
     }
 }
 
 module.exports = TagsManager;
 
-},{"./Tag":22}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1074,43 +899,39 @@ class Text extends DatabaseObject {
         this.vAlign = verticalAlignment;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/text_al_u05_c.htm
-        manager.addTag(0, "TEXT");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(40, this.height);
-        manager.addTag(1, this.value);
-        manager.addTag(50, this.rotation);
+        manager.push(0, "TEXT");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(40, this.height);
+        manager.push(1, this.value);
+        manager.push(50, this.rotation);
 
         if (
             H_ALIGN_CODES.includes(this.hAlign, 1) ||
             V_ALIGN_CODES.includes(this.vAlign, 1)
         ) {
-            manager.addTag(72, Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0));
-            manager.addTagsByElements([
-                [11, this.x],
-                [21, this.y],
-                [31, 0],
-            ]);
+            manager.push(72, Math.max(H_ALIGN_CODES.indexOf(this.hAlign), 0));
+
+            manager.push(11, this.x);
+            manager.push(21, this.y);
+            manager.push(31, 0);
+
             /* AutoCAD needs this one more time, yes, exactly here. */
-            manager.addTag(100, "AcDbText");
-            manager.addTag(73, Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0));
+            manager.push(100, "AcDbText");
+            manager.push(73, Math.max(V_ALIGN_CODES.indexOf(this.vAlign), 0));
         } else {
             /* AutoCAD needs this one more time. */
-            manager.addTag(100, "AcDbText");
+            manager.push(100, "AcDbText");
         }
-
-        return manager.tags();
     }
 }
 
 module.exports = Text;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],25:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],24:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1120,29 +941,25 @@ class TextStyle extends DatabaseObject {
         this.name = name;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "STYLE");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
+    tags(manager) {
+        manager.push(0, "STYLE");
+        super.tags(manager);
+        manager.push(2, this.name);
         /* No flags set */
-        manager.addTag(70, 0);
-        manager.addTag(40, 0);
-        manager.addTag(41, 1);
-        manager.addTag(50, 0);
-        manager.addTag(71, 0);
-        manager.addTag(42, 1);
-        manager.addTag(3, this.name);
-        manager.addTag(4, "");
-
-        return manager.tags();
+        manager.push(70, 0);
+        manager.push(40, 0);
+        manager.push(41, 1);
+        manager.push(50, 0);
+        manager.push(71, 0);
+        manager.push(42, 1);
+        manager.push(3, this.name);
+        manager.push(4, "");
     }
 }
 
 module.exports = TextStyle;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],26:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],25:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1160,21 +977,18 @@ class Vertex extends DatabaseObject {
         this.z = z;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "VERTEX");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y, this.z);
-        manager.addTag(70, 32);
-        return manager.tags();
+    tags(manager) {
+        manager.push(0, "VERTEX");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y, this.z);
+        manager.push(70, 32);
     }
 }
 
 module.exports = Vertex;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],27:[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],26:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const TagsManager = require("./TagsManager");
 
@@ -1185,23 +999,19 @@ class Viewport extends DatabaseObject {
         this.height = height;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "VPORT");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        manager.addTag(40, this.height);
+    tags(manager) {
+        manager.push(0, "VPORT");
+        super.tags(manager);
+        manager.push(2, this.name);
+        manager.push(40, this.height);
         /* No flags set */
-        manager.addTag(70, 0);
-
-        return manager.tags();
+        manager.push(70, 0);
     }
 }
 
 module.exports = Viewport;
 
-},{"./DatabaseObject":7,"./TagsManager":23}],"Drawing":[function(require,module,exports){
+},{"./DatabaseObject":7,"./TagsManager":22}],"Drawing":[function(require,module,exports){
 const LineType = require("./LineType");
 const Layer = require("./Layer");
 const Table = require("./Table");
@@ -1240,17 +1050,13 @@ class Drawing {
 
         this.setUnits("Unitless");
 
-        Drawing.LINE_TYPES.forEach((lineType) => {
-            this.addLineType(
-                lineType.name,
-                lineType.description,
-                lineType.elements
-            );
-        });
+        for (const ltype of Drawing.LINE_TYPES) {
+            this.addLineType(ltype.name, ltype.description, ltype.elements);
+        }
 
-        Drawing.LAYERS.forEach((layer) => {
-            this.addLayer(layer.name, layer.colorNumber, layer.lineTypeName);
-        });
+        for (const l of Drawing.LAYERS) {
+            this.addLayer(l.name, l.colorNumber, l.lineTypeName);
+        }
 
         this.setActiveLayer("0");
 
@@ -1423,7 +1229,7 @@ class Drawing {
         extrusionDirectionX,
         extrusionDirectionY,
         extrusionDirectionZ
-    ){
+    ) {
         this.activeLayer.addShape(
             new Cylinder(
                 x1,
@@ -1581,16 +1387,18 @@ class Drawing {
         return this;
     }
 
-    _getLtypeTableTags() {
+    _ltypeTable() {
         const t = new Table("LTYPE");
-        Object.values(this.lineTypes).forEach((v) => t.add(v));
-        return t.tags();
+        const ltypes = Object.values(this.lineTypes);
+        for (const lt of ltypes) t.add(lt);
+        return t;
     }
 
-    _getLayerTableTags() {
+    _layerTable(manager) {
         const t = new Table("LAYER");
-        Object.values(this.layers).forEach((v) => t.add(v));
-        return t.tags();
+        const layers = Object.values(this.layers);
+        for (const l of layers) t.add(l);
+        return t;
     }
 
     /**
@@ -1672,77 +1480,78 @@ class Drawing {
         this.dictionary.addChildDictionary("ACAD_GROUP", d);
     }
 
-    tags() {
+    _tagsManager() {
         const manager = new TagsManager();
 
         // Setup
         const blockRecordTable = new Table("BLOCK_RECORD");
-        Object.values(this.blocks).forEach((b) => {
-            const rec = new BlockRecord(b.name);
-            blockRecordTable.add(rec);
-        });
-        const ltypeTableTags = this._getLtypeTableTags();
-        const layerTableTags = this._getLayerTableTags();
+        const blocks = Object.values(this.blocks);
+        for (const b of blocks) {
+            const r = new BlockRecord(b.name);
+            blockRecordTable.add(r);
+        }
+        const ltypeTable = this._ltypeTable();
+        const layerTable = this._layerTable();
 
         // Header section start.
-        manager.addSectionBegin("HEADER");
-        manager.addHeaderVariable("HANDSEED", [[5, Handle.handle()]]);
-        Object.entries(this.headers).forEach((variable) => {
-            const [name, values] = variable;
+        manager.start("HEADER");
+        manager.addHeaderVariable("HANDSEED", [[5, Handle.peek()]]);
+        const variables = Object.entries(this.headers);
+        for (const v of variables) {
+            const [name, values] = v;
             manager.addHeaderVariable(name, values);
-        });
-        manager.addSectionEnd();
+        }
+        manager.end();
         // Header section end.
 
         // Classes section start.
-        manager.addSectionBegin("CLASSES");
+        manager.start("CLASSES");
         // Empty CLASSES section for compatibility
-        manager.addSectionEnd();
+        manager.end();
         // Classes section end.
 
         // Tables section start.
-        manager.addSectionBegin("TABLES");
-        manager.addTags(ltypeTableTags);
-        manager.addTags(layerTableTags);
-        Object.values(this.tables).forEach((table) => {
-            manager.addTags(table.tags());
-        });
-
-        manager.addTags(blockRecordTable.tags());
-        manager.addSectionEnd();
+        manager.start("TABLES");
+        ltypeTable.tags(manager);
+        layerTable.tags(manager);
+        const tables = Object.values(this.tables);
+        for (const t of tables) {
+            t.tags(manager);
+        }
+        blockRecordTable.tags(manager);
+        manager.end();
         // Tables section end.
 
         // Blocks section start.
-        manager.addSectionBegin("BLOCKS");
-        Object.values(this.blocks).forEach((block) => {
-            manager.addTags(block.tags());
-        });
-        manager.addSectionEnd();
+        manager.start("BLOCKS");
+        for (const b of blocks) {
+            b.tags(manager);
+        }
+        manager.end();
         // Blocks section end.
 
         // Entities section start.
-        manager.addSectionBegin("ENTITIES");
-        Object.values(this.layers).forEach((layer) => {
-            manager.addTags(layer.shapesTags(this.modelSpace));
-        });
-        manager.addSectionEnd();
+        manager.start("ENTITIES");
+        const layers = Object.values(this.layers);
+        for (const l of layers) {
+            l.shapesTags(this.modelSpace, manager);
+        }
+        manager.end();
         // Entities section end.
 
         // Objects section start.
-        manager.addSectionBegin("OBJECTS");
-        manager.addTags(this.dictionary.tags());
-        manager.addSectionEnd();
+        manager.start("OBJECTS");
+        this.dictionary.tags(manager);
+        manager.end();
         // Objects section end.
 
-        manager.addTag(0, "EOF");
+        manager.push(0, "EOF");
 
-        return manager.tags();
+        return manager;
     }
 
     toDxfString() {
-        return this.tags().reduce((dxfString, tag) => {
-            return `${dxfString}${tag.toDxfString()}`;
-        }, "");
+        return this._tagsManager().toDxfString();
     }
 }
 
@@ -1796,4 +1605,4 @@ Drawing.UNITS = {
 
 module.exports = Drawing;
 
-},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Cylinder":6,"./Dictionary":8,"./DimStyleTable":9,"./Ellipse":10,"./Face":11,"./Handle":12,"./Layer":13,"./Line":14,"./Line3d":15,"./LineType":16,"./Point":17,"./Polyline":18,"./Polyline3d":19,"./Spline":20,"./Table":21,"./TagsManager":23,"./Text":24,"./TextStyle":25,"./Viewport":27}]},{},[]);
+},{"./AppId":1,"./Arc":2,"./Block":3,"./BlockRecord":4,"./Circle":5,"./Cylinder":6,"./Dictionary":8,"./DimStyleTable":9,"./Ellipse":10,"./Face":11,"./Handle":12,"./Layer":13,"./Line":14,"./Line3d":15,"./LineType":16,"./Point":17,"./Polyline":18,"./Polyline3d":19,"./Spline":20,"./Table":21,"./TagsManager":22,"./Text":23,"./TextStyle":24,"./Viewport":26}]},{},[]);
