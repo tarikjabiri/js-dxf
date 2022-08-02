@@ -12,21 +12,16 @@ class Line3d extends DatabaseObject {
         this.z2 = z2;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        manager.addTag(0, "LINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x1, this.y1, this.z1);
-        manager.addTagsByElements([
-            [11, this.x2],
-            [21, this.y2],
-            [31, this.z2],
-        ]);
+        manager.push(0, "LINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x1, this.y1, this.z1);
 
-        return manager.tags();
+        manager.push(11, this.x2);
+        manager.push(21, this.y2);
+        manager.push(31, this.z2);
     }
 }
 

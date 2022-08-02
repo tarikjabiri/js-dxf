@@ -36,17 +36,13 @@ class Drawing {
 
         this.setUnits("Unitless");
 
-        Drawing.LINE_TYPES.forEach((lineType) => {
-            this.addLineType(
-                lineType.name,
-                lineType.description,
-                lineType.elements
-            );
-        });
+        for (const ltype of Drawing.LINE_TYPES) {
+            this.addLineType(ltype.name, ltype.description, ltype.elements);
+        }
 
-        Drawing.LAYERS.forEach((layer) => {
-            this.addLayer(layer.name, layer.colorNumber, layer.lineTypeName);
-        });
+        for (const l of Drawing.LAYERS) {
+            this.addLayer(l.name, l.colorNumber, l.lineTypeName);
+        }
 
         this.setActiveLayer("0");
 
@@ -219,7 +215,7 @@ class Drawing {
         extrusionDirectionX,
         extrusionDirectionY,
         extrusionDirectionZ
-    ){
+    ) {
         this.activeLayer.addShape(
             new Cylinder(
                 x1,
@@ -377,16 +373,18 @@ class Drawing {
         return this;
     }
 
-    _getLtypeTableTags() {
+    _ltypeTable() {
         const t = new Table("LTYPE");
-        Object.values(this.lineTypes).forEach((v) => t.add(v));
-        return t.tags();
+        const ltypes = Object.values(this.lineTypes);
+        for (const lt of ltypes) t.add(lt);
+        return t;
     }
 
-    _getLayerTableTags() {
+    _layerTable(manager) {
         const t = new Table("LAYER");
-        Object.values(this.layers).forEach((v) => t.add(v));
-        return t.tags();
+        const layers = Object.values(this.layers);
+        for (const l of layers) t.add(l);
+        return t;
     }
 
     /**
@@ -468,77 +466,78 @@ class Drawing {
         this.dictionary.addChildDictionary("ACAD_GROUP", d);
     }
 
-    tags() {
+    _tagsManager() {
         const manager = new TagsManager();
 
         // Setup
         const blockRecordTable = new Table("BLOCK_RECORD");
-        Object.values(this.blocks).forEach((b) => {
-            const rec = new BlockRecord(b.name);
-            blockRecordTable.add(rec);
-        });
-        const ltypeTableTags = this._getLtypeTableTags();
-        const layerTableTags = this._getLayerTableTags();
+        const blocks = Object.values(this.blocks);
+        for (const b of blocks) {
+            const r = new BlockRecord(b.name);
+            blockRecordTable.add(r);
+        }
+        const ltypeTable = this._ltypeTable();
+        const layerTable = this._layerTable();
 
         // Header section start.
-        manager.addSectionBegin("HEADER");
-        manager.addHeaderVariable("HANDSEED", [[5, Handle.handle()]]);
-        Object.entries(this.headers).forEach((variable) => {
-            const [name, values] = variable;
+        manager.start("HEADER");
+        manager.addHeaderVariable("HANDSEED", [[5, Handle.peek()]]);
+        const variables = Object.entries(this.headers);
+        for (const v of variables) {
+            const [name, values] = v;
             manager.addHeaderVariable(name, values);
-        });
-        manager.addSectionEnd();
+        }
+        manager.end();
         // Header section end.
 
         // Classes section start.
-        manager.addSectionBegin("CLASSES");
+        manager.start("CLASSES");
         // Empty CLASSES section for compatibility
-        manager.addSectionEnd();
+        manager.end();
         // Classes section end.
 
         // Tables section start.
-        manager.addSectionBegin("TABLES");
-        manager.addTags(ltypeTableTags);
-        manager.addTags(layerTableTags);
-        Object.values(this.tables).forEach((table) => {
-            manager.addTags(table.tags());
-        });
-
-        manager.addTags(blockRecordTable.tags());
-        manager.addSectionEnd();
+        manager.start("TABLES");
+        ltypeTable.tags(manager);
+        layerTable.tags(manager);
+        const tables = Object.values(this.tables);
+        for (const t of tables) {
+            t.tags(manager);
+        }
+        blockRecordTable.tags(manager);
+        manager.end();
         // Tables section end.
 
         // Blocks section start.
-        manager.addSectionBegin("BLOCKS");
-        Object.values(this.blocks).forEach((block) => {
-            manager.addTags(block.tags());
-        });
-        manager.addSectionEnd();
+        manager.start("BLOCKS");
+        for (const b of blocks) {
+            b.tags(manager);
+        }
+        manager.end();
         // Blocks section end.
 
         // Entities section start.
-        manager.addSectionBegin("ENTITIES");
-        Object.values(this.layers).forEach((layer) => {
-            manager.addTags(layer.shapesTags(this.modelSpace));
-        });
-        manager.addSectionEnd();
+        manager.start("ENTITIES");
+        const layers = Object.values(this.layers);
+        for (const l of layers) {
+            l.shapesTags(this.modelSpace, manager);
+        }
+        manager.end();
         // Entities section end.
 
         // Objects section start.
-        manager.addSectionBegin("OBJECTS");
-        manager.addTags(this.dictionary.tags());
-        manager.addSectionEnd();
+        manager.start("OBJECTS");
+        this.dictionary.tags(manager);
+        manager.end();
         // Objects section end.
 
-        manager.addTag(0, "EOF");
+        manager.push(0, "EOF");
 
-        return manager.tags();
+        return manager;
     }
 
     toDxfString() {
-        return this.tags().reduce((dxfString, tag) => {
-            return `${dxfString}${tag.toDxfString()}`;
-        }, "");
+        return this._tagsManager().toDxfString();
     }
 }
 

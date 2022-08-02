@@ -8,17 +8,13 @@ class Viewport extends DatabaseObject {
         this.height = height;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "VPORT");
-        manager.addTags(super.tags());
-        manager.addTag(2, this.name);
-        manager.addTag(40, this.height);
+    tags(manager) {
+        manager.push(0, "VPORT");
+        super.tags(manager);
+        manager.push(2, this.name);
+        manager.push(40, this.height);
         /* No flags set */
-        manager.addTag(70, 0);
-
-        return manager.tags();
+        manager.push(70, 0);
     }
 }
 

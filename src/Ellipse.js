@@ -23,23 +23,19 @@ class Ellipse extends DatabaseObject {
         this.endAngle = endAngle;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
-        manager.addTag(0, "ELLIPSE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-        manager.addTag(11, this.majorAxisX);
-        manager.addTag(21, this.majorAxisY);
-        manager.addTag(31, 0);
+        manager.push(0, "ELLIPSE");
+        super.tags();
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(11, this.majorAxisX);
+        manager.push(21, this.majorAxisY);
+        manager.push(31, 0);
 
-        manager.addTag(40, this.axisRatio);
-        manager.addTag(41, this.startAngle);
-        manager.addTag(42, this.endAngle);
-
-        return manager.tags();
+        manager.push(40, this.axisRatio);
+        manager.push(41, this.startAngle);
+        manager.push(42, this.endAngle);
     }
 }
 

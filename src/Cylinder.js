@@ -28,25 +28,21 @@ class Cylinder extends DatabaseObject {
         this.z = z;
         this.r = r;
         this.thickness = thickness;
-        this.extrusionDirectionX = extrusionDirectionX,
-        this.extrusionDirectionY = extrusionDirectionY,
-        this.extrusionDirectionZ = extrusionDirectionZ
+        (this.extrusionDirectionX = extrusionDirectionX),
+            (this.extrusionDirectionY = extrusionDirectionY),
+            (this.extrusionDirectionZ = extrusionDirectionZ);
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "CIRCLE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y, this.z);
-        manager.addTag(40, this.r);
-        manager.addTag(39, this.thickness);
-        manager.addTag(210, this.extrusionDirectionX);
-        manager.addTag(220, this.extrusionDirectionY);
-        manager.addTag(230, this.extrusionDirectionZ);
-
-        return manager.tags();
+    tags(manager) {
+        manager.push(0, "CIRCLE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y, this.z);
+        manager.push(40, this.r);
+        manager.push(39, this.thickness);
+        manager.push(210, this.extrusionDirectionX);
+        manager.push(220, this.extrusionDirectionY);
+        manager.push(230, this.extrusionDirectionZ);
     }
 }
 

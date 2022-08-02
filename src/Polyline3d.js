@@ -12,33 +12,29 @@ class Polyline3d extends DatabaseObject {
         this.verticies = points.map((point) => {
             const [x, y, z] = point;
             const vertex = new Vertex(x, y, z);
-            vertex.handleToOwner = this.handle;
+            vertex.ownerObjectHandle = this.handle;
             return vertex;
         });
-        this.seqendHandle = Handle.handle();
+        this.seqendHandle = Handle.next();
     }
 
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTag(0, "POLYLINE");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addTag(66, 1);
-        manager.addTag(70, 0);
-        manager.addPointTags(0, 0);
+    tags(manager) {
+        manager.push(0, "POLYLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.push(66, 1);
+        manager.push(70, 0);
+        manager.point(0, 0);
 
         this.verticies.forEach((vertex) => {
             vertex.layer = this.layer;
-            manager.addTags(vertex.tags());
+            vertex.tags(manager);
         });
 
-        manager.addTag(0, "SEQEND");
-        manager.addTag(5, this.seqendHandle);
-        manager.addTag(100, "AcDbEntity");
-        manager.addTag(8, this.layer.name);
-
-        return manager.tags();
+        manager.push(0, "SEQEND");
+        manager.push(5, this.seqendHandle);
+        manager.push(100, "AcDbEntity");
+        manager.push(8, this.layer.name);
     }
 }
 

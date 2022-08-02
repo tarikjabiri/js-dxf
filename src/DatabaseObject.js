@@ -1,9 +1,10 @@
 const Handle = require("./Handle");
 const TagsManager = require("./TagsManager");
 
-class DatabaseObject extends Handle {
+class DatabaseObject {
     constructor(subclass = null) {
-        super();
+        this.handle = Handle.next();
+        this.ownerObjectHandle = "0";
         this.subclassMarkers = [];
         if (subclass) {
             if (Array.isArray(subclass)) {
@@ -15,29 +16,15 @@ class DatabaseObject extends Handle {
     }
 
     /**
-     * Get the array of tags.
-     * @returns {Tag[]}
+     *
+     * @param {TagsManager} manager
      */
-    tags() {
-        const manager = new TagsManager();
-
-        manager.addTags(this.handleTag());
-        manager.addTags(this.handleToOwnerTag());
-        this.subclassMarkers.forEach((subclassMarker) => {
-            manager.addTag(100, subclassMarker);
-        });
-
-        return manager.tags();
-    }
-
-    /**
-     * Get the dxf string
-     * @returns {String}
-     */
-    toDxfString() {
-        const manager = new TagsManager();
-        manager.addTags(this.tags());
-        return manager.toDxfString();
+    tags(manager) {
+        manager.push(5, this.handle);
+        manager.push(330, this.ownerObjectHandle);
+        for (const s of this.subclassMarkers) {
+            manager.push(100, s);
+        }
     }
 }
 

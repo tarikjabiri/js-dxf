@@ -8,16 +8,12 @@ class Point extends DatabaseObject {
         this.y = y;
     }
 
-    tags() {
-        const manager = new TagsManager();
-
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
-        manager.addTag(0, "POINT");
-        manager.addTags(super.tags());
-        manager.addTag(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
-
-        return manager.tags();
+        manager.push(0, "POINT");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
     }
 }
 
