@@ -23,7 +23,7 @@ class Arc extends DatabaseObject {
         manager.push(0, "ARC");
         super.tags(manager);
         manager.push(8, this.layer.name);
-        manager.addPointTags(this.x, this.y);
+        manager.point(this.x, this.y);
         manager.push(40, this.r);
         manager.push(100, "AcDbArc");
         manager.push(50, this.startAngle);
