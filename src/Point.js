@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Point extends DatabaseObject {
     constructor(x, y) {

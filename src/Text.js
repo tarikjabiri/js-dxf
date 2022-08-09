@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 const H_ALIGN_CODES = ["left", "center", "right"];
 const V_ALIGN_CODES = ["baseline", "bottom", "middle", "top"];

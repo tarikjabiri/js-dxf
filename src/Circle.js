@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Circle extends DatabaseObject {
     /**

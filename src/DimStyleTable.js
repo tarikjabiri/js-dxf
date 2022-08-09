@@ -1,6 +1,5 @@
 const DatabaseObject = require("./DatabaseObject");
 const Table = require("./Table");
-const TagsManager = require("./TagsManager");
 
 class DimStyleTable extends Table {
     constructor(name) {

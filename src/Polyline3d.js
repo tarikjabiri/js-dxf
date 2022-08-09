@@ -1,6 +1,5 @@
 const DatabaseObject = require("./DatabaseObject");
 const Handle = require("./Handle");
-const TagsManager = require("./TagsManager");
 const Vertex = require("./Vertex");
 
 class Polyline3d extends DatabaseObject {

@@ -1,5 +1,4 @@
 const Handle = require("./Handle");
-const TagsManager = require("./TagsManager");
 
 class DatabaseObject {
     constructor(subclass = null) {

@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Face extends DatabaseObject {
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {

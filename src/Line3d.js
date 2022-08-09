@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Line3d extends DatabaseObject {
     constructor(x1, y1, z1, x2, y2, z2) {

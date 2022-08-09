@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Ellipse extends DatabaseObject {
     /**
@@ -26,7 +25,7 @@ class Ellipse extends DatabaseObject {
     tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
         manager.push(0, "ELLIPSE");
-        super.tags();
+        super.tags(manager);
         manager.push(8, this.layer.name);
         manager.point(this.x, this.y);
         manager.push(11, this.majorAxisX);

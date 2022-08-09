@@ -1,5 +1,4 @@
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Layer extends DatabaseObject {
     constructor(name, colorNumber, lineTypeName = null) {
