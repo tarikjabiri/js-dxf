@@ -1,6 +1,5 @@
 require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class AppId extends DatabaseObject {
     constructor(name) {
@@ -19,9 +18,8 @@ class AppId extends DatabaseObject {
 
 module.exports = AppId;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],2:[function(require,module,exports){
+},{"./DatabaseObject":7}],2:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Arc extends DatabaseObject {
     /**
@@ -55,9 +53,8 @@ class Arc extends DatabaseObject {
 
 module.exports = Arc;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],3:[function(require,module,exports){
+},{"./DatabaseObject":7}],3:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Block extends DatabaseObject {
     constructor(name) {
@@ -88,9 +85,8 @@ class Block extends DatabaseObject {
 
 module.exports = Block;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],4:[function(require,module,exports){
+},{"./DatabaseObject":7}],4:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class BlockRecord extends DatabaseObject {
     constructor(name) {
@@ -113,9 +109,8 @@ class BlockRecord extends DatabaseObject {
 
 module.exports = BlockRecord;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],5:[function(require,module,exports){
+},{"./DatabaseObject":7}],5:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Circle extends DatabaseObject {
     /**
@@ -142,9 +137,8 @@ class Circle extends DatabaseObject {
 
 module.exports = Circle;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],6:[function(require,module,exports){
+},{"./DatabaseObject":7}],6:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Cylinder extends DatabaseObject {
     /**
@@ -193,9 +187,8 @@ class Cylinder extends DatabaseObject {
 
 module.exports = Cylinder;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],7:[function(require,module,exports){
+},{"./DatabaseObject":7}],7:[function(require,module,exports){
 const Handle = require("./Handle");
-const TagsManager = require("./TagsManager");
 
 class DatabaseObject {
     constructor(subclass = null) {
@@ -226,9 +219,8 @@ class DatabaseObject {
 
 module.exports = DatabaseObject;
 
-},{"./Handle":12,"./TagsManager":22}],8:[function(require,module,exports){
+},{"./Handle":12}],8:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Dictionary extends DatabaseObject {
     constructor() {
@@ -268,10 +260,9 @@ class Dictionary extends DatabaseObject {
 
 module.exports = Dictionary;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],9:[function(require,module,exports){
+},{"./DatabaseObject":7}],9:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Table = require("./Table");
-const TagsManager = require("./TagsManager");
 
 class DimStyleTable extends Table {
     constructor(name) {
@@ -297,9 +288,8 @@ class DimStyleTable extends Table {
 
 module.exports = DimStyleTable;
 
-},{"./DatabaseObject":7,"./Table":21,"./TagsManager":22}],10:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Table":21}],10:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Ellipse extends DatabaseObject {
     /**
@@ -326,7 +316,7 @@ class Ellipse extends DatabaseObject {
     tags(manager) {
         // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ellipse_al_u05_c.htm
         manager.push(0, "ELLIPSE");
-        super.tags();
+        super.tags(manager);
         manager.push(8, this.layer.name);
         manager.point(this.x, this.y);
         manager.push(11, this.majorAxisX);
@@ -341,9 +331,8 @@ class Ellipse extends DatabaseObject {
 
 module.exports = Ellipse;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],11:[function(require,module,exports){
+},{"./DatabaseObject":7}],11:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Face extends DatabaseObject {
     constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
@@ -385,7 +374,7 @@ class Face extends DatabaseObject {
 
 module.exports = Face;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],12:[function(require,module,exports){
+},{"./DatabaseObject":7}],12:[function(require,module,exports){
 class Handle {
     static seed = 0;
 
@@ -402,7 +391,6 @@ module.exports = Handle;
 
 },{}],13:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Layer extends DatabaseObject {
     constructor(name, colorNumber, lineTypeName = null) {
@@ -453,9 +441,8 @@ class Layer extends DatabaseObject {
 
 module.exports = Layer;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],14:[function(require,module,exports){
+},{"./DatabaseObject":7}],14:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Line extends DatabaseObject {
     constructor(x1, y1, x2, y2) {
@@ -481,9 +468,8 @@ class Line extends DatabaseObject {
 
 module.exports = Line;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],15:[function(require,module,exports){
+},{"./DatabaseObject":7}],15:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Line3d extends DatabaseObject {
     constructor(x1, y1, z1, x2, y2, z2) {
@@ -511,9 +497,8 @@ class Line3d extends DatabaseObject {
 
 module.exports = Line3d;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],16:[function(require,module,exports){
+},{"./DatabaseObject":7}],16:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class LineType extends DatabaseObject {
     /**
@@ -554,9 +539,8 @@ class LineType extends DatabaseObject {
 
 module.exports = LineType;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],17:[function(require,module,exports){
+},{"./DatabaseObject":7}],17:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Point extends DatabaseObject {
     constructor(x, y) {
@@ -576,9 +560,8 @@ class Point extends DatabaseObject {
 
 module.exports = Point;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],18:[function(require,module,exports){
+},{"./DatabaseObject":7}],18:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Polyline extends DatabaseObject {
     /**
@@ -620,10 +603,9 @@ class Polyline extends DatabaseObject {
 
 module.exports = Polyline;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],19:[function(require,module,exports){
+},{"./DatabaseObject":7}],19:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
 const Handle = require("./Handle");
-const TagsManager = require("./TagsManager");
 const Vertex = require("./Vertex");
 
 class Polyline3d extends DatabaseObject {
@@ -663,9 +645,8 @@ class Polyline3d extends DatabaseObject {
 
 module.exports = Polyline3d;
 
-},{"./DatabaseObject":7,"./Handle":12,"./TagsManager":22,"./Vertex":25}],20:[function(require,module,exports){
+},{"./DatabaseObject":7,"./Handle":12,"./Vertex":25}],20:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Spline extends DatabaseObject {
     /**
@@ -782,9 +763,8 @@ class Spline extends DatabaseObject {
 
 module.exports = Spline;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],21:[function(require,module,exports){
+},{"./DatabaseObject":7}],21:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Table extends DatabaseObject {
     constructor(name) {
@@ -814,7 +794,7 @@ class Table extends DatabaseObject {
 
 module.exports = Table;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],22:[function(require,module,exports){
+},{"./DatabaseObject":7}],22:[function(require,module,exports){
 class TagsManager {
     constructor() {
         this.lines = [];
@@ -865,7 +845,6 @@ module.exports = TagsManager;
 
 },{}],23:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 const H_ALIGN_CODES = ["left", "center", "right"];
 const V_ALIGN_CODES = ["baseline", "bottom", "middle", "top"];
@@ -931,9 +910,8 @@ class Text extends DatabaseObject {
 
 module.exports = Text;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],24:[function(require,module,exports){
+},{"./DatabaseObject":7}],24:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class TextStyle extends DatabaseObject {
     constructor(name) {
@@ -959,9 +937,8 @@ class TextStyle extends DatabaseObject {
 
 module.exports = TextStyle;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],25:[function(require,module,exports){
+},{"./DatabaseObject":7}],25:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Vertex extends DatabaseObject {
     /**
@@ -988,9 +965,8 @@ class Vertex extends DatabaseObject {
 
 module.exports = Vertex;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],26:[function(require,module,exports){
+},{"./DatabaseObject":7}],26:[function(require,module,exports){
 const DatabaseObject = require("./DatabaseObject");
-const TagsManager = require("./TagsManager");
 
 class Viewport extends DatabaseObject {
     constructor(name, height) {
@@ -1011,7 +987,7 @@ class Viewport extends DatabaseObject {
 
 module.exports = Viewport;
 
-},{"./DatabaseObject":7,"./TagsManager":22}],"Drawing":[function(require,module,exports){
+},{"./DatabaseObject":7}],"Drawing":[function(require,module,exports){
 const LineType = require("./LineType");
 const Layer = require("./Layer");
 const Table = require("./Table");
