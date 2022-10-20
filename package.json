@@ -30,8 +30,5 @@
     "browserify": "^16.2.3",
     "minimist": ">=1.2.3"
   },
-  "dependencies": {
-    "babel-plugin-syntax-class-properties": "^6.13.0",
-    "babel-plugin-transform-class-properties": "^6.24.1"
-  }
+  "dependencies": {}
 }
