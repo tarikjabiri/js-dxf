@@ -2,7 +2,7 @@
   "name": "dxf-writer",
   "version": "1.18.2",
   "description": "Dead simple 2D DXF writer",
-  "main": "index.js",
+  "main": "app.js",
   "types": "./index.d.ts",
   "directories": {
     "example": "examples"
