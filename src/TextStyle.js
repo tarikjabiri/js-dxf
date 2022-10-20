@@ -1,6 +1,7 @@
 const DatabaseObject = require("./DatabaseObject");
 
 class TextStyle extends DatabaseObject {
+    fontFileName = 'txt';
     constructor(name) {
         super(["AcDbSymbolTableRecord", "AcDbTextStyleTableRecord"]);
         this.name = name;
@@ -17,7 +18,7 @@ class TextStyle extends DatabaseObject {
         manager.push(50, 0);
         manager.push(71, 0);
         manager.push(42, 1);
-        manager.push(3, this.name);
+        manager.push(3, this.fontFileName);
         manager.push(4, "");
     }
 }
