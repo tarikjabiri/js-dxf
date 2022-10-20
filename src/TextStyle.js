@@ -17,7 +17,7 @@ class TextStyle extends DatabaseObject {
         manager.push(50, 0);
         manager.push(71, 0);
         manager.push(42, 1);
-        manager.push(3, this.name);
+        manager.push(3, "txt");
         manager.push(4, "");
     }
 }
