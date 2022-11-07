@@ -31,11 +31,25 @@ declare module "dxf-writer" {
     // [GroupCode, value]
     export type HeaderValue = [number, number];
 
-    export interface RenderableToDxf {
+    export abstract class RenderableToDxf {
         toDxfString(): string;
     }
 
-    export class Arc implements RenderableToDxf {
+    abstract class Block {
+        constructor(name: string);
+        tags(manager: TagsManager): void;
+    }
+
+    export abstract class TagsManager extends RenderableToDxf {
+        point(x: number, y: number, z?: number): void;
+        start(name: string): void;
+        end(): void;
+        addHeaderVariable(name: string, tagsElements: HeaderValue[]): void;
+        push(code: string | number, value: string | number): void;
+    }
+
+
+    export class Arc extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public r: number;
@@ -59,7 +73,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Circle implements RenderableToDxf {
+    export class Circle extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public r: number;
@@ -73,7 +87,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Cylinder implements RenderableToDxf {
+    export class Cylinder extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public z1: number;
@@ -106,7 +120,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Face implements RenderableToDxf {
+    export class Face extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public z1: number;
@@ -137,7 +151,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Layer implements RenderableToDxf {
+    export class Layer extends RenderableToDxf {
         public name: string;
         public colorNumber: number;
         public lineTypeName: string;
@@ -154,7 +168,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Line implements RenderableToDxf {
+    export class Line extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public x2: number;
@@ -164,7 +178,7 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class LineType implements RenderableToDxf {
+    export class LineType extends RenderableToDxf {
         public name: string;
         public description: string;
         public elements: Array<number>;
@@ -178,7 +192,7 @@ declare module "dxf-writer" {
         getElementsSum(): number;
     }
 
-    export class Point implements RenderableToDxf {
+    export class Point extends RenderableToDxf {
         public x: number;
         public y: number;
 
@@ -186,21 +200,21 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
-    export class Polyline implements RenderableToDxf {
+    export class Polyline extends RenderableToDxf {
         public points: Array<Point2D>;
 
         constructor(points: Array<Point2D>);
         tags(manager: TagsManager): void;
     }
 
-    export class Polyline3D implements RenderableToDxf {
+    export class Polyline3D extends RenderableToDxf {
         public points: Array<Point3D>;
 
         constructor(points: Array<Point3D>);
         tags(manager: TagsManager): void;
     }
 
-    export class Text implements RenderableToDxf {
+    export class Text extends RenderableToDxf {
         public x1: number;
         public y1: number;
         public height: number;
@@ -239,7 +253,7 @@ declare module "dxf-writer" {
         | "MAGENTA"
         | "WHITE";
 
-    export default class Drawing implements RenderableToDxf {
+    export default class Drawing extends RenderableToDxf {
         constructor();
 
         layers: { [key: string]: Layer };
