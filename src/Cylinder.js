@@ -27,9 +27,9 @@ class Cylinder extends DatabaseObject {
         this.z = z;
         this.r = r;
         this.thickness = thickness;
-        (this.extrusionDirectionX = extrusionDirectionX),
-            (this.extrusionDirectionY = extrusionDirectionY),
-            (this.extrusionDirectionZ = extrusionDirectionZ);
+        this.extrusionDirectionX = extrusionDirectionX;
+        this.extrusionDirectionY = extrusionDirectionY;
+        this.extrusionDirectionZ = extrusionDirectionZ;
     }
 
     tags(manager) {

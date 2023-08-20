@@ -12,6 +12,11 @@ class Table extends DatabaseObject {
         this.elements.push(element);
     }
 
+    replace (element) {
+        this.elements = this.elements.filter(e => e.name !== element.name);
+        this.add(element);
+    }
+
     tags(manager) {
         manager.push(0, "TABLE");
         manager.push(2, this.name);

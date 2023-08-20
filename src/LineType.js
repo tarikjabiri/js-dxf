@@ -31,9 +31,7 @@ class LineType extends DatabaseObject {
     }
 
     getElementsSum() {
-        return this.elements.reduce((sum, element) => {
-            return sum + Math.abs(element);
-        }, 0);
+        return this.elements.reduce((sum, element) => sum + Math.abs(element), 0);
     }
 }
 
