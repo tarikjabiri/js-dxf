@@ -544,6 +544,10 @@ class Drawing {
         return this._tagsManager().toDxfString();
     }
 
+    getViewport() {
+        return {x: this.viewportX, y: this.viewportY, width: this.viewportW, height: this.viewportH};
+    }
+
     setViewport (x, y, w, h) {
         if (x === undefined)
             x = this.viewportX;
