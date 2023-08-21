@@ -8,7 +8,7 @@ class Polyline3d extends DatabaseObject {
      */
     constructor(points) {
         super(["AcDbEntity", "AcDb3dPolyline"]);
-        this.verticies = points.map((point) => {
+        this.vertices = points.map((point) => {
             const [x, y, z] = point;
             const vertex = new Vertex(x, y, z);
             vertex.ownerObjectHandle = this.handle;
@@ -25,7 +25,7 @@ class Polyline3d extends DatabaseObject {
         manager.push(70, 0);
         manager.point(0, 0);
 
-        this.verticies.forEach((vertex) => {
+        this.vertices.forEach((vertex) => {
             vertex.layer = this.layer;
             vertex.tags(manager);
         });

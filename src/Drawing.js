@@ -1,27 +1,27 @@
-const LineType = require("./LineType");
-const Layer = require("./Layer");
-const Table = require("./Table");
-const DimStyleTable = require("./DimStyleTable");
-const TextStyle = require("./TextStyle");
-const Viewport = require("./Viewport");
 const AppId = require("./AppId");
+const Arc = require("./Arc");
 const Block = require("./Block");
 const BlockRecord = require("./BlockRecord");
-const Dictionary = require("./Dictionary");
-const Line = require("./Line");
-const Line3d = require("./Line3d");
-const Arc = require("./Arc");
 const Circle = require("./Circle");
 const Cylinder = require("./Cylinder");
-const Text = require("./Text");
+const Dictionary = require("./Dictionary");
+const DimStyleTable = require("./DimStyleTable");
+const Ellipse = require("./Ellipse");
+const Face = require("./Face");
+const Handle = require("./Handle");
+const Layer = require("./Layer");
+const Line = require("./Line");
+const Line3d = require("./Line3d");
+const LineType = require("./LineType");
+const Point = require("./Point");
 const Polyline = require("./Polyline");
 const Polyline3d = require("./Polyline3d");
-const Face = require("./Face");
-const Point = require("./Point");
 const Spline = require("./Spline");
-const Ellipse = require("./Ellipse");
+const Table = require("./Table");
 const TagsManager = require("./TagsManager");
-const Handle = require("./Handle");
+const Text = require("./Text");
+const TextStyle = require("./TextStyle");
+const Viewport = require("./Viewport");
 
 class Drawing {
     constructor() {
@@ -31,7 +31,10 @@ class Drawing {
         this.headers = {};
         this.tables = {};
         this.blocks = {};
-
+        this.viewportX = 0;
+        this.viewportY = 0;
+        this.viewportW = 1000;
+        this.viewportH = 0;
         this.dictionary = new Dictionary();
 
         this.setUnits("Unitless");
@@ -282,7 +285,7 @@ class Drawing {
     drawPolyline3d(points) {
         points.forEach((point) => {
             if (point.length !== 3) {
-                throw "Require 3D coordinates";
+                throw new Error("Require 3D coordinates");
             }
         });
         this.activeLayer.addShape(new Polyline3d(points));
@@ -380,6 +383,7 @@ class Drawing {
         return t;
     }
 
+    // eslint-disable-next-line no-unused-vars
     _layerTable(manager) {
         const t = new Table("LAYER");
         const layers = Object.values(this.layers);
@@ -404,11 +408,11 @@ class Drawing {
      * @param {string} unit see Drawing.UNITS
      */
     setUnits(unit) {
-        let value =
+        const value =
             typeof Drawing.UNITS[unit] != "undefined"
                 ? Drawing.UNITS[unit]
                 : Drawing.UNITS["Unitless"];
-        this.header("INSUNITS", [[70, Drawing.UNITS[unit]]]);
+        this.header("INSUNITS", [[70, value]]);
         return this;
     }
 
@@ -452,7 +456,7 @@ class Drawing {
             this.tables["DIMSTYLE"] = t;
         }
 
-        vpTable.add(new Viewport("*ACTIVE", 1000));
+        this.setViewport();
 
         /* Non-default text alignment is not applied without this entry. */
         styleTable.add(new TextStyle("standard"));
@@ -538,6 +542,32 @@ class Drawing {
 
     toDxfString() {
         return this._tagsManager().toDxfString();
+    }
+
+    getViewport() {
+        return {x: this.viewportX, y: this.viewportY, width: this.viewportW, height: this.viewportH};
+    }
+
+    setViewport (x, y, w, h) {
+        if (x === undefined)
+            x = this.viewportX;
+        if (y === undefined)
+            y = this.viewportY;
+        if (w === undefined)
+            w = this.viewportW;
+        if (h === undefined)
+            h = this.viewportH;
+
+        this.viewportX = x;
+        this.viewportY = y;
+        this.viewportW = w;
+        this.viewportH = h;
+
+        let vpTable = this.tables["VPORT"];
+        if (!vpTable) {
+            vpTable = this.addTable("VPORT");
+        }
+        vpTable.replace(new Viewport("*ACTIVE", this.viewportX, this.viewportY, this.viewportW, this.viewportH));
     }
 }
 

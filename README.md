@@ -9,23 +9,25 @@ npm install dxf-writer
 
 ## Node.js example
 ```javascript
-const Drawing = require('dxf-writer');
-const fs = require('fs');
+const Drawing = require("dxf-writer");
+const fs = require("fs");
 
-let d = new Drawing();
+const dxf = new Drawing();
 
-d.setUnits('Decimeters');
-d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
-d.setActiveLayer('l_green');
-d.drawText(20, -70, 10, 0, 'go green!');
+dxf.setUnits("Decimeters");
+dxf.drawText(10, 0, 10, 0, "Hello World"); // draw text in the default layer named "0"
+dxf.addLayer("l_green", Drawing.ACI.GREEN, "CONTINUOUS");
+dxf.setActiveLayer("l_green");
+dxf.drawText(20, -70, 10, 0, "go green!");
 
 //or fluent
-d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DOTTED')
- .setActiveLayer('l_yellow')
- .drawCircle(50, -30, 25);
+dxf.addLayer("l_yellow", Drawing.ACI.YELLOW, "DASHED")
+    .setActiveLayer("l_yellow")
+    .drawCircle(50, -30, 25);
 
-fs.writeFileSync(__filename + '.dxf', d.toDxfString());
+dxf.setViewport(70, 0, 20, 10); //set viewport (x, y, width, height)
+
+fs.writeFileSync(__filename + ".dxf", dxf.toDxfString());
 ```
 Example preview in the LibreCAD:
 ![exmple in LibreCAD](https://raw.githubusercontent.com/ognjen-petrovic/js-dxf/master/examples/demo.png "example in LibreCAD")

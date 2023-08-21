@@ -3,43 +3,40 @@
     <meta charset="utf-8">
     <title>js - DXF</title>
     <script src="dxf_bundle.js"></script>
+    <script src="highlight.js"></script>
     <script>
-        var Drawing = require('Drawing');
         window.onload = function()
         {
-            d = new Drawing();
+            const example = ()=>{
+                const Drawing = require("Drawing");
+                const dxf = new Drawing();
 
-            d.setUnits('Decimeters');
-            d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-            d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
-            d.setActiveLayer('l_green');
-            d.drawText(20, -70, 10, 0, 'go green!');
+                dxf.setUnits("Decimeters");
+                dxf.drawText(10.0, 0, 10, 0, "Hello World"); // draw text in the default layer named "0"
+                dxf.addLayer("l_green", Drawing.ACI.GREEN, "CONTINUOUS");
+                dxf.setActiveLayer("l_green");
+                dxf.drawText(20, -70, 10, 0, "go green!");
 
-            //or fluent
-            d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
-            .setActiveLayer('l_yellow')
-            .drawCircle(50, -30, 25);
+                //or fluent
+                dxf.addLayer("l_yellow", Drawing.ACI.YELLOW, "DASHED")
+                   .setActiveLayer("l_yellow")
+                   .drawCircle(50, -30, 25);
 
-            var b = new Blob([d.toDxfString()], {type: 'application/dxf'});
-            document.getElementById('dxf').href = URL.createObjectURL(b);
+                dxf.setViewport(70, 0, 20, 10); //set viewport (x, y, width, height)
+                const dxfSource = dxf.toDxfString(); //get dxf source string
+                // console.log(dxfSource);
+                return dxfSource;
+            }
+            const blob = new Blob([example()], {type: "application/dxf"});
+            document.getElementById("dxf").href = URL.createObjectURL(blob);
+            //display source code of the example
+            const text = example.toString();
+            source.innerHTML = highlight(text.substring(text.search(/\s+\S/), text.indexOf("return")).trim().replace(/^                /gm, ""));
         }
     </script>
 </head>
 <body>
-    <pre>
-            let d = new Drawing();
-
-            d.setUnits('Decimeters');
-            d.drawText(10, 0, 10, 0, 'Hello World'); // draw text in the default layer named "0"
-            d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
-            d.setActiveLayer('l_green');
-            d.drawText(20, -70, 10, 0, 'go green!');
-
-            //or fluent
-            d.addLayer('l_yellow', Drawing.ACI.YELLOW, 'DASHED')
-            .setActiveLayer('l_yellow')
-            .drawCircle(50, -30, 25);
-    </pre>
-<a href="" id="dxf" download="demo.dxf">demo.dxf</a>
+    <pre id="source" class="code"></pre>
+    <a href="" id="dxf" download="demo.dxf">demo.dxf</a>
 </body>
 </html>

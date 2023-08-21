@@ -25,7 +25,7 @@ class Spline extends DatabaseObject {
             );
         }
 
-        if (knots == null) {
+        if (knots === null) {
             // Examples:
             // degree 2, 3 pts:  0 0 0 1 1 1
             // degree 2, 4 pts:  0 0 0 1 2 2 2
