@@ -545,6 +545,10 @@ class Drawing {
         return this._tagsManager().toDxfString();
     }
 
+    getViewport() {
+        return {x: this.viewportX, y: this.viewportY, width: this.viewportW, height: this.viewportH};
+    }
+
     setViewport (x, y, w, h) {
         if (x === undefined)
             x = this.viewportX;
@@ -890,7 +894,7 @@ class DimStyleTable extends Table {
         this.subclassMarkers.push("AcDbDimStyleTable");
     }
 
-    tags(manager) {
+    tags(manager){
         manager.push(0, "TABLE");
         manager.push(2, this.name);
         DatabaseObject.prototype.tags.call(this, manager);
@@ -1232,7 +1236,7 @@ class Polyline3d extends DatabaseObject {
      */
     constructor(points) {
         super(["AcDbEntity", "AcDb3dPolyline"]);
-        this.verticies = points.map((point) => {
+        this.vertices = points.map((point) => {
             const [x, y, z] = point;
             const vertex = new Vertex(x, y, z);
             vertex.ownerObjectHandle = this.handle;
@@ -1249,7 +1253,7 @@ class Polyline3d extends DatabaseObject {
         manager.push(70, 0);
         manager.point(0, 0);
 
-        this.verticies.forEach((vertex) => {
+        this.vertices.forEach((vertex) => {
             vertex.layer = this.layer;
             vertex.tags(manager);
         });
