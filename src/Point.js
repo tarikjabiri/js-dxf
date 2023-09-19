@@ -1,10 +1,11 @@
 const DatabaseObject = require("./DatabaseObject");
 
 class Point extends DatabaseObject {
-    constructor(x, y) {
+    constructor(x, y, z) {
         super(["AcDbEntity", "AcDbPoint"]);
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     tags(manager) {
@@ -12,7 +13,7 @@ class Point extends DatabaseObject {
         manager.push(0, "POINT");
         super.tags(manager);
         manager.push(8, this.layer.name);
-        manager.point(this.x, this.y);
+        manager.point(this.x, this.y, this.z);
     }
 }
 

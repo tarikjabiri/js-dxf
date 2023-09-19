@@ -97,8 +97,8 @@ class Drawing {
         return this;
     }
 
-    drawPoint(x, y) {
-        this.activeLayer.addShape(new Point(x, y));
+    drawPoint(x, y, z = 0) {
+        this.activeLayer.addShape(new Point(x, y, z));
         return this;
     }
 

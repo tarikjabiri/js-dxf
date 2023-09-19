@@ -48,7 +48,6 @@ declare module "dxf-writer" {
         push(code: string | number, value: string | number): void;
     }
 
-
     export class Arc extends RenderableToDxf {
         public x1: number;
         public y1: number;
@@ -279,7 +278,7 @@ declare module "dxf-writer" {
         ): Drawing;
         setActiveLayer(name: string): Drawing;
         drawLine(x1: number, y1: number, x2: number, y2: number): Drawing;
-        drawPoint(x: number, y: number): Drawing;
+        drawPoint(x: number, y: number, z?: number): Drawing;
 
         /**
          * draws a closed rectangular polyline with option for round or diagonal corners
