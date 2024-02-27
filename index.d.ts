@@ -243,7 +243,7 @@ declare module "dxf-writer" {
     }
 
     export class Mesh extends RenderableToDxf {
-        public vertices: number[][];
+        public vertices: Point3D[];
         public faceIndices: number[][];
 
         constructor(vertices: number[][], faceIndices: number[][]);
@@ -412,9 +412,9 @@ declare module "dxf-writer" {
 
         /**
          * @param {[number, number, number][]} vertices - Array of vertices like [ [x1, y1, z3], [x2, y2, z3]... ]
-         * @param {number[][]} indices - Array of face indices
+         * @param {number[][]} faceIndices - Array of face indices
          */
-        drawMesh(vertices: number[][], faceIndices: number[][]): Drawing;
+        drawMesh(vertices: Point3D[], faceIndices: number[][]): Drawing;
 
         /**
          * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB

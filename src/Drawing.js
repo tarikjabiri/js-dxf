@@ -302,7 +302,7 @@ class Drawing {
 
     /**
      * @param {[number, number, number][]} vertices - Array of vertices like [ [x1, y1, z3], [x2, y2, z3]... ]
-     * @param {number[][]} indices - Array of face indices
+     * @param {number[][]} faceIndices - Array of face indices
      */
     drawMesh(vertices, faceIndices) {
         this.activeLayer.addShape(new Mesh(vertices, faceIndices));
