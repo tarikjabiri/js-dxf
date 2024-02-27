@@ -18,7 +18,7 @@ class Block extends DatabaseObject {
         manager.point(0, 0);
         manager.push(3, this.name);
         /* xref path name - nothing */
-        manager.push(1, "");
+        // manager.push(1, "");
 
         //XXX dump content here
 

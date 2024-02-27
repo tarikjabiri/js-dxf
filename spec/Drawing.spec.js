@@ -51,4 +51,21 @@ describe("Drawing", function () {
         d.drawPoint(50, 50, 50);
         fs.writeFileSync("output/point.dxf", d.toDxfString());
     });
+
+    it("can draw a mesh", function () {
+        var d = new Drawing();
+        d.drawMesh(
+            [
+                [0, 0, 0],
+                [100, 0, 0],
+                [0, 100, 0],
+                [100, 100, 0],
+            ],
+            [
+                [0, 2, 3],
+                [0, 3, 1],
+            ]
+        );
+        fs.writeFileSync("output/mesh-simple.dxf", d.toDxfString());
+    });
 });
