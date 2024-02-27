@@ -1,29 +1,32 @@
-class Arc
-{
+const DatabaseObject = require("./DatabaseObject");
+
+class Arc extends DatabaseObject {
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {number} x - Center x
+     * @param {number} y - Center y
      * @param {number} r - radius
-     * @param {number} startAngle - degree 
-     * @param {number} endAngle - degree 
+     * @param {number} startAngle - degree
+     * @param {number} endAngle - degree
      */
-    constructor(x1, y1, r, startAngle, endAngle)
-    {
-        this.x1 = x1;
-        this.y1 = y1;
+    constructor(x, y, r, startAngle, endAngle) {
+        super(["AcDbEntity", "AcDbCircle"]);
+        this.x = x;
+        this.y = y;
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
     }
 
-    toDxfString()
-    {
+    tags(manager) {
         //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
-        let s = `0\nARC\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `10\n${this.x1}\n20\n${this.y1}\n30\n0\n`;
-        s += `40\n${this.r}\n50\n${this.startAngle}\n51\n${this.endAngle}\n`;
-        return s;
+        manager.push(0, "ARC");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.point(this.x, this.y);
+        manager.push(40, this.r);
+        manager.push(100, "AcDbArc");
+        manager.push(50, this.startAngle);
+        manager.push(51, this.endAngle);
     }
 }
 

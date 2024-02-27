@@ -1,47 +1,39 @@
-class LineType
-{
+const DatabaseObject = require("./DatabaseObject");
+
+class LineType extends DatabaseObject {
     /**
      * @param {string} name
      * @param {string} description
-     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a 
+     * @param {array} elements - if elem > 0 it is a line, if elem < 0 it is gap, if elem == 0.0 it is a
      */
-    constructor(name, description, elements)
-    {
+    constructor(name, description, elements) {
+        super(["AcDbSymbolTableRecord", "AcDbLinetypeTableRecord"]);
         this.name = name;
         this.description = description;
         this.elements = elements;
     }
 
-    /**
-     * @link https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
-     */
-    toDxfString()
-    {
-        let s = '0\nLTYPE\n';
-        s += '72\n65\n';
-        s += '70\n64\n';
-        s += `2\n${this.name}\n`;
-        s += `3\n${this.description}\n`;
-        s += `73\n${this.elements.length}\n`;
-        s += `40\n${this.getElementsSum()}\n`;
+    tags(manager) {
+        // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/ltype_al_u05_c.htm
+        manager.push(0, "LTYPE");
+        super.tags(manager);
+        manager.push(2, this.name);
+        manager.push(3, this.description);
+        manager.push(70, 0);
+        manager.push(72, 65);
+        manager.push(73, this.elements.length);
+        manager.push(40, this.getElementsSum());
 
-        for (let i = 0; i < this.elements.length; ++i)
-        {
-            s += `49\n${this.elements[i]}\n`;
-        }
-
-        return s;
+        this.elements.forEach((element) => {
+            manager.push(49, element);
+            manager.push(74, 0);
+        });
     }
 
-    getElementsSum()
-    {
-        let sum = 0;
-        for (let i = 0; i < this.elements.length; ++i)
-        {
-            sum += Math.abs(this.elements[i]);
-        }
-
-        return sum;
+    getElementsSum() {
+        return this.elements.reduce((sum, element) => {
+            return sum + Math.abs(element);
+        }, 0);
     }
 }
 

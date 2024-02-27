@@ -1,36 +1,45 @@
+const DatabaseObject = require("./DatabaseObject");
+
 const LAYER_NAME_BANNED_REGEX = /<|>|\/|\\|"|:|;|\?|\*|\||=|'/g;
 
 function isInvalidLayerName(name) {
     return LAYER_NAME_BANNED_REGEX.test(name);
 }
 
-class Layer {
-    constructor(name, colorNumber, lineTypeName) {
+class Layer extends DatabaseObject {
+    constructor(name, colorNumber, lineTypeName = null) {
         if (isInvalidLayerName(name)) {
             throw new Error(
-                `Layer name ${name} cannot include the following characters: < > / \ " : ; ? * | = ’`,
+                `Layer name ${name} cannot include the following characters: < > / \ " : ; ? * | = ’`
             );
         }
+
+        super(["AcDbSymbolTableRecord", "AcDbLayerTableRecord"]);
         this.name = name;
         this.colorNumber = colorNumber;
         this.lineTypeName = lineTypeName;
         this.shapes = [];
+        this.trueColor = -1;
     }
 
-    toDxfString() {
-        if (this.shapes.length === 0) {
-            return "";
-        }
+    tags(manager) {
+        manager.push(0, "LAYER");
+        super.tags(manager);
+        manager.push(2, this.name);
+        if (this.trueColor !== -1) manager.push(420, this.trueColor);
+        else manager.push(62, this.colorNumber);
 
-        let s = "0\nLAYER\n";
-        s += "70\n64\n";
-        s += `2\n${this.name}\n`;
-        s += `62\n${this.colorNumber}\n`;
-        s += `61\n0\n`;
-        if (this.lineTypeName) {
-            s += `6\n${this.lineTypeName}\n`;
-        }
-        return s;
+        manager.push(70, 0);
+        if (this.lineTypeName) manager.push(6, this.lineTypeName);
+
+        /* Hard-pointer handle to PlotStyleName object; seems mandatory, but any value seems OK,
+         * including 0.
+         */
+        manager.push(390, 1);
+    }
+
+    setTrueColor(color) {
+        this.trueColor = color;
     }
 
     addShape(shape) {
@@ -42,13 +51,11 @@ class Layer {
         return this.shapes;
     }
 
-    shapesToDxf() {
-        let s = "";
-        for (let i = 0; i < this.shapes.length; ++i) {
-            s += this.shapes[i].toDxfString();
+    shapesTags(space, manager) {
+        for (const shape of this.shapes) {
+            shape.ownerObjectHandle = space.handle;
+            shape.tags(manager);
         }
-
-        return s;
     }
 }
 

@@ -3,7 +3,7 @@ const fs = require('fs');
 
 let d = new Drawing();
 
-d.addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
+d.setUnits('Yards').addLayer('l_green', Drawing.ACI.GREEN, 'CONTINUOUS');
 d.setActiveLayer('l_green');
 
 d.drawLine(50, 50, 100, 100)
