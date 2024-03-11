@@ -2,5 +2,10 @@ node_modules/
 output/
 *.log
 .vscode
-.DS_Store
-*.dxf
+.idea/
+*.iml
+package-lock.json
+pnpm-lock.yaml
+**.DS_Store
+**.dxf
+yarn.lock

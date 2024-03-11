@@ -1,58 +1,41 @@
-const POLYLINE_TYPE = {
-    POLYLINE: 8,
-    POLYGON: 1,
-}
+const DatabaseObject = require("./DatabaseObject");
 
-const DEFAULT_OPTIONS = {
-    polylineType: POLYLINE_TYPE.POLYLINE,
-    thickness: 0,
-    lineType: null,
-}
-
-class Polyline
-{
+class Polyline extends DatabaseObject {
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {array} points - Array of points like [ [x1, y1], [x2, y2, bulge]... ]
+     * @param {boolean} closed
+     * @param {number} startWidth
+     * @param {number} endWidth
      */
-    constructor(points, options)
-    {
+    constructor(points, closed = false, startWidth = 0, endWidth = 0) {
+        super(["AcDbEntity", "AcDbPolyline"]);
         this.points = points;
-        this.options = {
-            ...DEFAULT_OPTIONS,
-            ...options,
-        };
+        this.closed = closed;
+        this.startWidth = startWidth;
+        this.endWidth = endWidth;
     }
 
-    toDxfString()
-    {
-        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
-        //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
-        let s = `0\nPOLYLINE\n`;
-        s += `8\n${this.layer.name}\n`;
-        s += `66\n1\n`;
-        s += `70\n${this.options.polylineType}\n`;
-        s += `39\n${this.options.thickness}\n`;
-        s += `10\n0\n20\n0\n30\n0\n`;
-        s += '100\nAcDbEntity\n100\nAcDb3dPolyline\n'
+    tags(manager) {
+        manager.push(0, "LWPOLYLINE");
+        super.tags(manager);
+        manager.push(8, this.layer.name);
+        manager.push(6, "ByLayer");
+        manager.push(62, 256);
+        manager.push(370, -1);
+        manager.push(90, this.points.length);
+        manager.push(70, this.closed ? 1 : 0);
 
-        if (this.options.lineType) {
-            s += `6\n${this.options.lineType}\n`;
-        }
-
-        for (let i = 0; i < this.points.length; ++i)
-        {
-            s += `0\nVERTEX\n`;
-            s += `8\n${this.layer.name}\n`;
-            s += `70\n32\n`;
-            s += `10\n${this.points[i][0]}\n20\n${this.points[i][1]}\n30\n${this.points[i][2]}\n`;
-            s += '100\nAcDbVertex\n100\nAcDb3dPolylineVertex\n'
-        }
-        
-        s += `0\nSEQEND\n`;
-        return s;
+        this.points.forEach((point) => {
+            const [x, y, z] = point;
+            manager.push(10, x);
+            manager.push(20, y);
+            if (this.startWidth !== 0 || this.endWidth !== 0) {
+                manager.push(40, this.startWidth);
+                manager.push(41, this.endWidth);
+            }
+            if (z !== undefined) manager.push(42, z);
+        });
     }
 }
-
-Polyline.POLYLINE_TYPE = POLYLINE_TYPE
 
 module.exports = Polyline;
