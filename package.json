@@ -1,40 +1,40 @@
 {
-  "name": "@propelleraero/dxf-writer",
-  "version": "1.18.4",
-  "description": "Dead simple 2D DXF writer",
-  "main": "index.js",
-  "types": "./index.d.ts",
-  "directories": {
-    "example": "examples"
-  },
-  "scripts": {
-    "test": "jasmine spec/*.spec.js",
-    "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ognjen-petrovic/js-dxf.git"
-  },
-  "keywords": [
-    "DXF",
-    "CAD",
-    "AutoCAD"
-  ],
-  "author": "Ognjen Petrovic",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ognjen-petrovic/js-dxf/issues"
-  },
-  "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
-  "devDependencies": {
-    "husky": "^1.1.0",
-    "jasmine": "^3.2.0",
-    "browserify": "^16.2.3",
-    "minimist": ">=1.2.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn test"
+    "name": "@propelleraero/dxf-writer",
+    "version": "1.19.0",
+    "description": "Dead simple 2D DXF writer",
+    "main": "index.js",
+    "types": "./index.d.ts",
+    "directories": {
+        "example": "examples"
+    },
+    "scripts": {
+        "test": "jasmine spec/*.spec.js",
+        "bundle": "browserify -r ./src/Drawing.js:Drawing > ./examples/browser/dxf_bundle.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ognjen-petrovic/js-dxf.git"
+    },
+    "keywords": [
+        "DXF",
+        "CAD",
+        "AutoCAD"
+    ],
+    "author": "Ognjen Petrovic",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ognjen-petrovic/js-dxf/issues"
+    },
+    "homepage": "https://github.com/ognjen-petrovic/js-dxf#readme",
+    "devDependencies": {
+        "husky": "^1.1.0",
+        "jasmine": "^3.2.0",
+        "browserify": "^16.2.3",
+        "minimist": ">=1.2.3"
+    },
+    "husky": {
+        "hooks": {
+            "pre-push": "yarn test"
+        }
     }
-  }
 }
