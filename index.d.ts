@@ -1,4 +1,4 @@
-declare module "dxf-writer" {
+declare module "@propelleraero/dxf-writer" {
     export type Unit =
         | "Unitless"
         | "Inches"
