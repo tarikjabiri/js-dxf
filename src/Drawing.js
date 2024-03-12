@@ -22,6 +22,7 @@ const Spline = require("./Spline");
 const Ellipse = require("./Ellipse");
 const TagsManager = require("./TagsManager");
 const Handle = require("./Handle");
+const Mesh = require("./Mesh");
 
 class Drawing {
     constructor() {
@@ -234,6 +235,16 @@ class Drawing {
     /**
      * @param {number} x1 - x
      * @param {number} y1 - y
+     * @param {number} z1 - z
+     */
+    drawPoint(x1, y1, z1) {
+        this.activeLayer.addShape(new Point(x1, y1, z1));
+        return this;
+    }
+
+    /**
+     * @param {number} x1 - x
+     * @param {number} y1 - y
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
@@ -286,6 +297,15 @@ class Drawing {
             }
         });
         this.activeLayer.addShape(new Polyline3d(points));
+        return this;
+    }
+
+    /**
+     * @param {[number, number, number][]} vertices - Array of vertices like [ [x1, y1, z3], [x2, y2, z3]... ]
+     * @param {number[][]} faceIndices - Array of face indices
+     */
+    drawMesh(vertices, faceIndices) {
+        this.activeLayer.addShape(new Mesh(vertices, faceIndices));
         return this;
     }
 
@@ -418,8 +438,8 @@ class Drawing {
      */
     generateAutocadExtras() {
         if (!this.headers["ACADVER"]) {
-            /* AutoCAD 2007 version. */
-            this.header("ACADVER", [[1, "AC1021"]]);
+            /* AutoCAD 2010 version. */
+            this.header("ACADVER", [[1, "AC1024"]]);
         }
 
         if (!this.lineTypes["ByBlock"]) {

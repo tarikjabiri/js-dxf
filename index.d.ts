@@ -1,4 +1,4 @@
-declare module "dxf-writer" {
+declare module "@propelleraero/dxf-writer" {
     export type Unit =
         | "Unitless"
         | "Inches"
@@ -47,7 +47,6 @@ declare module "dxf-writer" {
         addHeaderVariable(name: string, tagsElements: HeaderValue[]): void;
         push(code: string | number, value: string | number): void;
     }
-
 
     export class Arc extends RenderableToDxf {
         public x1: number;
@@ -243,6 +242,14 @@ declare module "dxf-writer" {
         tags(manager: TagsManager): void;
     }
 
+    export class Mesh extends RenderableToDxf {
+        public vertices: Point3D[];
+        public faceIndices: number[][];
+
+        constructor(vertices: number[][], faceIndices: number[][]);
+        tags(manager: TagsManager): void;
+    }
+
     export type ACIKey =
         | "LAYER"
         | "RED"
@@ -402,6 +409,12 @@ declare module "dxf-writer" {
          * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z1]... ]
          */
         drawPolyline3d(points: Array<Point3D>): Drawing;
+
+        /**
+         * @param {[number, number, number][]} vertices - Array of vertices like [ [x1, y1, z3], [x2, y2, z3]... ]
+         * @param {number[][]} faceIndices - Array of face indices
+         */
+        drawMesh(vertices: Point3D[], faceIndices: number[][]): Drawing;
 
         /**
          * @param {number} trueColor - Integer representing the true color, can be passed as an hexadecimal value of the form 0xRRGGBB

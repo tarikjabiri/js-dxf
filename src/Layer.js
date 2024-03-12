@@ -1,7 +1,19 @@
 const DatabaseObject = require("./DatabaseObject");
 
+const LAYER_NAME_BANNED_REGEX = /<|>|\/|\\|"|:|;|\?|\*|\||=|'/g;
+
+function isInvalidLayerName(name) {
+    return LAYER_NAME_BANNED_REGEX.test(name);
+}
+
 class Layer extends DatabaseObject {
     constructor(name, colorNumber, lineTypeName = null) {
+        if (isInvalidLayerName(name)) {
+            throw new Error(
+                `Layer name ${name} cannot include the following characters: < > / \ " : ; ? * | = ’`
+            );
+        }
+
         super(["AcDbSymbolTableRecord", "AcDbLayerTableRecord"]);
         this.name = name;
         this.colorNumber = colorNumber;
